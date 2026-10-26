@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://doa80b5eb72xx"]
+
+[ext_resource type="Texture2D" uid="uid://gm4mpk2o168i" path="res://mario_sheep.jpg" id="1_o5qli"]
+
+[node name="Node3D" type="Node3D" unique_id=932919660]
+
+[node name="Sheep" type="Sprite3D" parent="." unique_id=2122071915]
+texture = ExtResource("1_o5qli")
