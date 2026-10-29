@@ -1,0 +1,349 @@
+[gd_scene format=3 uid="uid://cxon0lure0rdr"]
+
+[ext_resource type="PackedScene" uid="uid://b5it351olcro1" path="res://Low_Poly_Farm_Animals_v1.0/Sheep-edit.blend" id="1_t8l8v"]
+
+[sub_resource type="Animation" id="Animation_gw4f6"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("sheep_head:position:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.828, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("sheep_head:rotation:x")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("sheep_br_leg:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-0.198, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("sheep_br_leg:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.37, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/4/type = "bezier"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("sheep_br_leg:position:z")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-0.324, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/5/type = "bezier"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("sheep_fr_leg:position:x")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-0.198, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/6/type = "bezier"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("sheep_fr_leg:position:y")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.37, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/7/type = "bezier"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("sheep_fr_leg:position:z")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.324, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/8/type = "bezier"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("sheep_bl_leg:position:x")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.198, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/9/type = "bezier"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("sheep_bl_leg:position:y")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.37, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/10/type = "bezier"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("sheep_bl_leg:position:z")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-0.324, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/11/type = "bezier"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("sheel_fl_leg:position:x")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.198, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/12/type = "bezier"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("sheel_fl_leg:position:y")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.37, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/13/type = "bezier"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("sheel_fl_leg:position:z")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.324, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/14/type = "bezier"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("sheep_br_leg:rotation:x")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/15/type = "bezier"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("sheep_fr_leg:rotation:x")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/16/type = "bezier"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("sheep_bl_leg:rotation:x")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/17/type = "bezier"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("sheel_fl_leg:rotation:x")
+tracks/17/interp = 1
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_6qn06"]
+resource_name = "eating_grass"
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("sheep_head:position:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0, 0),
+"points": PackedFloat32Array(0.828, -0.25, 0, 0.25, 0, 0.328, -0.099999994, -0.05730915, 0.0833108, 0.047744714, 0.339, -0.13333333, 0.29161578, 0.049529202, -0.10832623, 0.828, -0.041666668, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.5, 0.73333335, 1)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("sheep_head:rotation:x")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(2, 0, 0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0.524, -0.083333336, 0, 0, 0, 0.524, -0.083333336, 0, 0, 0, 0, -0.083333336, 0.08733334, 0, 0),
+"times": PackedFloat32Array(0, 0.3, 0.8, 1)
+}
+
+[sub_resource type="Animation" id="Animation_55m3e"]
+resource_name = "idle"
+
+[sub_resource type="Animation" id="Animation_t8l8v"]
+resource_name = "walk_cycle"
+length = 0.9
+loop_mode = 1
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("sheel_fl_leg:rotation:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(3, 3, 3, 3),
+"points": PackedFloat32Array(0.5, -0.075, 0, 0.075, 0, -0.5, -0.075, 0, 0.075, 0, 0, -0.07499999, 0, 0.07499999, 0, 0.5, -0.07499999, 0, 0.07499999, 0),
+"times": PackedFloat32Array(0, 0.3, 0.6, 0.9)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("sheep_bl_leg:rotation:x")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(3, 3, 3, 3, 3),
+"points": PackedFloat32Array(0.5, -0.075, 0, 0.075, 0, -0.5, -0.075, 0, 0.075, 0, 0, -0.074999996, 0, 0.074999996, 0, 0.5, -0.074999996, 0, 0.074999996, 0, -0.5, -0.075, 0, 0.075, 0),
+"times": PackedFloat32Array(-0.2, 0.1, 0.4, 0.7, 1)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("sheep_fr_leg:rotation:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(3, 3, 3, 3, 3),
+"points": PackedFloat32Array(-0.5, -0.075, 0, 0.075, 0, 0, -0.075, 0, 0.075, 0, 0.5, -0.075, 0, 0.075, 0, -0.5, -0.075, 0, 0.075, 0, 0, -0.075, 0, 0.075, 0),
+"times": PackedFloat32Array(-0.1, 0.2, 0.5, 0.8, 1.1)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("sheep_br_leg:rotation:x")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(3, 3, 3, 3),
+"points": PackedFloat32Array(0, -0.075, 0, 0.075, 0, 0.5, -0.075, 0, 0.075, 0, -0.5, -0.07499999, 0, 0.07499999, 0, 0, -0.07499999, 0, 0.07499999, 0),
+"times": PackedFloat32Array(0, 0.3, 0.6, 0.9)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_n54i3"]
+_data = {
+&"RESET": SubResource("Animation_gw4f6"),
+&"eating_grass": SubResource("Animation_6qn06"),
+&"idle": SubResource("Animation_55m3e"),
+&"walk_cycle": SubResource("Animation_t8l8v")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_vrdyb"]
+animation = &"eating_grass"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_vbo3h"]
+animation = &"idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_t8l8v"]
+animation = &"walk_cycle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_t8l8v"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gw4f6"]
+advance_mode = 2
+advance_condition = &"eating_grass"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_6qn06"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_55m3e"]
+break_loop_at_end = true
+advance_mode = 2
+advance_condition = &"walking"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_n54i3"]
+break_loop_at_end = true
+advance_mode = 2
+advance_expression = "not get(\"parameters/conditions/walking\")
+"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_i2tgm"]
+states/End/position = Vector2(836, 45)
+states/Start/position = Vector2(196, 45)
+states/eating_grass/node = SubResource("AnimationNodeAnimation_vrdyb")
+states/eating_grass/position = Vector2(507, 156)
+states/idle/node = SubResource("AnimationNodeAnimation_vbo3h")
+states/idle/position = Vector2(507, 45)
+states/walk_cycle/node = SubResource("AnimationNodeAnimation_t8l8v")
+states/walk_cycle/position = Vector2(507, -66)
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_t8l8v"), "idle", "eating_grass", SubResource("AnimationNodeStateMachineTransition_gw4f6"), "eating_grass", "idle", SubResource("AnimationNodeStateMachineTransition_6qn06"), "idle", "walk_cycle", SubResource("AnimationNodeStateMachineTransition_55m3e"), "walk_cycle", "idle", SubResource("AnimationNodeStateMachineTransition_n54i3")]
+graph_offset = Vector2(-17, -106)
+
+[node name="Sheep" unique_id=505412207 instance=ExtResource("1_t8l8v")]
+
+[node name="AnimationTree" type="AnimationTree" parent="." index="0" unique_id=239299628]
+libraries/ = SubResource("AnimationLibrary_n54i3")
+tree_root = SubResource("AnimationNodeStateMachine_i2tgm")
+parameters/conditions/eating_grass = false
+parameters/conditions/walking = false
+
+[node name="sheep_br_leg" parent="." index="4" unique_id=667220820]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.198, 0.37, -0.324)
+
+[node name="sheep_fr_leg" parent="." index="5" unique_id=648175788]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.198, 0.37, 0.324)
+
+[node name="sheep_head" parent="." index="6" unique_id=1199657362]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.828, 0.384)
