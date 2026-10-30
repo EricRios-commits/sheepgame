@@ -4,12 +4,12 @@ Hello, thanks for taking time and helping out with the addon!
 
 Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. Please sign the CLA before sending the PR: https://www.jetbrains.com/agreements/cla/.
 
-#### Local setup
+
 
 Open the `godot-editor-addon/CMakeLists.txt` in Rider 2026.1+, select `rider-gdextension` target in the run configuration selector.
 There are some more fixes coming in 2026.2, which will allow working on gdscript and cpp files within the same workspace.
 
-#### Signing the binaries
+
 
 Plugin binaries need to be signed to comply with modern operating system security requirements. Unsigned dynamic libraries may fail to load or trigger security warnings:
 

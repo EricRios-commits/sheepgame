@@ -4,7 +4,7 @@ This addon currently provides two features:
 1. Finds all Rider installations in the system and provides a selector on the `Text Editor` -> `External` tab in the settings to select one.
 2. Provides the "Use Rider" toggle in the Godot toolbar and, when enabled, applies a set of editor settings recommended for working with JetBrains Rider. The goal is to make it trivial to switch between Rider‑optimized settings and stock Godot settings with a single click.
 
-## Quick start
+
 
 Requirements:
 - Godot 4.5+
@@ -21,7 +21,7 @@ Use:
 Screenshot:
 ![Toolbar toggle](screenshots/Toolbar.png)
 
-## What the toggle changes
+
 
 The preset values live in `presets.json`.
 
@@ -33,7 +33,7 @@ When OFF:
 
 Note: The plugin does not currently auto‑set Rider’s executable path or flags. See Plans below.
 
-## Setting Rider to be the external editor
+
 
 The plugin automatically detects installed Rider versions on your system and provides a convenient dropdown menu to
 select which installation to use as your external editor.
@@ -43,9 +43,9 @@ select which installation to use as your external editor.
 - When you select a Rider installation, the plugin automatically updates the `dotnet/editor/external_editor_path` editor
   setting.
 
-## License
+
 See `addons/rider-plugin/LICENCE`.
 
-## Acknowledgements
+
 Created by JetBrains to streamline using Rider with Godot. 
 Initial idea https://github.com/sszigeti/toggle_external_editor

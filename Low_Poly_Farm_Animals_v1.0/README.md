@@ -3,13 +3,13 @@ by reodesuxz
 
 24 low poly farm animals and barnyard props: cows, pigs, sheep, horses, poultry and more.
 
-## Contents
+
 - FBX/  - one .fbx per model (Unity, Unreal, Godot, Blender)
 - GLB/  - one .glb per model (Godot, three.js, Babylon.js, web)
 - OBJ/  - one .obj + .mtl per model
 - Animals_AllAssets.blend - every model in one Blender file (Blender 4.3+)
 
-## Specs
+
 - Total: 3092 triangles for all 24 models (32-196 tris each)
 - Flat-shaded, simple shared materials (no textures needed)
 - Real-world scale in metres, pivot at the base centre
@@ -41,6 +41,6 @@ by reodesuxz
 | cow_bell | Barnyard | 40 | 25 x 20 x 19 |
 | egg_basket | Barnyard | 176 | 67 x 70 x 34 |
 
-## License
+
 See LICENSE.txt. Free to use in unlimited personal and commercial projects. You may not resell or redistribute the models themselves.
 If this pack helped you, a small tip on itch.io keeps more free packs coming. Thank you!

@@ -1,6 +1,6 @@
 @tool
-## Simple JSON helpers for editor/runtime use.
-## Keeps file and JSON parsing concerns out of feature code.
+
+
 class_name JsonUtils
 
 static func load_from_file(path: String) -> Variant:
