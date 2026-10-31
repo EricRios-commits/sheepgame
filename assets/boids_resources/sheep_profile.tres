@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BoidSpeciesProfile" format=3 uid="uid://bkljjy0dwvkxk"]
+
+[ext_resource type="Script" uid="uid://cnxce80poaxm2" path="res://flocking/boid_species_profile.gd" id="1_1c1jq"]
+[ext_resource type="Script" uid="uid://bis4gpcq54r1r" path="res://flocking/boid_state_behaviour.gd" id="2_28o43"]
+[ext_resource type="Script" uid="uid://djyd2nvfcfeqr" path="res://flocking/boid_influence_entry.gd" id="3_hvd72"]
+[ext_resource type="Script" uid="uid://c8aeuk4jxy5uf" path="res://flocking/boid_influence_flock.gd" id="4_8viis"]
+[ext_resource type="Script" uid="uid://dekxhec4bht7h" path="res://flocking/boid_influence_bounds.gd" id="5_psnpc"]
+[ext_resource type="Script" uid="uid://6cikbviab3ep" path="res://flocking/boid_influence_emitter.gd" id="6_8viis"]
+[ext_resource type="Script" uid="uid://cnmijcpbub6nh" path="res://flocking/boid_transition.gd" id="6_hw244"]
+
+[sub_resource type="Resource" id="Resource_hvd72"]
+script = ExtResource("4_8viis")
+metadata/_custom_type_script = "uid://c8aeuk4jxy5uf"
+
+[sub_resource type="Resource" id="Resource_g10b7"]
+script = ExtResource("3_hvd72")
+influence = SubResource("Resource_hvd72")
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_psnpc"]
+script = ExtResource("5_psnpc")
+metadata/_custom_type_script = "uid://dekxhec4bht7h"
+
+[sub_resource type="Resource" id="Resource_8viis"]
+script = ExtResource("3_hvd72")
+influence = SubResource("Resource_psnpc")
+weight = 5.0
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_n30l7"]
+script = ExtResource("6_8viis")
+metadata/_custom_type_script = "uid://6cikbviab3ep"
+
+[sub_resource type="Resource" id="Resource_hw244"]
+script = ExtResource("3_hvd72")
+influence = SubResource("Resource_n30l7")
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_wt37s"]
+script = ExtResource("2_28o43")
+influences = Array[ExtResource("3_hvd72")]([SubResource("Resource_g10b7"), SubResource("Resource_8viis"), SubResource("Resource_hw244")])
+metadata/_custom_type_script = "uid://bis4gpcq54r1r"
+
+[resource]
+script = ExtResource("1_1c1jq")
+states = Array[ExtResource("2_28o43")]([SubResource("Resource_wt37s")])
+metadata/_custom_type_script = "uid://cnxce80poaxm2"

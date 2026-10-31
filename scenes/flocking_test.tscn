@@ -2,10 +2,15 @@
 
 [ext_resource type="Script" uid="uid://b1wnhlmks4525" path="res://flocking/boid_system.gd" id="1_7ko1b"]
 [ext_resource type="Script" uid="uid://dptck584sv5sx" path="res://flocking/boid_ground.gd" id="2_bj1q3"]
+[ext_resource type="Resource" uid="uid://bkljjy0dwvkxk" path="res://assets/boids_resources/sheep_profile.tres" id="3_nfvba"]
 [ext_resource type="Script" uid="uid://p4stixdtom0l" path="res://flocking/boid_spawn_zone.gd" id="3_v8eyb"]
+[ext_resource type="Script" uid="uid://cepgtvd7hhnlp" path="res://flocking/boid_interaction_entry.gd" id="4_4r5p2"]
 [ext_resource type="Script" uid="uid://ddho2emmyrsog" path="res://flocking/boid_spawn_config.gd" id="4_tletc"]
+[ext_resource type="Script" uid="uid://dqilrneqx88ib" path="res://flocking/boid_interaction_table.gd" id="5_atv6b"]
 [ext_resource type="Script" uid="uid://c17vvof7em5ng" path="res://flocking/boid_debug_presenter.gd" id="5_bj1q3"]
 [ext_resource type="PackedScene" uid="uid://dxg1x58qxrlp1" path="res://debug/debug_panel.tscn" id="6_v8eyb"]
+[ext_resource type="Script" uid="uid://bfcj4jv4px22k" path="res://flocking/boid_emitter.gd" id="10_k7114"]
+[ext_resource type="Script" uid="uid://c2kshrc3t1oow" path="res://flocking/boid_debug_overlay.gd" id="11_4r5p2"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_w7mgy"]
 
@@ -35,12 +40,22 @@ size = Vector3(1, 5, 1)
 [sub_resource type="Resource" id="Resource_h4t55"]
 script = ExtResource("2_bj1q3")
 
-[sub_resource type="Resource" id="Resource_w7mgy"]
+[sub_resource type="Resource" id="Resource_psnpc"]
+script = ExtResource("5_atv6b")
+metadata/_custom_type_script = "uid://dqilrneqx88ib"
+
+[sub_resource type="Resource" id="Resource_104nh"]
 script = ExtResource("4_tletc")
-count = 5000
-initial_speed = 2.0
+count = 500
+metadata/_custom_type_script = "uid://ddho2emmyrsog"
 
 [sub_resource type="PrismMesh" id="PrismMesh_bj1q3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fne4r"]
+albedo_color = Color(1, 0.14901961, 0.06666667, 1)
+
+[sub_resource type="TorusMesh" id="TorusMesh_8w0r3"]
+material = SubResource("StandardMaterial3D_fne4r")
 
 [node name="FlockingTest" type="Node3D" unique_id=940581002]
 
@@ -170,14 +185,20 @@ shape = SubResource("BoxShape3D_u7jmn")
 
 [node name="BoidSystem" type="Node3D" parent="." unique_id=1636822568]
 script = ExtResource("1_7ko1b")
+rng_seed = null
+sim_hz = null
 ground = SubResource("Resource_h4t55")
+default_profile = ExtResource("3_nfvba")
+interactions = SubResource("Resource_psnpc")
+auto_spawn = null
+run_simulation = null
 metadata/_custom_type_script = "uid://b1wnhlmks4525"
 
 [node name="BoidSpawnZone" type="Node3D" parent="." unique_id=2001783826 node_paths=PackedStringArray("system")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3868637, 0, 19.451723)
 script = ExtResource("3_v8eyb")
 system = NodePath("../BoidSystem")
-config = SubResource("Resource_w7mgy")
+config = SubResource("Resource_104nh")
 
 [node name="BoidDebugPresenter" type="Node3D" parent="." unique_id=309146974 node_paths=PackedStringArray("system")]
 script = ExtResource("5_bj1q3")
@@ -186,3 +207,20 @@ mesh = SubResource("PrismMesh_bj1q3")
 palette = PackedColorArray(0.62560153, 0.5363135, 0.9720586, 1)
 
 [node name="DebugPanel" parent="." unique_id=1183930503 instance=ExtResource("6_v8eyb")]
+
+[node name="BoidEmitter" type="Node3D" parent="." unique_id=1220959143 node_paths=PackedStringArray("system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1685772, 0)
+script = ExtResource("10_k7114")
+system = NodePath("../BoidSystem")
+strength = 3.0
+metadata/_custom_type_script = "uid://bfcj4jv4px22k"
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="BoidEmitter" unique_id=1834179793]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5758219, 0)
+mesh = SubResource("TorusMesh_8w0r3")
+
+[node name="BoidDebugOverlay" type="Node3D" parent="." unique_id=22081606 node_paths=PackedStringArray("system")]
+script = ExtResource("11_4r5p2")
+system = NodePath("../BoidSystem")
+metadata/_custom_type_script = "uid://c2kshrc3t1oow"

@@ -92,7 +92,6 @@ func _build_gizmo() -> void:
 	mat.albedo_color = Color(1.0, 0.8, 0.2)
 	_gizmo.material_override = mat
 	_gizmo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	# Internal child: not saved into the scene, hidden from the scene tree dock.
 	add_child(_gizmo, false, Node.INTERNAL_MODE_FRONT)
 	_redraw()
 
