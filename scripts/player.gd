@@ -8,9 +8,17 @@ extends CharacterBody3D
 var _model: Node3D
 var _jump_requested := false
 
+# Passthrough
+@export var boid_system: BoidSystem = null
+@export var boid_emitter: BoidEmitter
 
 func _ready() -> void:
 	_model = get_node_or_null("goose2") as Node3D
+	if boid_system != null: 
+		# By default the emitter cannot have a reference to the system because it's outside the scene of the player
+		boid_emitter.system = boid_system
+		# so we force a restart on the boid manually
+		boid_emitter._ready()
 
 
 func _unhandled_key_input(event: InputEvent) -> void:

@@ -1,15 +1,15 @@
 [remap]
 
-importer="scene"
+importer="ArrayMesh"
 importer_version=1
-type="PackedScene"
+type="ArrayMesh"
 uid="uid://b1cl7kmvdw7n1"
-path="res://.godot/imported/sheep.glb-e1078775b143706f01ff69a6632732ec.scn"
+path="res://.godot/imported/sheep.glb-e1078775b143706f01ff69a6632732ec.res"
 
 [deps]
 
 source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/sheep.glb"
-dest_files=["res://.godot/imported/sheep.glb-e1078775b143706f01ff69a6632732ec.scn"]
+dest_files=["res://.godot/imported/sheep.glb-e1078775b143706f01ff69a6632732ec.res"]
 
 [params]
 

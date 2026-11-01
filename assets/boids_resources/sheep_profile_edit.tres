@@ -1,0 +1,56 @@
+[gd_resource type="Resource" script_class="BoidSpeciesProfile" format=3 uid="uid://cvvq0q35rcgcb"]
+
+[ext_resource type="Script" uid="uid://cnxce80poaxm2" path="res://flocking/core/boid_species_profile.gd" id="1_n0mgq"]
+[ext_resource type="Script" uid="uid://bis4gpcq54r1r" path="res://flocking/core/boid_state_behaviour.gd" id="2_gx5vc"]
+[ext_resource type="Script" uid="uid://djyd2nvfcfeqr" path="res://flocking/influence/boid_influence_entry.gd" id="3_0tsx8"]
+[ext_resource type="Script" uid="uid://c8aeuk4jxy5uf" path="res://flocking/influence/boid_influence_flock.gd" id="4_sv8xv"]
+[ext_resource type="Script" uid="uid://bhsg8vp4eqtob" path="res://flocking/influence/boid_influence_obstacle.gd" id="5_igllk"]
+[ext_resource type="Script" uid="uid://cnmijcpbub6nh" path="res://flocking/core/boid_transition.gd" id="7_7piv0"]
+[ext_resource type="Script" uid="uid://6cikbviab3ep" path="res://flocking/influence/boid_influence_emitter.gd" id="9_cfqa4"]
+
+[sub_resource type="Resource" id="Resource_wmlgg"]
+script = ExtResource("4_sv8xv")
+cohesion = 1.0
+alignment = 0.1
+metadata/_custom_type_script = "uid://c8aeuk4jxy5uf"
+
+[sub_resource type="Resource" id="Resource_tgjpg"]
+script = ExtResource("3_0tsx8")
+influence = SubResource("Resource_wmlgg")
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_j1kj0"]
+script = ExtResource("9_cfqa4")
+emitter_kind = &"player"
+gain = 10.0
+metadata/_custom_type_script = "uid://6cikbviab3ep"
+
+[sub_resource type="Resource" id="Resource_n4chu"]
+script = ExtResource("3_0tsx8")
+influence = SubResource("Resource_j1kj0")
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_2i47q"]
+script = ExtResource("5_igllk")
+margin = 1.0
+slide = 0.0
+brake = 0.0
+metadata/_custom_type_script = "uid://bhsg8vp4eqtob"
+
+[sub_resource type="Resource" id="Resource_6b5q0"]
+script = ExtResource("3_0tsx8")
+influence = SubResource("Resource_2i47q")
+weight = 100.0
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_wt37s"]
+script = ExtResource("2_gx5vc")
+max_speed = 2.0
+max_accel = 4.0
+influences = Array[ExtResource("3_0tsx8")]([SubResource("Resource_tgjpg"), SubResource("Resource_n4chu"), SubResource("Resource_6b5q0")])
+metadata/_custom_type_script = "uid://bis4gpcq54r1r"
+
+[resource]
+script = ExtResource("1_n0mgq")
+states = Array[ExtResource("2_gx5vc")]([SubResource("Resource_wt37s")])
+metadata/_custom_type_script = "uid://cnxce80poaxm2"

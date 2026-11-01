@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://dqg6omhqeu4hb"]
+
+[ext_resource type="Script" uid="uid://ek4d4cmcdtgd" path="res://scripts/isometric_camera.gd" id="1_bmim4"]
+
+[node name="CameraPivot" type="Node3D" unique_id=47035790]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
+script = ExtResource("1_bmim4")
+
+[node name="CameraTilt" type="Node3D" parent="." unique_id=707493815]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraTilt" unique_id=444507165]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+projection = 1
+current = true
+size = 5.0

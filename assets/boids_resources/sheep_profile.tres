@@ -13,11 +13,13 @@
 
 [sub_resource type="Resource" id="Resource_4e15o"]
 script = ExtResource("4_8viis")
+cohesion = 0.5
 metadata/_custom_type_script = "uid://c8aeuk4jxy5uf"
 
 [sub_resource type="Resource" id="Resource_w7mgy"]
 script = ExtResource("3_hvd72")
 influence = SubResource("Resource_4e15o")
+weight = 5.0
 metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
 
 [sub_resource type="Resource" id="Resource_cd40g"]
@@ -36,6 +38,7 @@ metadata/_custom_type_script = "uid://emocdqybg6tr"
 [sub_resource type="Resource" id="Resource_10eym"]
 script = ExtResource("3_hvd72")
 influence = SubResource("Resource_jtvhe")
+weight = 0.0
 metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
 
 [sub_resource type="Resource" id="Resource_8w0r3"]

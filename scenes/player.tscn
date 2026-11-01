@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://c7w2p252lahk"]
+
+[ext_resource type="Script" uid="uid://i331ua0ok5r7" path="res://scripts/player.gd" id="1_g2els"]
+[ext_resource type="PackedScene" uid="uid://bw7si11pw38uf" path="res://Low_Poly_Farm_Animals_v1.0/GLB/goose.glb" id="2_qhqgy"]
+[ext_resource type="Script" uid="uid://ek4d4cmcdtgd" path="res://scripts/isometric_camera.gd" id="3_qhqgy"]
+[ext_resource type="Script" uid="uid://bfcj4jv4px22k" path="res://flocking/core/boid_emitter.gd" id="4_dqkch"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tbgi4"]
+radius = 0.3
+height = 1.3
+
+[node name="Player" type="CharacterBody3D" unique_id=317266410 node_paths=PackedStringArray("boid_emitter")]
+floor_snap_length = 0.2
+script = ExtResource("1_g2els")
+boid_emitter = NodePath("BoidEmitter")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=255108407]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
+shape = SubResource("CapsuleShape3D_tbgi4")
+
+[node name="goose2" parent="." unique_id=966382740 instance=ExtResource("2_qhqgy")]
+
+[node name="CameraPivot" type="Node3D" parent="." unique_id=47035790]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
+script = ExtResource("3_qhqgy")
+follow_target_path = NodePath("..")
+
+[node name="CameraTilt" type="Node3D" parent="CameraPivot" unique_id=707493815]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot/CameraTilt" unique_id=444507165]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+projection = 1
+current = true
+size = 20.0
+
+[node name="BoidEmitter" type="Node3D" parent="." unique_id=2036329533]
+script = ExtResource("4_dqkch")
+kind = &"player"
+radius = 2.0
+strength = 10.0
+metadata/_custom_type_script = "uid://bfcj4jv4px22k"

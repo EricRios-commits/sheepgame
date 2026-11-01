@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b1wnhlmks4525" path="res://flocking/core/boid_system.gd" id="1_7ko1b"]
 [ext_resource type="Script" uid="uid://buhpxwa1if1fu" path="res://flocking/obstacles/boid_obstacle.gd" id="1_atv6b"]
+[ext_resource type="Material" uid="uid://bp2h3axglj66m" path="res://materials/grass.tres" id="1_ko1ec"]
 [ext_resource type="Script" uid="uid://dptck584sv5sx" path="res://flocking/ground/boid_ground.gd" id="2_bj1q3"]
 [ext_resource type="Resource" uid="uid://bkljjy0dwvkxk" path="res://assets/boids_resources/sheep_profile.tres" id="3_nfvba"]
 [ext_resource type="Script" uid="uid://p4stixdtom0l" path="res://flocking/core/boid_spawn_zone.gd" id="3_v8eyb"]
@@ -13,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://dxg1x58qxrlp1" path="res://debug/debug_panel.tscn" id="6_v8eyb"]
 [ext_resource type="Script" uid="uid://bfcj4jv4px22k" path="res://flocking/core/boid_emitter.gd" id="10_k7114"]
 [ext_resource type="Script" uid="uid://c2kshrc3t1oow" path="res://flocking/debug/boid_debug_overlay.gd" id="11_4r5p2"]
+[ext_resource type="ArrayMesh" uid="uid://b1cl7kmvdw7n1" path="res://Low_Poly_Farm_Animals_v1.0/GLB/sheep.glb" id="11_q5fff"]
 [ext_resource type="Script" uid="uid://cfatoy1e10yl1" path="res://flocking/core/boid_pen.gd" id="14_1efgf"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_w7mgy"]
@@ -24,11 +26,8 @@ sky_material = SubResource("ProceduralSkyMaterial_w7mgy")
 background_mode = 2
 sky = SubResource("Sky_h4t55")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h4t55"]
-albedo_color = Color(0.06666667, 0.6745098, 0.21568628, 1)
-
 [sub_resource type="PlaneMesh" id="PlaneMesh_8w0r3"]
-material = SubResource("StandardMaterial3D_h4t55")
+material = ExtResource("1_ko1ec")
 size = Vector2(30, 60)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_uuqwr"]
@@ -56,7 +55,7 @@ script = ExtResource("4_tletc")
 count = 500
 metadata/_custom_type_script = "uid://ddho2emmyrsog"
 
-[sub_resource type="PrismMesh" id="PrismMesh_bj1q3"]
+[sub_resource type="QuadMesh" id="QuadMesh_1efgf"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fne4r"]
 albedo_color = Color(1, 0.14901961, 0.06666667, 1)
@@ -74,7 +73,7 @@ transform = Transform3D(0.70274836, -0.023442948, 0.71105206, -0.6641349, 0.3367
 shadow_enabled = true
 
 [node name="Floor2" type="MeshInstance3D" parent="." unique_id=641108163]
-transform = Transform3D(1, 0, 0, 0, 0.76381016, 0.01675883, 0, -0.021586776, 0.5929824, 0, 15.876259, -65.300934)
+transform = Transform3D(1, 0, 0, 0, 0.76381016, 0.01675883, 0, -0.021586776, 0.5929824, -0.003947258, 15.859494, -65.26925)
 mesh = SubResource("PlaneMesh_8w0r3")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Floor2" unique_id=981207202]
@@ -238,7 +237,14 @@ config = SubResource("Resource_104nh")
 [node name="BoidDebugPresenter" type="Node3D" parent="." unique_id=309146974 node_paths=PackedStringArray("system")]
 script = ExtResource("5_bj1q3")
 system = NodePath("../BoidSystem")
-mesh = SubResource("PrismMesh_bj1q3")
+mesh = ExtResource("11_q5fff")
+palette = PackedColorArray(0.62560153, 0.5363135, 0.9720586, 1)
+
+[node name="BoidDebugPresenter" type="Node3D" parent="BoidDebugPresenter" unique_id=775630787 node_paths=PackedStringArray("system")]
+visible = false
+script = ExtResource("5_bj1q3")
+system = NodePath("../../BoidSystem")
+mesh = SubResource("QuadMesh_1efgf")
 palette = PackedColorArray(0.62560153, 0.5363135, 0.9720586, 1)
 
 [node name="DebugPanel" parent="." unique_id=1183930503 instance=ExtResource("6_v8eyb")]
