@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://c068axpe0uibv"]
+
+[ext_resource type="Script" uid="uid://ddf08h0oky4ka" path="res://scripts/main_menu.gd" id="1_rayio"]
+[ext_resource type="FontFile" uid="uid://cygci47g3aict" path="res://addons/fonts/Hello Farmer Font by Keithzo.ttf" id="2_4pl3l"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x15ge"]
+bg_color = Color(0.4117647, 0.24705882, 0.09019608, 0.5254902)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vue75"]
+bg_color = Color(0.22344854, 0.12491866, 0.031383056, 0.5254902)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l6cm7"]
+bg_color = Color(0.22352941, 0.1254902, 0.03137255, 0.5254902)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_k0akp"]
+
+[node name="MainMenu" type="Control" unique_id=254378970]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_rayio")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1490059087]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 101.0
+offset_top = 163.0
+offset_right = 316.0
+offset_bottom = 278.5
+grow_vertical = 2
+
+[node name="StartButton" type="Button" parent="VBoxContainer" unique_id=763776065]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_4pl3l")
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("StyleBoxFlat_x15ge")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vue75")
+theme_override_styles/hover = SubResource("StyleBoxFlat_l6cm7")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_k0akp")
+text = "Start game"
+
+[node name="QuitButton" type="Button" parent="VBoxContainer" unique_id=2120715684]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_4pl3l")
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("StyleBoxFlat_x15ge")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vue75")
+theme_override_styles/hover = SubResource("StyleBoxFlat_l6cm7")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_k0akp")
+text = "Quit"
+
+[node name="Label" type="Label" parent="." unique_id=885101958]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -475.0
+offset_top = -234.0
+offset_right = -120.0
+offset_bottom = -165.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.2184786, 1.0653656)
+theme_override_fonts/font = ExtResource("2_4pl3l")
+theme_override_font_sizes/font_size = 55
+text = "Heap o'Sheeps"
+
+[connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]
