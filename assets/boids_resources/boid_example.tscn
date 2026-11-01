@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://dq84ir150s5di"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_h4t55"]
+
+[node name="BoidExample" type="Node3D" unique_id=1135285058]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=343636952]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+mesh = SubResource("PrismMesh_h4t55")
