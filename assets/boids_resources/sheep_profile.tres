@@ -1,13 +1,57 @@
 [gd_resource type="Resource" script_class="BoidSpeciesProfile" format=3 uid="uid://bkljjy0dwvkxk"]
 
-[ext_resource type="Script" uid="uid://cnxce80poaxm2" path="res://flocking/boid_species_profile.gd" id="1_1c1jq"]
-[ext_resource type="Script" uid="uid://bis4gpcq54r1r" path="res://flocking/boid_state_behaviour.gd" id="2_28o43"]
-[ext_resource type="Script" uid="uid://djyd2nvfcfeqr" path="res://flocking/boid_influence_entry.gd" id="3_hvd72"]
-[ext_resource type="Script" uid="uid://c8aeuk4jxy5uf" path="res://flocking/boid_influence_flock.gd" id="4_8viis"]
-[ext_resource type="Script" uid="uid://dekxhec4bht7h" path="res://flocking/boid_influence_bounds.gd" id="5_psnpc"]
-[ext_resource type="Script" uid="uid://6cikbviab3ep" path="res://flocking/boid_influence_emitter.gd" id="6_8viis"]
-[ext_resource type="Script" uid="uid://cnmijcpbub6nh" path="res://flocking/boid_transition.gd" id="6_hw244"]
-[ext_resource type="Script" uid="uid://bhsg8vp4eqtob" path="res://flocking/boid_influence_obstacle.gd" id="7_psnpc"]
+[ext_resource type="Script" uid="uid://cnxce80poaxm2" path="res://flocking/core/boid_species_profile.gd" id="1_1c1jq"]
+[ext_resource type="Script" uid="uid://bis4gpcq54r1r" path="res://flocking/core/boid_state_behaviour.gd" id="2_28o43"]
+[ext_resource type="Script" uid="uid://djyd2nvfcfeqr" path="res://flocking/influence/boid_influence_entry.gd" id="3_hvd72"]
+[ext_resource type="Script" uid="uid://c8aeuk4jxy5uf" path="res://flocking/influence/boid_influence_flock.gd" id="4_8viis"]
+[ext_resource type="Script" uid="uid://dekxhec4bht7h" path="res://flocking/influence/boid_influence_bounds.gd" id="5_psnpc"]
+[ext_resource type="Script" uid="uid://6cikbviab3ep" path="res://flocking/influence/boid_influence_emitter.gd" id="6_8viis"]
+[ext_resource type="Script" uid="uid://emocdqybg6tr" path="res://flocking/influence/boid_influence_wander.gd" id="6_fne4r"]
+[ext_resource type="Script" uid="uid://cnmijcpbub6nh" path="res://flocking/core/boid_transition.gd" id="6_hw244"]
+[ext_resource type="Script" uid="uid://bhsg8vp4eqtob" path="res://flocking/influence/boid_influence_obstacle.gd" id="7_psnpc"]
+[ext_resource type="Script" uid="uid://dky77xa1ugq0t" path="res://flocking/influence/boid_influence_cruise.gd" id="10_fne4r"]
+
+[sub_resource type="Resource" id="Resource_4e15o"]
+script = ExtResource("4_8viis")
+metadata/_custom_type_script = "uid://c8aeuk4jxy5uf"
+
+[sub_resource type="Resource" id="Resource_w7mgy"]
+script = ExtResource("3_hvd72")
+influence = SubResource("Resource_4e15o")
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_cd40g"]
+script = ExtResource("7_psnpc")
+metadata/_custom_type_script = "uid://bhsg8vp4eqtob"
+
+[sub_resource type="Resource" id="Resource_ydnqi"]
+script = ExtResource("3_hvd72")
+influence = SubResource("Resource_cd40g")
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_jtvhe"]
+script = ExtResource("6_fne4r")
+metadata/_custom_type_script = "uid://emocdqybg6tr"
+
+[sub_resource type="Resource" id="Resource_10eym"]
+script = ExtResource("3_hvd72")
+influence = SubResource("Resource_jtvhe")
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_8w0r3"]
+script = ExtResource("6_hw244")
+to_state = &"flee"
+emitter_kind = &"dog"
+min_time_in_state = 1.0
+metadata/_custom_type_script = "uid://cnmijcpbub6nh"
+
+[sub_resource type="Resource" id="Resource_wt37s"]
+script = ExtResource("2_28o43")
+max_speed = 2.0
+max_accel = 4.0
+influences = Array[ExtResource("3_hvd72")]([SubResource("Resource_w7mgy"), SubResource("Resource_ydnqi"), SubResource("Resource_10eym")])
+transitions = Array[ExtResource("6_hw244")]([SubResource("Resource_8w0r3")])
+metadata/_custom_type_script = "uid://bis4gpcq54r1r"
 
 [sub_resource type="Resource" id="Resource_hvd72"]
 script = ExtResource("4_8viis")
@@ -35,24 +79,35 @@ metadata/_custom_type_script = "uid://6cikbviab3ep"
 [sub_resource type="Resource" id="Resource_hw244"]
 script = ExtResource("3_hvd72")
 influence = SubResource("Resource_n30l7")
-weight = 5.0
+weight = 50.0
 metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
 
-[sub_resource type="Resource" id="Resource_h4t55"]
-script = ExtResource("7_psnpc")
-metadata/_custom_type_script = "uid://bhsg8vp4eqtob"
+[sub_resource type="Resource" id="Resource_o5nd3"]
+script = ExtResource("10_fne4r")
+speed = 4.0
+layer = 0
+metadata/_custom_type_script = "uid://dky77xa1ugq0t"
 
-[sub_resource type="Resource" id="Resource_8w0r3"]
+[sub_resource type="Resource" id="Resource_8vv4c"]
 script = ExtResource("3_hvd72")
-influence = SubResource("Resource_h4t55")
+influence = SubResource("Resource_o5nd3")
 metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
 
-[sub_resource type="Resource" id="Resource_wt37s"]
+[sub_resource type="Resource" id="Resource_g4t4i"]
+script = ExtResource("6_hw244")
+trigger = 2
+metadata/_custom_type_script = "uid://cnmijcpbub6nh"
+
+[sub_resource type="Resource" id="Resource_e580h"]
 script = ExtResource("2_28o43")
-influences = Array[ExtResource("3_hvd72")]([SubResource("Resource_g10b7"), SubResource("Resource_8viis"), SubResource("Resource_hw244"), SubResource("Resource_8w0r3")])
+state = &"flee"
+max_speed = 8.0
+max_accel = 8.0
+influences = Array[ExtResource("3_hvd72")]([SubResource("Resource_g10b7"), SubResource("Resource_8viis"), SubResource("Resource_hw244"), SubResource("Resource_8vv4c")])
+transitions = Array[ExtResource("6_hw244")]([SubResource("Resource_g4t4i")])
 metadata/_custom_type_script = "uid://bis4gpcq54r1r"
 
 [resource]
 script = ExtResource("1_1c1jq")
-states = Array[ExtResource("2_28o43")]([SubResource("Resource_wt37s")])
+states = Array[ExtResource("2_28o43")]([SubResource("Resource_wt37s"), SubResource("Resource_e580h")])
 metadata/_custom_type_script = "uid://cnxce80poaxm2"
