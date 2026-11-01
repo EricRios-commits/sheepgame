@@ -1,7 +1,6 @@
 ﻿class_name BoidBehaviourTable
 extends RefCounted
 ## Flat, array-indexed compilation of the authored profiles 
-## Rebuilt when the vocabulary or the profiles change. One runtime per ENTRY, not per boid.
 
 var n_species := 1
 var n_states := 1
@@ -38,6 +37,8 @@ static func build(sys: BoidSystem) -> BoidBehaviourTable:
 	for p in sys.profiles:
 		if p != null:
 			profiles.append(p)
+	vocab.state_id(BoidSystem.PENNED_STATE)
+	vocab.state_id(BoidSystem.DEAD_STATE)
 	var all := profiles.duplicate()
 	if fallback != null:
 		all.append(fallback)
@@ -66,6 +67,9 @@ static func build(sys: BoidSystem) -> BoidBehaviourTable:
 		for st in t.n_states:
 			var stname: StringName = vocab.state_names[st] if st < vocab.state_names.size() else &""
 			var sb: BoidStateBehaviour = null
+			if stname == BoidSystem.PENNED_STATE or stname == BoidSystem.DEAD_STATE:
+				t._add_group(sys, null)
+				continue
 			if prof != null:
 				sb = prof.find_state(stname)
 				if sb == null and not prof.states.is_empty():

@@ -1,8 +1,6 @@
 ﻿class_name BoidNeighbourHash
 extends BoidNeighbourStrategy
 ## 2D (x-z) uniform grid built by counting sort each tick.
-##
-## Dense grid over the bounding box of the boids
 
 const MAX_CELLS := 1 << 16
 
@@ -12,21 +10,20 @@ var dim_x := 1
 var dim_z := 1
 
 var _count := 0
-## aliases store.pos
 var _pos := PackedVector2Array()
-## ncells + 1 
 var _cell_start := PackedInt32Array()
-## scratch for the scatter pass
 var _cell_cursor := PackedInt32Array()
-## per slot 
 var _cell_of := PackedInt32Array()
-## slots grouped by cell
 var _items := PackedInt32Array()
+
+
+func indexed_count() -> int:
+	return _count
 
 
 func rebuild(store: BoidStore, max_query_radius: float) -> void:
 	_pos = store.pos
-	_count = store.count
+	_count = store.active_count
 	var n := _count
 	if n == 0:
 		dim_x = 1
