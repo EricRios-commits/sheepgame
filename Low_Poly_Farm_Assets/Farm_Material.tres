@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://db3now8o0juhe"]
+
+[ext_resource type="Texture2D" uid="uid://b1j3kwtmtyniv" path="res://Low_Poly_Farm_Assets/textures/color_1024x1024.jpg" id="1_kennm"]
+
+[resource]
+albedo_texture = ExtResource("1_kennm")

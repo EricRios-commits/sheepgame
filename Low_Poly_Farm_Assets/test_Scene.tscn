@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://dtuadgcpbqa1d"]
+
+[ext_resource type="PackedScene" uid="uid://cajahaw1lji4j" path="res://Low_Poly_Farm_Assets/LowPoly_FarmReady_fbx.FBX" id="1_mmsh3"]
+[ext_resource type="Texture2D" uid="uid://b1j3kwtmtyniv" path="res://Low_Poly_Farm_Assets/textures/color_1024x1024.jpg" id="2_ytvd3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2m16y"]
+albedo_texture = ExtResource("2_ytvd3")
+
+[node name="LowPoly_FarmReady_fbx" unique_id=1387416697 instance=ExtResource("1_mmsh3")]
+
+[node name="Object476" parent="farmwagon_a01_001" parent_id_path=PackedInt32Array(1947351737) index="5" unique_id=892774731]
+transform = Transform3D(-1, 0, 0, 0, -3.5762787e-07, -0.99999994, 0, 0.99999994, -3.5762787e-07, 0.47691846, 0.05000782, -0.46025756)
+
+[node name="Object620" parent="." index="806" unique_id=367492906]
+material_override = SubResource("StandardMaterial3D_2m16y")
+
+[node name="tree_c030" parent="." index="906" unique_id=1393860560]
+transform = Transform3D(-0.22452079, -0.3888819, 0, 0, 0, 0.35776, -0.3888819, 0.22452079, 0, 2.2607749, 8.860192, 35.061344)
