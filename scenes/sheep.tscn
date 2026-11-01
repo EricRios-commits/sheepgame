@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cxon0lure0rdr"]
 
-[ext_resource type="PackedScene" uid="uid://b5it351olcro1" path="res://Low_Poly_Farm_Animals_v1.0/Sheep-edit.blend" id="1_t8l8v"]
+[ext_resource type="PackedScene" uid="uid://dpek7875hef7r" path="res://Low_Poly_Farm_Animals_v1.0/Sheep-edit.blend" id="1_t8l8v"]
 
 [sub_resource type="Animation" id="Animation_gw4f6"]
 length = 0.001
@@ -128,79 +128,59 @@ tracks/10/keys = {
 tracks/11/type = "bezier"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("sheel_fl_leg:position:x")
+tracks/11/path = NodePath("sheep_br_leg:rotation:x")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
 "handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0.198, -0.25, 0, 0.25, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0)
 }
 tracks/12/type = "bezier"
 tracks/12/imported = false
 tracks/12/enabled = true
-tracks/12/path = NodePath("sheel_fl_leg:position:y")
+tracks/12/path = NodePath("sheep_fr_leg:rotation:x")
 tracks/12/interp = 1
 tracks/12/loop_wrap = true
 tracks/12/keys = {
 "handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0.37, -0.25, 0, 0.25, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0)
 }
 tracks/13/type = "bezier"
 tracks/13/imported = false
 tracks/13/enabled = true
-tracks/13/path = NodePath("sheel_fl_leg:position:z")
+tracks/13/path = NodePath("sheep_bl_leg:rotation:x")
 tracks/13/interp = 1
 tracks/13/loop_wrap = true
 tracks/13/keys = {
 "handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0.324, -0.25, 0, 0.25, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0)
 }
-tracks/14/type = "bezier"
+tracks/14/type = "value"
 tracks/14/imported = false
 tracks/14/enabled = true
-tracks/14/path = NodePath("sheep_br_leg:rotation:x")
+tracks/14/path = NodePath("sheep_fl_leg:position")
 tracks/14/interp = 1
 tracks/14/loop_wrap = true
 tracks/14/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.198, 0.37, 0.324)]
 }
-tracks/15/type = "bezier"
+tracks/15/type = "value"
 tracks/15/imported = false
 tracks/15/enabled = true
-tracks/15/path = NodePath("sheep_fr_leg:rotation:x")
+tracks/15/path = NodePath("sheep_head:position:z")
 tracks/15/interp = 1
 tracks/15/loop_wrap = true
 tracks/15/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-tracks/16/type = "bezier"
-tracks/16/imported = false
-tracks/16/enabled = true
-tracks/16/path = NodePath("sheep_bl_leg:rotation:x")
-tracks/16/interp = 1
-tracks/16/loop_wrap = true
-tracks/16/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-tracks/17/type = "bezier"
-tracks/17/imported = false
-tracks/17/enabled = true
-tracks/17/path = NodePath("sheel_fl_leg:rotation:x")
-tracks/17/interp = 1
-tracks/17/loop_wrap = true
-tracks/17/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.384]
 }
 
 [sub_resource type="Animation" id="Animation_6qn06"]
@@ -238,7 +218,7 @@ loop_mode = 1
 tracks/0/type = "bezier"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("sheel_fl_leg:rotation:x")
+tracks/0/path = NodePath("sheep_fl_leg:rotation:x")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -339,11 +319,14 @@ tree_root = SubResource("AnimationNodeStateMachine_i2tgm")
 parameters/conditions/eating_grass = false
 parameters/conditions/walking = false
 
-[node name="sheep_br_leg" parent="." index="4" unique_id=667220820]
+[node name="sheep_br_leg" parent="." index="3" unique_id=729225641]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.198, 0.37, -0.324)
 
-[node name="sheep_fr_leg" parent="." index="5" unique_id=648175788]
+[node name="sheep_fl_leg" parent="." index="4" unique_id=1774703691]
+transform = Transform3D(1, 0, 0, 0, 0.87758255, -0.47942555, 0, 0.47942555, 0.87758255, 0.198, 0.37, 0.324)
+
+[node name="sheep_fr_leg" parent="." index="5" unique_id=1361416015]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.198, 0.37, 0.324)
 
-[node name="sheep_head" parent="." index="6" unique_id=1199657362]
+[node name="sheep_head" parent="." index="6" unique_id=289911218]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.828, 0.384)
