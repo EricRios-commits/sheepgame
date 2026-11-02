@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bh3h5ixl7h0q"]
+
+[resource]
+resource_name = "sheep"
+cull_mode = 2
+albedo_color = Color(0.93210155, 0.9223677, 0.8833429, 1)
+roughness = 0.85

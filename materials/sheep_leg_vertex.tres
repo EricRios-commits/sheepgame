@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dtugdfjddxi1y"]
+
+[ext_resource type="Shader" uid="uid://fffrwwncyr38" path="res://materials/sheep.gdshader" id="1_h7aqp"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_h7aqp")
+shader_parameter/animation_state = 1
+shader_parameter/speed = 4.0
+shader_parameter/phase = 0.524
+shader_parameter/center_angle = 0.0
+shader_parameter/angle_span = 1.0

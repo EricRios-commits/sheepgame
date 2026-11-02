@@ -5,6 +5,8 @@ extends Node3D
 @export_range(0.0, 3.0, 0.1) var follow_height: float = 0.6
 @export_range(0.0, 20.0, 0.1) var follow_speed: float = 8.0
 
+@export var camera: Camera3D
+
 var _follow_target: Node3D
 var _q_held := false
 var _e_held := false
@@ -46,6 +48,17 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			_e_held = key_event.pressed
 			get_viewport().set_input_as_handled()
 
+# Mouse scroll to change the FOV
+func _unhandled_input(event: InputEvent) -> void:
+	if event is not InputEventMouseButton:
+		return
+	
+	var evt = event as InputEventMouseButton
+	if evt.button_index == MOUSE_BUTTON_WHEEL_UP:
+		camera.size *= 1.1
+	elif evt.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+		camera.size /= 1.1
+	
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:

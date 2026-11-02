@@ -1,6 +1,8 @@
-[gd_scene format=3 uid="uid://cxon0lure0rdr"]
+[gd_scene format=4 uid="uid://cxon0lure0rdr"]
 
 [ext_resource type="PackedScene" uid="uid://dpek7875hef7r" path="res://Low_Poly_Farm_Animals_v1.0/Sheep-edit.blend" id="1_t8l8v"]
+[ext_resource type="Shader" uid="uid://fffrwwncyr38" path="res://materials/sheep.gdshader" id="2_gw4f6"]
+[ext_resource type="Material" uid="uid://dtugdfjddxi1y" path="res://materials/sheep_leg_vertex.tres" id="3_6qn06"]
 
 [sub_resource type="Animation" id="Animation_gw4f6"]
 length = 0.001
@@ -311,22 +313,183 @@ states/walk_cycle/position = Vector2(507, -66)
 transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_t8l8v"), "idle", "eating_grass", SubResource("AnimationNodeStateMachineTransition_gw4f6"), "eating_grass", "idle", SubResource("AnimationNodeStateMachineTransition_6qn06"), "idle", "walk_cycle", SubResource("AnimationNodeStateMachineTransition_55m3e"), "walk_cycle", "idle", SubResource("AnimationNodeStateMachineTransition_n54i3")]
 graph_offset = Vector2(-17, -106)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0yoa8"]
+render_priority = 0
+shader = ExtResource("2_gw4f6")
+shader_parameter/animation_state = 1
+shader_parameter/speed = 4.0
+shader_parameter/phase = 0.0
+shader_parameter/center_angle = 0.0
+shader_parameter/angle_span = 1.0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_5hebt"]
+_surfaces = [{
+"aabb": AABB(-0.084, -0.37, -0.08399999, 0.16800001, 0.37, 0.16799998),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAACAAEAAwAEAAEABQAAAAIAAwAAAAUABAAGAAIABQACAAYAAwAHAAQAAwAFAAcABwAGAAQABwAFAAYA"),
+"name": "sheep",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAAAAP//AAAAAP//AAAAAAAA/////wAAAAAAAAAAAAD/////AAAAAP//AAD//wAA////////AAD//wAAAAAAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_55m3e"]
+resource_name = "Sheep-edit_sheep_004"
+_surfaces = [{
+"aabb": AABB(-0.084, -0.37, -0.08399999, 0.16800001, 0.37, 0.16799998),
+"attribute_data": PackedByteArray("/1////+f/7//n////1//v/9f/7//n/9//5//v/9f/3//X/9//5//P/+f/3//X/8//1//P/+fAAD/n/8//18AAP8f/3//X/8//1//f/8f/z//n/9//9//P//f/3//n/8/"),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkADAANAA4ADAAPAA0AEAARABIAEAATABEAFAAVABYAFAAXABUA"),
+"material": SubResource("ShaderMaterial_0yoa8"),
+"name": "sheep",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AAAAAP//VNUAAP//AABU1QAA/////1TVAAAAAAAAVNUAAAAAAAD///////8AAP//AAD//wAA/////wAAAAD/////AAAAAFTV////////VNX/////AABU1f//AAD//1TV//8AAP///78AAP//////v/////////+/AAAAAP///78AAAAAAAD/v///AAD///+///8AAAAA/78AAAAA////v/////8AAP//AAD///////8AAP//AAD/////////////VNVU1VTVVNVU1VTVVNVU1f+//7//v/+//7//v/+//7+qKqoqqiqqKqoqqiqqKqoq/////////////////////wAA/38AAP9/AAD/fwAA/3//f/+//3//v/9//7//f/+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_5hebt")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h7aqp"]
+render_priority = 0
+shader = ExtResource("2_gw4f6")
+shader_parameter/animation_state = 1
+shader_parameter/speed = 4.0
+shader_parameter/phase = 2.618
+shader_parameter/center_angle = 0.0
+shader_parameter/angle_span = 1.0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_6q2ni"]
+_surfaces = [{
+"aabb": AABB(-0.08399999, -0.37, -0.08399999, 0.16800001, 0.37, 0.16799998),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAACAAEAAwAEAAEABQAAAAIAAwAAAAUABAAGAAIABQACAAYAAwAHAAQAAwAFAAcABwAGAAQABwAFAAYA"),
+"name": "sheep",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAAAAP//AAAAAP//AAAAAAAA/////wAAAAAAAAAAAAD/////AAAAAP//AAD//wAA////////AAD//wAAAAAAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_n54i3"]
+resource_name = "Sheep-edit_sheep_005"
+_surfaces = [{
+"aabb": AABB(-0.08399999, -0.37, -0.08399999, 0.16800001, 0.37, 0.16799998),
+"attribute_data": PackedByteArray("/1////+f/7//n////1//v/9f/7//n/9//5//v/9f/3//X/9//5//P/+f/3//X/8//1//P/+fAAD/n/8//18AAP8f/3//X/8//1//f/8f/z//n/9//9//P//f/3//n/8/"),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkADAANAA4ADAAPAA0AEAARABIAEAATABEAFAAVABYAFAAXABUA"),
+"material": SubResource("ShaderMaterial_h7aqp"),
+"name": "sheep",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AAAAAP//VNUAAP//AABU1QAA/////1TVAAAAAAAAVNUAAAAAAAD///////8AAP//AAD//wAA/////wAAAAD/////AAAAAFTV////////VNX/////AABU1f//AAD//1TV//8AAP///78AAP//////v/////////+/AAAAAP///78AAAAAAAD/v///AAD///+///8AAAAA/78AAAAA////v/////8AAP//AAD///////8AAP//AAD/////////////VNVU1VTVVNVU1VTVVNVU1f+//7//v/+//7//v/+//7+qKqoqqiqqKqoqqiqqKqoq/////////////////////wAA/38AAP9/AAD/fwAA/3//f/+//3//v/9//7//f/+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_6q2ni")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_kqpw6"]
+_surfaces = [{
+"aabb": AABB(-0.084, -0.37, -0.08399999, 0.16800001, 0.37, 0.16799998),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAACAAEAAwAEAAEABQAAAAIAAwAAAAUABAAGAAIABQACAAYAAwAHAAQAAwAFAAcABwAGAAQABwAFAAYA"),
+"name": "sheep",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAAAAP//AAAAAP//AAAAAAAA/////wAAAAAAAAAAAAD/////AAAAAP//AAD//wAA////////AAD//wAAAAAAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_6qn06"]
+resource_name = "Sheep-edit_sheep_006"
+_surfaces = [{
+"aabb": AABB(-0.084, -0.37, -0.08399999, 0.16800001, 0.37, 0.16799998),
+"attribute_data": PackedByteArray("/1////+f/7//n////1//v/9f/7//n/9//5//v/9f/3//X/9//5//P/+f/3//X/8//1//P/+fAAD/n/8//18AAP8f/3//X/8//1//f/8f/z//n/9//9//P//f/3//n/8/"),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkADAANAA4ADAAPAA0AEAARABIAEAATABEAFAAVABYAFAAXABUA"),
+"material": ExtResource("3_6qn06"),
+"name": "sheep",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AAAAAP//VNUAAP//AABU1QAA/////1TVAAAAAAAAVNUAAAAAAAD///////8AAP//AAD//wAA/////wAAAAD/////AAAAAFTV////////VNX/////AABU1f//AAD//1TV//8AAP///78AAP//////v/////////+/AAAAAP///78AAAAAAAD/v///AAD///+///8AAAAA/78AAAAA////v/////8AAP//AAD///////8AAP//AAD/////////////VNVU1VTVVNVU1VTVVNVU1f+//7//v/+//7//v/+//7+qKqoqqiqqKqoqqiqqKqoq/////////////////////wAA/38AAP9/AAD/fwAA/3//f/+//3//v/9//7//f/+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_kqpw6")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_j8acu"]
+render_priority = 0
+shader = ExtResource("2_gw4f6")
+shader_parameter/animation_state = 1
+shader_parameter/speed = 4.0
+shader_parameter/phase = 3.142
+shader_parameter/center_angle = 0.0
+shader_parameter/angle_span = 1.0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_vrdyb"]
+_surfaces = [{
+"aabb": AABB(-0.08399999, -0.37, -0.08399999, 0.16800001, 0.37, 0.16799998),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAACAAEAAwAEAAEABQAAAAIAAwAAAAUABAAGAAIABQACAAYAAwAHAAQAAwAFAAcABwAGAAQABwAFAAYA"),
+"name": "sheep",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAAAAP//AAAAAP//AAAAAAAA/////wAAAAAAAAAAAAD/////AAAAAP//AAD//wAA////////AAD//wAAAAAAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_vbo3h"]
+resource_name = "Sheep-edit_sheep_002"
+_surfaces = [{
+"aabb": AABB(-0.08399999, -0.37, -0.08399999, 0.16800001, 0.37, 0.16799998),
+"attribute_data": PackedByteArray("/1////+f/7//n////1//v/9f/7//n/9//5//v/9f/3//X/9//5//P/+f/3//X/8//1//P/+fAAD/n/8//18AAP8f/3//X/8//1//f/8f/z//n/9//9//P//f/3//n/8/"),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkADAANAA4ADAAPAA0AEAARABIAEAATABEAFAAVABYAFAAXABUA"),
+"material": SubResource("ShaderMaterial_j8acu"),
+"name": "sheep",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("AAAAAP//VNUAAP//AABU1QAA/////1TVAAAAAAAAVNUAAAAAAAD///////8AAP//AAD//wAA/////wAAAAD/////AAAAAFTV////////VNX/////AABU1f//AAD//1TV//8AAP///78AAP//////v/////////+/AAAAAP///78AAAAAAAD/v///AAD///+///8AAAAA/78AAAAA////v/////8AAP//AAD///////8AAP//AAD/////////////VNVU1VTVVNVU1VTVVNVU1f+//7//v/+//7//v/+//7+qKqoqqiqqKqoqqiqqKqoq/////////////////////wAA/38AAP9/AAD/fwAA/3//f/+//3//v/9//7//f/+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_vrdyb")
+
 [node name="Sheep" unique_id=505412207 instance=ExtResource("1_t8l8v")]
 
 [node name="AnimationTree" type="AnimationTree" parent="." index="0" unique_id=239299628]
+active = false
 libraries/ = SubResource("AnimationLibrary_n54i3")
 tree_root = SubResource("AnimationNodeStateMachine_i2tgm")
 parameters/conditions/eating_grass = false
 parameters/conditions/walking = false
 
+[node name="sheep_bl_leg" parent="." index="1" unique_id=1295066121]
+mesh = SubResource("ArrayMesh_55m3e")
+
 [node name="sheep_br_leg" parent="." index="3" unique_id=729225641]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.198, 0.37, -0.324)
+mesh = SubResource("ArrayMesh_n54i3")
 
 [node name="sheep_fl_leg" parent="." index="4" unique_id=1774703691]
-transform = Transform3D(1, 0, 0, 0, 0.87758255, -0.47942555, 0, 0.47942555, 0.87758255, 0.198, 0.37, 0.324)
+mesh = SubResource("ArrayMesh_6qn06")
 
 [node name="sheep_fr_leg" parent="." index="5" unique_id=1361416015]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.198, 0.37, 0.324)
+mesh = SubResource("ArrayMesh_vbo3h")
 
 [node name="sheep_head" parent="." index="6" unique_id=289911218]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.828, 0.384)

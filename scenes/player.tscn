@@ -20,10 +20,11 @@ shape = SubResource("CapsuleShape3D_tbgi4")
 
 [node name="goose2" parent="." unique_id=966382740 instance=ExtResource("2_qhqgy")]
 
-[node name="CameraPivot" type="Node3D" parent="." unique_id=47035790]
+[node name="CameraPivot" type="Node3D" parent="." unique_id=47035790 node_paths=PackedStringArray("camera")]
 transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
 script = ExtResource("3_qhqgy")
 follow_target_path = NodePath("..")
+camera = NodePath("CameraTilt/Camera3D")
 
 [node name="CameraTilt" type="Node3D" parent="CameraPivot" unique_id=707493815]
 transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0)
