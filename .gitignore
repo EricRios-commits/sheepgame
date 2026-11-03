@@ -27,3 +27,13 @@ mono_crash.*.json
 *.exe
 # Uncomment if your project does not version PCK files as runtime dependencies.
 # *.pck
+
+# Optional tools and configuration specific to this workstation.
+/.local/
+/Open-Godot.cmd
+/addons/godot_ai/
+
+# Older local dog iterations and Blender backups.
+/assets/dog/archive/
+*.blend1
+/assets/Low_Poly_Farm_Animals_v1.0/**/*.import

@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://gm4mpk2o168i" path="res://mario_sheep.jpg" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://ek4d4cmcdtgd" path="res://scripts/isometric_camera.gd" id="2_camera"]
 [ext_resource type="Script" uid="uid://i331ua0ok5r7" path="res://scripts/player.gd" id="3_jyhfs"]
-[ext_resource type="PackedScene" uid="uid://chy3rgvednlyb" path="res://Low_Poly_Farm_Animals_v1.0/GLB/goose.glb" id="3_sugp2"]
+[ext_resource type="PackedScene" path="res://assets/dog/german_shepherd.glb" id="3_sugp2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0wfyh"]
 shading_mode = 0
@@ -62,7 +62,9 @@ script = ExtResource("3_jyhfs")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 shape = SubResource("CapsuleShape3D_tbgi4")
 
-[node name="goose2" parent="Player" unique_id=1539237525 instance=ExtResource("3_sugp2")]
+[node name="Visuals" type="Node3D" parent="Player"]
+
+[node name="DogModel" parent="Player/Visuals" instance=ExtResource("3_sugp2")]
 
 [node name="GroundBody" type="StaticBody3D" parent="." unique_id=702527909]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.95, 0)
