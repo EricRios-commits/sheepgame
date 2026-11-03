@@ -10,6 +10,7 @@ radius = 0.3
 height = 1.3
 
 [node name="Player" type="CharacterBody3D" unique_id=317266410 node_paths=PackedStringArray("boid_emitter")]
+collision_mask = 3
 floor_snap_length = 0.2
 script = ExtResource("1_g2els")
 boid_emitter = NodePath("BoidEmitter")
