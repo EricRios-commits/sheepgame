@@ -42,20 +42,19 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_rsepv")
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_diyik"]
-size = Vector3(1.4055235, 5.596118, 0.07011789)
+[sub_resource type="BoxShape3D" id="BoxShape3D_3tr07"]
+size = Vector3(1.4055235, 0.76948225, 0.07011789)
 
 [node name="Fence" type="Node3D" unique_id=1236831645]
+metadata/_edit_group_ = true
 
 [node name="fence_p042" type="MeshInstance3D" parent="." unique_id=425520850]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3867085, 0)
 material_override = ExtResource("1_3tr07")
 mesh = SubResource("ArrayMesh_nokgm")
 
-[node name="body" type="StaticBody3D" parent="fence_p042" unique_id=2081468120]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3867085, 0)
-metadata/_edit_group_ = true
+[node name="StaticBody3D" type="StaticBody3D" parent="fence_p042" unique_id=1989862789]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, -2.9802322e-08, -3.7252903e-09)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="fence_p042/body" unique_id=633292599]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, -0.70346487, -3.7252903e-09)
-shape = SubResource("BoxShape3D_diyik")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="fence_p042/StaticBody3D" unique_id=61683870]
+shape = SubResource("BoxShape3D_3tr07")

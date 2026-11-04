@@ -11,11 +11,15 @@
 [ext_resource type="Script" uid="uid://ddho2emmyrsog" path="res://flocking/core/boid_spawn_config.gd" id="4_tletc"]
 [ext_resource type="Script" uid="uid://dqilrneqx88ib" path="res://flocking/core/boid_interaction_table.gd" id="5_atv6b"]
 [ext_resource type="Script" uid="uid://c17vvof7em5ng" path="res://flocking/debug/boid_debug_presenter.gd" id="5_bj1q3"]
+[ext_resource type="Script" uid="uid://rxx1132rkva2" path="res://flocking/obstacles/boid_obstacle_source.gd" id="6_2j614"]
 [ext_resource type="PackedScene" uid="uid://dxg1x58qxrlp1" path="res://debug/debug_panel.tscn" id="6_v8eyb"]
+[ext_resource type="Script" uid="uid://bcbiaoan3p8p5" path="res://flocking/obstacles/boid_obstacle_source_world.gd" id="7_jvyfr"]
 [ext_resource type="Script" uid="uid://bfcj4jv4px22k" path="res://flocking/core/boid_emitter.gd" id="10_k7114"]
 [ext_resource type="Script" uid="uid://c2kshrc3t1oow" path="res://flocking/debug/boid_debug_overlay.gd" id="11_4r5p2"]
 [ext_resource type="ArrayMesh" uid="uid://b1cl7kmvdw7n1" path="res://Low_Poly_Farm_Animals_v1.0/GLB/sheep.glb" id="11_q5fff"]
 [ext_resource type="Script" uid="uid://cfatoy1e10yl1" path="res://flocking/core/boid_pen.gd" id="14_1efgf"]
+[ext_resource type="MeshLibrary" uid="uid://pogebmh1yhsn" path="res://assets/mesh_libraries/walls.tres" id="19_vrvfp"]
+[ext_resource type="PackedScene" uid="uid://c7w2p252lahk" path="res://scenes/player.tscn" id="22_jvyfr"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_w7mgy"]
 
@@ -46,6 +50,10 @@ script = ExtResource("2_bj1q3")
 script = ExtResource("4_k7114")
 metadata/_custom_type_script = "uid://bm3na2cm00w3e"
 
+[sub_resource type="Resource" id="Resource_ww5jj"]
+script = ExtResource("7_jvyfr")
+metadata/_custom_type_script = "uid://bcbiaoan3p8p5"
+
 [sub_resource type="Resource" id="Resource_psnpc"]
 script = ExtResource("5_atv6b")
 metadata/_custom_type_script = "uid://dqilrneqx88ib"
@@ -54,8 +62,6 @@ metadata/_custom_type_script = "uid://dqilrneqx88ib"
 script = ExtResource("4_tletc")
 count = 500
 metadata/_custom_type_script = "uid://ddho2emmyrsog"
-
-[sub_resource type="QuadMesh" id="QuadMesh_1efgf"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fne4r"]
 albedo_color = Color(1, 0.14901961, 0.06666667, 1)
@@ -72,39 +78,43 @@ environment = SubResource("Environment_8w0r3")
 transform = Transform3D(0.70274836, -0.023442948, 0.71105206, -0.6641349, 0.33673966, 0.66748124, -0.25508717, -0.9413059, 0.221074, 0, 0, 0)
 shadow_enabled = true
 
-[node name="Floor2" type="MeshInstance3D" parent="." unique_id=641108163]
-transform = Transform3D(1, 0, 0, 0, 0.76381016, 0.01675883, 0, -0.021586776, 0.5929824, -0.003947258, 15.859494, -65.26925)
+[node name="Floors" type="Node3D" parent="." unique_id=1023239951]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.9999999, 0, -1.4901161e-08, 1.4901161e-08, 0.9999999, 0, 0, 0)
+
+[node name="Floor2" type="MeshInstance3D" parent="Floors" unique_id=641108163]
+transform = Transform3D(1.0000001, 0, 0, 0, 0.7638103, 0.016758831, 1.4901165e-08, -0.021586789, 0.5929825, -0.0039472585, 15.859496, -65.26926)
 mesh = SubResource("PlaneMesh_8w0r3")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Floor2" unique_id=981207202]
+[node name="StaticBody3D" type="StaticBody3D" parent="Floors/Floor2" unique_id=981207202]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor2/StaticBody3D" unique_id=1473029327]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floors/Floor2/StaticBody3D" unique_id=1473029327]
 shape = SubResource("BoxShape3D_uuqwr")
 
-[node name="Floor3" type="MeshInstance3D" parent="." unique_id=137214626]
-transform = Transform3D(1, 0, 0, 0, 0.6610173, -0.29758346, 0, 0.383312, 0.51317936, 0, 7.7712307, -32.55443)
+[node name="Floor3" type="MeshInstance3D" parent="Floors" unique_id=137214626]
+transform = Transform3D(1.0000001, 0, 0, 0, 0.66101736, -0.2975835, 1.4901165e-08, 0.38331205, 0.5131794, 0, 7.7712317, -32.554432)
 mesh = SubResource("PlaneMesh_8w0r3")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Floor3" unique_id=1005863193]
+[node name="StaticBody3D" type="StaticBody3D" parent="Floors/Floor3" unique_id=1005863193]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor3/StaticBody3D" unique_id=1616262439]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floors/Floor3/StaticBody3D" unique_id=1616262439]
 shape = SubResource("BoxShape3D_uuqwr")
 
-[node name="Floor4" type="MeshInstance3D" parent="." unique_id=325848218]
-transform = Transform3D(0.22869635, 0, 0, 0, 0.7555277, -0.028602306, 0, 0.043729797, 0.49416694, 0, 10.162441, -32.55443)
+[node name="Floor4" type="MeshInstance3D" parent="Floors" unique_id=325848218]
+transform = Transform3D(0.22869638, 0, 0, 0, 0.7555278, -0.02860231, 3.407842e-09, 0.04372979, 0.494167, 0, 10.162442, -32.554432)
 mesh = SubResource("PlaneMesh_8w0r3")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Floor4" unique_id=1649012479]
+[node name="StaticBody3D" type="StaticBody3D" parent="Floors/Floor4" unique_id=1649012479]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor4/StaticBody3D" unique_id=1189886080]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floors/Floor4/StaticBody3D" unique_id=1189886080]
 shape = SubResource("BoxShape3D_uuqwr")
 
-[node name="Floor" type="MeshInstance3D" parent="." unique_id=1367859136]
+[node name="Floor" type="MeshInstance3D" parent="Floors" unique_id=1367859136]
+transform = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 1.4901165e-08, -1.4901165e-08, 1.0000001, 0, 0, 0)
 mesh = SubResource("PlaneMesh_8w0r3")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Floor" unique_id=577542509]
+[node name="StaticBody3D" type="StaticBody3D" parent="Floors/Floor" unique_id=577542509]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor/StaticBody3D" unique_id=1463424001]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floors/Floor/StaticBody3D" unique_id=1463424001]
 shape = SubResource("BoxShape3D_uuqwr")
 
 [node name="TestCamera" type="Camera3D" parent="." unique_id=1404362286]
@@ -224,6 +234,7 @@ shape = SubResource("BoxShape3D_u7jmn")
 script = ExtResource("1_7ko1b")
 ground = SubResource("Resource_h4t55")
 ground_source = SubResource("Resource_atv6b")
+obstacle_sources = Array[ExtResource("6_2j614")]([SubResource("Resource_ww5jj")])
 default_profile = ExtResource("3_nfvba")
 interactions = SubResource("Resource_psnpc")
 metadata/_custom_type_script = "uid://b1wnhlmks4525"
@@ -233,19 +244,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3868637, 0, 19.451723)
 script = ExtResource("3_v8eyb")
 system = NodePath("../BoidSystem")
 config = SubResource("Resource_104nh")
-
-[node name="BoidDebugPresenter" type="Node3D" parent="." unique_id=309146974 node_paths=PackedStringArray("system")]
-script = ExtResource("5_bj1q3")
-system = NodePath("../BoidSystem")
-mesh = ExtResource("11_q5fff")
-palette = PackedColorArray(0.62560153, 0.5363135, 0.9720586, 1)
-
-[node name="BoidDebugPresenter" type="Node3D" parent="BoidDebugPresenter" unique_id=775630787 node_paths=PackedStringArray("system")]
-visible = false
-script = ExtResource("5_bj1q3")
-system = NodePath("../../BoidSystem")
-mesh = SubResource("QuadMesh_1efgf")
-palette = PackedColorArray(0.62560153, 0.5363135, 0.9720586, 1)
 
 [node name="DebugPanel" parent="." unique_id=1183930503 instance=ExtResource("6_v8eyb")]
 
@@ -277,3 +275,24 @@ metadata/_custom_type_script = "uid://cfatoy1e10yl1"
 [node name="Label3D" type="Label3D" parent="." unique_id=1843048041]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 11.952294, -25.122623)
 text = "Overhangs are bad"
+
+[node name="GridMap" type="GridMap" parent="." unique_id=367986019]
+mesh_library = ExtResource("19_vrvfp")
+collision_layer = 2
+collision_mask = 3
+collision_visibility_mode = 1
+data = {
+"cells": PackedInt32Array(4, 5, 0, 5, 5, 0, 6, 5, 0, 6, 65525, 0, 7, 65525, 0, 5, 4, 0, 3, 4, 0)
+}
+metadata/_editor_floor_ = Vector3(0, 0, 0)
+
+[node name="Player" parent="." unique_id=317266410 node_paths=PackedStringArray("boid_system") instance=ExtResource("22_jvyfr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.1728745, 1.1959624, 18.629387)
+collision_layer = 3
+boid_system = NodePath("../BoidSystem")
+
+[node name="BoidDebugPresenter" type="Node3D" parent="." unique_id=1871675449 node_paths=PackedStringArray("system")]
+script = ExtResource("5_bj1q3")
+system = NodePath("../BoidSystem")
+mesh = ExtResource("11_q5fff")
+metadata/_custom_type_script = "uid://c17vvof7em5ng"
