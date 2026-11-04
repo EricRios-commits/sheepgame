@@ -302,6 +302,11 @@ func check_invariants() -> bool:
 			in_pens_scan += 1
 	return in_pens_scan == in_pens
 
+func interpolation_alpha() -> float:
+	if not run_simulation:
+		return 1.0
+	var since := _accum + Engine.get_physics_interpolation_fraction() / float(Engine.physics_ticks_per_second)
+	return clampf(since * float(sim_hz), 0.0, 1.0)
 
 # spawingn
 

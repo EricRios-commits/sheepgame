@@ -1,4 +1,4 @@
-﻿class_name BoidHeightfield
+class_name BoidHeightfield
 extends BoidGround
 ## Baked height lattice with bilinear lookup 
 ## Limitation: this is a heightfield, so overhangs and tunnels are not representable.
@@ -9,10 +9,6 @@ extends BoidGround
 @export var depth := 0
 @export var heights := PackedFloat32Array()
 
-func rect() -> Rect2:
-	return Rect2(origin, Vector2(maxi(width - 1, 0), maxi(depth - 1, 0)) * cell)
-
-
 ## Sizes the lattice for `bounds` (heights are left unset). Used by the ground sources.
 func setup_lattice(bounds: Rect2, cell_size: float) -> void:
 	origin = bounds.position
@@ -20,15 +16,6 @@ func setup_lattice(bounds: Rect2, cell_size: float) -> void:
 	width = int(ceil(bounds.size.x / cell_size)) + 1
 	depth = int(ceil(bounds.size.y / cell_size)) + 1
 	heights.resize(width * depth)
-
-
-## f(x, z) -> height, or NAN for no ground.
-func bake_from_function(bounds: Rect2, cell_size: float, f: Callable) -> void:
-	setup_lattice(bounds, cell_size)
-	for iz in depth:
-		for ix in width:
-			heights[iz * width + ix] = f.call(origin.x + ix * cell, origin.y + iz * cell)
-
 
 func height_at(xz: Vector2) -> float:
 	if width < 2 or depth < 2:
@@ -99,3 +86,34 @@ func sample_batch(pos: PackedVector2Array, out: PackedFloat32Array, n: int) -> v
 		if is_nan(h00) or is_nan(h10) or is_nan(h01) or is_nan(h11):
 			continue
 		out[k] = lerpf(lerpf(h00, h10, tx), lerpf(h01, h11, tx), tz)
+		
+		
+func sample_normals(pos: PackedVector2Array, out: PackedVector3Array, from: int, to: int) -> void:
+	if width < 2 or depth < 2:
+		for i in range(from, to):
+			out[i] = Vector3.UP
+		return
+	var inv := 1.0 / cell
+	var wmax := width - 2
+	var dmax := depth - 2
+	var hs := heights
+	for k in range(from, to):
+		var p := pos[k]
+		var fx := (p.x - origin.x) * inv
+		var fz := (p.y - origin.y) * inv
+		var ix := clampi(int(floor(fx)), 0, wmax)
+		var iz := clampi(int(floor(fz)), 0, dmax)
+		var tx := clampf(fx - float(ix), 0.0, 1.0)
+		var tz := clampf(fz - float(iz), 0.0, 1.0)
+		var i := iz * width + ix
+		var h00 := hs[i]
+		var h10 := hs[i + 1]
+		var h01 := hs[i + width]
+		var h11 := hs[i + width + 1]
+		if is_nan(h00) or is_nan(h10) or is_nan(h01) or is_nan(h11):
+			out[k] = Vector3.UP
+			continue
+		var dx := lerpf(h10 - h00, h11 - h01, tz) * inv
+		var dz := lerpf(h01 - h00, h11 - h10, tx) * inv
+		var il := 1.0 / sqrt(dx * dx + 1.0 + dz * dz)
+		out[k] = Vector3(-dx * il, il, -dz * il)

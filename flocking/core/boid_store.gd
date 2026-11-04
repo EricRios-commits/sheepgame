@@ -1,4 +1,4 @@
-﻿class_name BoidStore
+class_name BoidStore
 extends RefCounted
 ## Flat typed storage for all boids of one system
 
@@ -214,3 +214,9 @@ func check_consistency() -> bool:
 		if _slot_of_id[id] >= 0:
 			live += 1
 	return live == count
+	
+func slot_ids() -> PackedInt32Array:
+	return _id_of_slot
+
+func id_generations() -> PackedInt32Array:
+	return _gen_of_id

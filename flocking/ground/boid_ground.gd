@@ -23,3 +23,7 @@ func normal_at(_xz: Vector2) -> Vector3:
 func sample_batch(pos: PackedVector2Array, out: PackedFloat32Array, n: int) -> void:
 	for i in n:
 		out[i] = height_at(pos[i])
+
+func sample_normals(pos: PackedVector2Array, out: PackedVector3Array, from: int, to: int) -> void:
+	for i in range(from, to):
+		out[i] = normal_at(pos[i])

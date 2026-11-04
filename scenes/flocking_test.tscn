@@ -10,14 +10,16 @@
 [ext_resource type="Script" uid="uid://bm3na2cm00w3e" path="res://flocking/ground/boid_ground_source_world.gd" id="4_k7114"]
 [ext_resource type="Script" uid="uid://ddho2emmyrsog" path="res://flocking/core/boid_spawn_config.gd" id="4_tletc"]
 [ext_resource type="Script" uid="uid://dqilrneqx88ib" path="res://flocking/core/boid_interaction_table.gd" id="5_atv6b"]
-[ext_resource type="Script" uid="uid://c17vvof7em5ng" path="res://flocking/debug/boid_debug_presenter.gd" id="5_bj1q3"]
 [ext_resource type="Script" uid="uid://rxx1132rkva2" path="res://flocking/obstacles/boid_obstacle_source.gd" id="6_2j614"]
 [ext_resource type="PackedScene" uid="uid://dxg1x58qxrlp1" path="res://debug/debug_panel.tscn" id="6_v8eyb"]
 [ext_resource type="Script" uid="uid://bcbiaoan3p8p5" path="res://flocking/obstacles/boid_obstacle_source_world.gd" id="7_jvyfr"]
 [ext_resource type="Script" uid="uid://bfcj4jv4px22k" path="res://flocking/core/boid_emitter.gd" id="10_k7114"]
 [ext_resource type="Script" uid="uid://c2kshrc3t1oow" path="res://flocking/debug/boid_debug_overlay.gd" id="11_4r5p2"]
-[ext_resource type="ArrayMesh" uid="uid://b1cl7kmvdw7n1" path="res://Low_Poly_Farm_Animals_v1.0/GLB/sheep.glb" id="11_q5fff"]
 [ext_resource type="Script" uid="uid://cfatoy1e10yl1" path="res://flocking/core/boid_pen.gd" id="14_1efgf"]
+[ext_resource type="Script" uid="uid://bh4m16gxnmuuw" path="res://flocking/presentation/boid_presenter.gd" id="15_shb5a"]
+[ext_resource type="Script" uid="uid://c7cfrpt3iasuh" path="res://flocking/presentation/boid_species_visual.gd" id="16_6x245"]
+[ext_resource type="Shader" uid="uid://dmwuwdcamd3i4" path="res://materials/boid_gait.gdshader" id="17_6x245"]
+[ext_resource type="ArrayMesh" uid="uid://cijrjnrcpjwky" path="res://Low_Poly_Farm_Animals_v1.0/sheep-edit2.blend" id="17_vrvfp"]
 [ext_resource type="MeshLibrary" uid="uid://pogebmh1yhsn" path="res://assets/mesh_libraries/walls.tres" id="19_vrvfp"]
 [ext_resource type="PackedScene" uid="uid://c7w2p252lahk" path="res://scenes/player.tscn" id="22_jvyfr"]
 
@@ -41,7 +43,7 @@ size = Vector3(30, 0.001, 60)
 size = Vector3(1, 5, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_u7jmn"]
-size = Vector3(1, 5, 1)
+size = Vector3(1, 14.3671875, 1)
 
 [sub_resource type="Resource" id="Resource_h4t55"]
 script = ExtResource("2_bj1q3")
@@ -68,6 +70,24 @@ albedo_color = Color(1, 0.14901961, 0.06666667, 1)
 
 [sub_resource type="TorusMesh" id="TorusMesh_8w0r3"]
 material = SubResource("StandardMaterial3D_fne4r")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xge20"]
+render_priority = 0
+shader = ExtResource("17_6x245")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/roughness = 0.9
+shader_parameter/speed_for_full_gait = 2.0
+shader_parameter/sway = 0.1
+shader_parameter/pitch = 0.05
+shader_parameter/bob = 0.05
+shader_parameter/breath = 0.012
+
+[sub_resource type="Resource" id="Resource_1xjow"]
+script = ExtResource("16_6x245")
+mesh = ExtResource("17_vrvfp")
+material = SubResource("ShaderMaterial_xge20")
+scale_jitter = 0.5
+metadata/_custom_type_script = "uid://c7cfrpt3iasuh"
 
 [node name="FlockingTest" type="Node3D" unique_id=940581002]
 
@@ -136,8 +156,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 mesh = SubResource("BoxMesh_8w0r3")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Obstacles/BoidObstacle/Mesh" unique_id=540281207]
+collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Obstacles/BoidObstacle/Mesh/StaticBody3D" unique_id=505504080]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.47460938, 0)
 shape = SubResource("BoxShape3D_u7jmn")
 
 [node name="BoidObstacle2" type="Node3D" parent="Obstacles" unique_id=279034518 node_paths=PackedStringArray("system")]
@@ -154,8 +176,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 mesh = SubResource("BoxMesh_8w0r3")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Obstacles/BoidObstacle2/Mesh" unique_id=1686829208]
+collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Obstacles/BoidObstacle2/Mesh/StaticBody3D" unique_id=1093400175]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.2089844, 0)
 shape = SubResource("BoxShape3D_u7jmn")
 
 [node name="BoidObstacle3" type="Node3D" parent="Obstacles" unique_id=1722224836 node_paths=PackedStringArray("system")]
@@ -172,6 +196,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 mesh = SubResource("BoxMesh_8w0r3")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Obstacles/BoidObstacle3/Mesh" unique_id=1181532575]
+collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Obstacles/BoidObstacle3/Mesh/StaticBody3D" unique_id=676303357]
 shape = SubResource("BoxShape3D_u7jmn")
@@ -190,6 +215,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 mesh = SubResource("BoxMesh_8w0r3")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Obstacles/BoidObstacle4/Mesh" unique_id=1693683590]
+collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Obstacles/BoidObstacle4/Mesh/StaticBody3D" unique_id=735160451]
 shape = SubResource("BoxShape3D_u7jmn")
@@ -208,6 +234,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 mesh = SubResource("BoxMesh_8w0r3")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Obstacles/BoidObstacle5/Mesh" unique_id=1512567554]
+collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Obstacles/BoidObstacle5/Mesh/StaticBody3D" unique_id=2121913868]
 shape = SubResource("BoxShape3D_u7jmn")
@@ -226,6 +253,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 mesh = SubResource("BoxMesh_8w0r3")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Obstacles/BoidObstacle6/Mesh" unique_id=339682616]
+collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Obstacles/BoidObstacle6/Mesh/StaticBody3D" unique_id=1292396991]
 shape = SubResource("BoxShape3D_u7jmn")
@@ -291,8 +319,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.1728745, 1.1959624, 18.6293
 collision_layer = 3
 boid_system = NodePath("../BoidSystem")
 
-[node name="BoidDebugPresenter" type="Node3D" parent="." unique_id=1871675449 node_paths=PackedStringArray("system")]
-script = ExtResource("5_bj1q3")
+[node name="BoidPresenter" type="Node3D" parent="." unique_id=573043167 node_paths=PackedStringArray("system")]
+script = ExtResource("15_shb5a")
 system = NodePath("../BoidSystem")
-mesh = ExtResource("11_q5fff")
-metadata/_custom_type_script = "uid://c17vvof7em5ng"
+visuals = Array[ExtResource("16_6x245")]([SubResource("Resource_1xjow")])
+metadata/_custom_type_script = "uid://bh4m16gxnmuuw"

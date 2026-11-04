@@ -52,15 +52,15 @@ data = {
 [sub_resource type="ImageTexture" id="ImageTexture_jkjg0"]
 image = SubResource("Image_ww5jj")
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_diyik"]
-size = Vector3(1.4055235, 5.596118, 0.07011789)
+[sub_resource type="BoxShape3D" id="BoxShape3D_3tr07"]
+size = Vector3(1.4055235, 0.76948225, 0.07011789)
 
 [resource]
 item/0/name = "fence_p042"
 item/0/mesh = SubResource("ArrayMesh_ww5jj")
 item/0/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item/0/mesh_cast_shadow = 1
-item/0/shapes = [SubResource("BoxShape3D_diyik"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, -1.0901734, -3.7252903e-09)]
+item/0/shapes = [SubResource("BoxShape3D_3tr07"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, -2.9802322e-08, -3.7252903e-09)]
 item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item/0/navigation_layers = 1
 item/0/preview = SubResource("ImageTexture_jkjg0")
