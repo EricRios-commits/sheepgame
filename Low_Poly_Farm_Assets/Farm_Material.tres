@@ -3,4 +3,5 @@
 [ext_resource type="Texture2D" uid="uid://b1j3kwtmtyniv" path="res://Low_Poly_Farm_Assets/textures/color_1024x1024.jpg" id="1_kennm"]
 
 [resource]
+cull_mode = 2
 albedo_texture = ExtResource("1_kennm")

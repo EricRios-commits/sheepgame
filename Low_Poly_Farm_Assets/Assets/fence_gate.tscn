@@ -62,3 +62,6 @@ shape = SubResource("BoxShape3D_x15ge")
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="." unique_id=996118754]
 transform = Transform3D(0.96302634, 0, -0.2694073, 0, 1, 0, 0.2694073, 0, 0.96302634, -0.69552577, 0.111973286, -3.2791905)
 shape = SubResource("BoxShape3D_x15ge")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=520277794]
+transform = Transform3D(1, 0, 0, 0, -0.038368266, 0.99926364, 0, -0.99926364, -0.038368266, -0.062183857, 7.4806304, 0)

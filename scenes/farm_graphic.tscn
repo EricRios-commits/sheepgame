@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://dhpmrqffx0y1m"]
+
+[ext_resource type="PackedScene" uid="uid://dalui2r11ca0q" path="res://Low_Poly_Farm_Assets/Assets/farm_building.fbx" id="1_e7ocq"]
+[ext_resource type="Material" uid="uid://db3now8o0juhe" path="res://Low_Poly_Farm_Assets/Farm_Material.tres" id="3_df117"]
+
+[node name="farm_building" unique_id=211494034 instance=ExtResource("1_e7ocq")]
+
+[node name="Box2494" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="0" unique_id=1900014036]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36.20117, -86.206055, 0.00390625)
+surface_material_override/0 = ExtResource("3_df117")
+
+[node name="Box2494_001" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="1" unique_id=848826139]
+visible = false
+
+[node name="Box2495" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="2" unique_id=1064677168]
+surface_material_override/0 = ExtResource("3_df117")
+
+[node name="Box2495_001" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="3" unique_id=950306657]
+visible = false
+
+[node name="Box2495_002" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="4" unique_id=1908585632]
+surface_material_override/0 = ExtResource("3_df117")
+
+[node name="Box2495_003" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="5" unique_id=2009453228]
+surface_material_override/0 = ExtResource("3_df117")
+
+[node name="Box2496" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="6" unique_id=2027869004]
+surface_material_override/0 = ExtResource("3_df117")
+
+[node name="Box2497" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="7" unique_id=471194896]
+surface_material_override/0 = ExtResource("3_df117")
+
+[node name="Box2497_001" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="8" unique_id=45969488]
+visible = false
+
+[node name="Object555" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="9" unique_id=589571515]
+surface_material_override/0 = ExtResource("3_df117")
+
+[node name="Object555_001" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="10" unique_id=729073831]
+visible = false
+
+[node name="Object556" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="11" unique_id=571768891]
+visible = false
+
+[node name="Object564" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="12" unique_id=54263571]
+visible = false
+
+[node name="Object568" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="13" unique_id=2006594009]
+surface_material_override/0 = ExtResource("3_df117")
+
+[node name="Object568_001" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="14" unique_id=1996723917]
+surface_material_override/0 = ExtResource("3_df117")
+
+[node name="Object568_002" parent="farmbuilding_c004" parent_id_path=PackedInt32Array(1544445300) index="15" unique_id=470310998]
+surface_material_override/0 = ExtResource("3_df117")

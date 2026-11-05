@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dujfbgyydke7s"]
+
+[ext_resource type="Texture2D" uid="uid://b1j3kwtmtyniv" path="res://Low_Poly_Farm_Assets/textures/color_1024x1024.jpg" id="1_av6ue"]
+
+[resource]
+resource_name = "farmmaterial"
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_av6ue")
+emission_enabled = true
+emission_energy_multiplier = 0.0
