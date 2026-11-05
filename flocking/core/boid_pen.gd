@@ -18,7 +18,7 @@ extends Node3D
 		entry_depth = v
 		_redraw()
 ## Number of spots that can be occupied
-@export_range(1, 500, 1) var number_of_spots := 100
+@export_range(1, 2000, 1) var number_of_spots := 100
 @export var snap_to_spots := true
 @export var show_gizmo_in_game := false
 
