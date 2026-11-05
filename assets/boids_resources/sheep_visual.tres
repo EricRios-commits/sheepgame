@@ -2,12 +2,14 @@
 
 [ext_resource type="Shader" uid="uid://dmwuwdcamd3i4" path="res://materials/boid_gait.gdshader" id="1_dba1w"]
 [ext_resource type="ArrayMesh" uid="uid://cijrjnrcpjwky" path="res://Low_Poly_Farm_Animals_v1.0/sheep-edit2.blend" id="2_cgbee"]
+[ext_resource type="Texture2D" uid="uid://cjqvk7mttbs5c" path="res://Low_Poly_Farm_Animals_v1.0/sheep-edit2-albedo.png" id="2_llnm0"]
 [ext_resource type="Script" uid="uid://c7cfrpt3iasuh" path="res://flocking/presentation/boid_species_visual.gd" id="3_llnm0"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xge20"]
 render_priority = 0
 shader = ExtResource("1_dba1w")
 shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/albedo_texture = ExtResource("2_llnm0")
 shader_parameter/roughness = 0.9
 shader_parameter/speed_for_full_gait = 2.0
 shader_parameter/sway = 0.1
