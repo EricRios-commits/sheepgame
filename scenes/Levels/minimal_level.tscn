@@ -54,10 +54,9 @@ system = NodePath("../BoidSystem")
 visuals = Array[ExtResource("8_pc86j")]([ExtResource("9_bwifq")])
 metadata/_custom_type_script = "uid://bh4m16gxnmuuw"
 
-[node name="Level Manager" type="Node3D" parent="scripts" unique_id=1702486038 node_paths=PackedStringArray("boid_system", "pens")]
+[node name="Level Manager" type="Node3D" parent="scripts" unique_id=1702486038 node_paths=PackedStringArray("boid_system")]
 script = ExtResource("10_c5lho")
 boid_system = NodePath("../BoidSystem")
-pens = [NodePath("../../BoidPen")]
 
 [node name="BoidSpawnZone" type="Node3D" parent="." unique_id=1176762863 node_paths=PackedStringArray("system")]
 script = ExtResource("10_hxcd1")
@@ -91,5 +90,5 @@ data = {
 }
 
 [node name="BoidPen" parent="." unique_id=2141528733 node_paths=PackedStringArray("system") instance=ExtResource("15_bh8bd")]
-transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, -9, 0, 28)
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, -7.7689447, 0, 28)
 system = NodePath("../scripts/BoidSystem")
