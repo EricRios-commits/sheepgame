@@ -7,6 +7,4 @@ render_priority = 0
 shader = ExtResource("1_h7aqp")
 shader_parameter/animation_state = 1
 shader_parameter/speed = 4.0
-shader_parameter/phase = 0.524
-shader_parameter/center_angle = 0.0
-shader_parameter/angle_span = 1.0
+shader_parameter/amplitude = 1.0

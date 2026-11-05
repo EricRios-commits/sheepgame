@@ -17,7 +17,8 @@ extends Node3D
 	set(v):
 		entry_depth = v
 		_redraw()
-@export_range(0.3, 10.0, 0.1) var spot_spacing := 1.2
+## Number of spots that can be occupied
+@export_range(1, 500, 1) var number_of_spots := 100
 @export var snap_to_spots := true
 @export var show_gizmo_in_game := false
 
@@ -60,6 +61,8 @@ func trigger_zmin() -> float:
 ## World-space spots inside the trigger region, deepest first
 func compute_spots() -> PackedVector2Array:
 	var out := PackedVector2Array()
+	if number_of_spots <= 0:
+		return out
 	var half := trigger_half()
 	var x_lo := -half.x + 0.4
 	var x_hi := half.x - 0.4
@@ -67,23 +70,30 @@ func compute_spots() -> PackedVector2Array:
 	var z_hi := half.y - 0.4
 	if x_hi < x_lo or z_hi < z_lo:
 		return out
-	var nx := int(floor((x_hi - x_lo) / spot_spacing)) + 1
-	var nz := int(floor((z_hi - z_lo) / spot_spacing)) + 1
-	var sx := (x_lo + x_hi) * 0.5 - float(nx - 1) * spot_spacing * 0.5
-	var sz := (z_lo + z_hi) * 0.5 - float(nz - 1) * spot_spacing * 0.5
+	var width := x_hi - x_lo
+	var depth := z_hi - z_lo
+	var aspect := width / depth
+	var nx := maxi(1, roundi(sqrt(number_of_spots * aspect)))
+	var nz := ceili(float(number_of_spots) / float(nx))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7919
 	var items: Array = []
 	for iz in nz:
 		for ix in nx:
-			var lx := clampf(sx + ix * spot_spacing + rng.randf_range(-0.2, 0.2) * spot_spacing, x_lo, x_hi)
-			var lz := clampf(sz + iz * spot_spacing + rng.randf_range(-0.2, 0.2) * spot_spacing, z_lo, z_hi)
+			if items.size() >= number_of_spots:
+				break
+			var lx := x_lo + (float(ix) + 0.5) * width / nx
+			var lz := z_lo + (float(iz) + 0.5) * depth / nz
+			lx += rng.randf_range(-0.15, 0.15) * width / nx
+			lz += rng.randf_range(-0.15, 0.15) * depth / nz
 			items.append([-lz * 1000.0 + absf(lx), Vector2(lx, lz)])
-	items.sort_custom(func(a: Array, b: Array) -> bool: return a[0] < b[0])
+	items.sort_custom(
+		func(a: Array, b: Array) -> bool:
+			return a[0] < b[0]
+	)
 	for it in items:
 		out.append(world_xz(it[1]))
 	return out
-
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var w := PackedStringArray()

@@ -268,7 +268,7 @@ interactions = SubResource("Resource_psnpc")
 metadata/_custom_type_script = "uid://b1wnhlmks4525"
 
 [node name="BoidSpawnZone" type="Node3D" parent="." unique_id=2001783826 node_paths=PackedStringArray("system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3868637, 0, 19.451723)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3868637, 4.6215286, -21.08759)
 script = ExtResource("3_v8eyb")
 system = NodePath("../BoidSystem")
 config = SubResource("Resource_104nh")
@@ -297,6 +297,7 @@ metadata/_custom_type_script = "uid://c2kshrc3t1oow"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16.497005, -62.851818)
 script = ExtResource("14_1efgf")
 system = NodePath("../BoidSystem")
+number_of_spots = 5
 show_gizmo_in_game = true
 metadata/_custom_type_script = "uid://cfatoy1e10yl1"
 
