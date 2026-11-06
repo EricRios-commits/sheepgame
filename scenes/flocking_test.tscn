@@ -297,7 +297,7 @@ metadata/_custom_type_script = "uid://c2kshrc3t1oow"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16.497005, -62.851818)
 script = ExtResource("14_1efgf")
 system = NodePath("../BoidSystem")
-number_of_spots = 5
+number_of_spots = 500
 show_gizmo_in_game = true
 metadata/_custom_type_script = "uid://cfatoy1e10yl1"
 

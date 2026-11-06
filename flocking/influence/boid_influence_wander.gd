@@ -24,7 +24,7 @@ class Runtime extends BoidInfluenceRuntime:
 		var scratch := st.scratch
 		var hdg := st.heading
 		var rng := sys.rng
-		var step := 2.0 * jitter * sqrt(sys.cur_dt)
+		var step := 2.0 * jitter * sqrt(sys.current_sim_dt)
 		for k in range(from, to):
 			var slot := order[k]
 			var ang := clampf(scratch[slot] + (rng.randf() - 0.5) * step, -max_angle, max_angle)

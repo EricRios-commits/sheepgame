@@ -85,14 +85,14 @@ func _process(_delta: float) -> void:
 		_arrow(p3, system.debug_layers[BoidInfluence.Layer.AMBIENT], Color(0.7, 0.7, 0.7))
 		_arrow(p3, system.debug_total, Color.WHITE)
 	if show_emitters:
-		for e in system.em_count:
-			var ep := system.em_pos[e]
-			_circle(Vector3(ep.x, y, ep.y), system.em_radius[e], Color(1.0, 0.5, 0.0, 0.6), 64)
+		for e in system.active_emitter_count:
+			var ep := system.emitter_positions[e]
+			_circle(Vector3(ep.x, y, ep.y), system.emiter_radii[e], Color(1.0, 0.5, 0.0, 0.6), 64)
 	if show_radii:
-		_circle(p3, system.table.max_query_radius, Color(1, 1, 1, 0.35))
+		_circle(p3, system.behaviour_table.max_query_radius, Color(1, 1, 1, 0.35))
 	if show_cells and system.neighbours is BoidNeighbourHash:
 		var h := system.neighbours as BoidNeighbourHash
-		var w := h.cell_window(p, system.table.max_query_radius)
+		var w := h.cell_window(p, system.behaviour_table.max_query_radius)
 		for cz in range(w.position.y, w.end.y):
 			for cx in range(w.position.x, w.end.x):
 				var x0 := h.origin.x + cx * h.cell

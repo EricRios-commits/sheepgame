@@ -1,4 +1,4 @@
-﻿class_name BoidInfluenceEmitter
+class_name BoidInfluenceEmitter
 extends BoidInfluence
 ## Reacts to emitters of one kind (dog, predator, lure...)
 ## FLEE pushes away, ATTRACT pulls in
@@ -40,20 +40,20 @@ class Runtime extends BoidInfluenceRuntime:
 	func apply(sys: BoidSystem, order: PackedInt32Array, from: int, to: int, weight: float,
 			_vmax: float, acc: PackedVector2Array) -> void:
 		_idx.clear()
-		for e in sys.em_count:
-			if sys.em_kind[e] == kind_id:
+		for e in sys.active_emitter_count:
+			if sys.emitter_kinds[e] == kind_id:
 				_idx.append(e)
 		var m := _idx.size()
 		if m == 0:
 			return
 		var pos := sys.store.pos
-		var ep := sys.em_pos
-		var er := sys.em_radius
-		var edir := sys.em_dir
-		var ecos := sys.em_cos_half
-		var estr := sys.em_strength
-		var elut := sys.em_lut
-		var lut_n := BoidSystem.LUT_N
+		var ep := sys.emitter_positions
+		var er := sys.emiter_radii
+		var edir := sys.emitter_directions
+		var ecos := sys.emitter_cos_half_angles
+		var estr := sys.emitter_strengths
+		var elut := sys.emitter_curve_luts
+		var lut_n := BoidSystem.CURVE_LUT_SAMPLES
 		var scale := weight * gain
 		for k in range(from, to):
 			var slot := order[k]
