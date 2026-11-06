@@ -139,7 +139,7 @@ func _capture(advance: bool) -> void:
 	if _use_tilt:
 		_normals.resize(s.count)
 		system.ground.sample_normals(s.pos, _normals, 0, n)
-	var dt := maxf(system.cur_dt, 1e-4)
+	var dt := maxf(system.current_sim_dt, 1e-4)
 	var kh := 1.0 - exp(-heading_response * dt)
 	var ks := 1.0 - exp(-speed_response * dt)
 	var kt := 1.0 - exp(-tilt_response * dt)

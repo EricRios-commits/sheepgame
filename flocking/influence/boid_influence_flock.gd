@@ -48,7 +48,7 @@ class Runtime extends BoidInfluenceRuntime:
 		var nb := sys.neighbours
 		var buf := _buf
 		var dslot := sys.debug_slot
-		var table := sys.table
+		var table := sys.behaviour_table
 		var weighted := table.has_interactions
 		var n_sp := table.n_species
 		var ixc := table.ix_cohesion
