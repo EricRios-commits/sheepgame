@@ -1,4 +1,4 @@
-﻿class_name BoidEmitter
+class_name BoidEmitter
 extends Node3D
 ## External actor (dog, predator, lure) that boids react to
 

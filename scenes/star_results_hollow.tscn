@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://dqblpdwrhl3q0"]
+
+[ext_resource type="Texture2D" uid="uid://p742nm6b2lr0" path="res://assets/star_hollow.png" id="1_mjp8d"]
+
+[node name="Star Results Hollow" type="TextureRect" unique_id=1360435613]
+custom_maximum_size = Vector2(100, 100)
+texture = ExtResource("1_mjp8d")

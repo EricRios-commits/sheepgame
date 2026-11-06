@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://b0imtefhtlpp0"]
+
+[ext_resource type="Texture2D" uid="uid://qb8fng0viucf" path="res://assets/star_filled.png" id="1_0xqof"]
+
+[node name="Star Results Filled" type="TextureRect" unique_id=976350140]
+modulate = Color(0.9098039, 1, 0.4, 1)
+custom_maximum_size = Vector2(100, 100)
+texture = ExtResource("1_0xqof")

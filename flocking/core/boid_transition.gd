@@ -1,4 +1,4 @@
-﻿class_name BoidTransition
+class_name BoidTransition
 extends Resource
 ## State change trigger. Evaluated after integration, queued, applied in Commit
 

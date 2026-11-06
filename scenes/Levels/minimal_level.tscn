@@ -11,11 +11,15 @@
 [ext_resource type="Resource" uid="uid://3yvh757yqh84" path="res://assets/boids_resources/sheep_visual.tres" id="9_bwifq"]
 [ext_resource type="Script" uid="uid://c5bgv6dso0k4e" path="res://scripts/level_manager.gd" id="10_c5lho"]
 [ext_resource type="Script" uid="uid://p4stixdtom0l" path="res://flocking/core/boid_spawn_zone.gd" id="10_hxcd1"]
+[ext_resource type="PackedScene" uid="uid://d4kbdpvujqm8n" path="res://scenes/star_gameplay.tscn" id="11_3e3er"]
 [ext_resource type="Script" uid="uid://ddho2emmyrsog" path="res://flocking/core/boid_spawn_config.gd" id="11_brxu4"]
 [ext_resource type="Material" uid="uid://bp2h3axglj66m" path="res://materials/grass.tres" id="12_8hmki"]
 [ext_resource type="PackedScene" uid="uid://c7w2p252lahk" path="res://scenes/player.tscn" id="12_lgyab"]
 [ext_resource type="MeshLibrary" uid="uid://pogebmh1yhsn" path="res://assets/mesh_libraries/walls.tres" id="14_egaff"]
 [ext_resource type="PackedScene" uid="uid://xswox3knp46t" path="res://scenes/farm_with_boid_pen.tscn" id="15_bh8bd"]
+[ext_resource type="Script" uid="uid://djd0d4276h66b" path="res://scripts/results_screen.gd" id="18_bwifq"]
+[ext_resource type="PackedScene" uid="uid://dqblpdwrhl3q0" path="res://scenes/star_results_hollow.tscn" id="19_hxcd1"]
+[ext_resource type="PackedScene" uid="uid://b0imtefhtlpp0" path="res://scenes/star_results_filled.tscn" id="20_brxu4"]
 
 [sub_resource type="Resource" id="Resource_i2tgm"]
 script = ExtResource("2_lgyab")
@@ -54,9 +58,11 @@ system = NodePath("../BoidSystem")
 visuals = Array[ExtResource("8_pc86j")]([ExtResource("9_bwifq")])
 metadata/_custom_type_script = "uid://bh4m16gxnmuuw"
 
-[node name="Level Manager" type="Node3D" parent="scripts" unique_id=1702486038 node_paths=PackedStringArray("boid_system")]
+[node name="Level Manager" type="Node3D" parent="scripts" unique_id=1702486038 node_paths=PackedStringArray("boid_system", "progress_bar")]
 script = ExtResource("10_c5lho")
 boid_system = NodePath("../BoidSystem")
+progress_bar = NodePath("../../UI/ProgressBar")
+star_indicator_scene = ExtResource("11_3e3er")
 
 [node name="BoidSpawnZone" type="Node3D" parent="." unique_id=1176762863 node_paths=PackedStringArray("system")]
 script = ExtResource("10_hxcd1")
@@ -92,3 +98,70 @@ data = {
 [node name="BoidPen" parent="." unique_id=2141528733 node_paths=PackedStringArray("system") instance=ExtResource("15_bh8bd")]
 transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, -7.7689447, 0, 28)
 system = NodePath("../scripts/BoidSystem")
+
+[node name="UI" type="Control" parent="." unique_id=1126724975]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="UI" unique_id=142094643]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 32.0
+grow_horizontal = 2
+max_value = 1.0
+
+[node name="Results Screen" type="PanelContainer" parent="UI" unique_id=1655082414 node_paths=PackedStringArray("level_manager")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("18_bwifq")
+level_manager = NodePath("../../scripts/Level Manager")
+star_hollow = ExtResource("19_hxcd1")
+star_filled = ExtResource("20_brxu4")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Results Screen" unique_id=1155930949]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/Results Screen/VBoxContainer" unique_id=685422388]
+layout_mode = 2
+text = "YOU WIN"
+horizontal_alignment = 1
+
+[node name="Stars" type="HBoxContainer" parent="UI/Results Screen/VBoxContainer" unique_id=591716274]
+layout_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="UI/Results Screen/VBoxContainer" unique_id=500392371]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Button" type="Button" parent="UI/Results Screen/VBoxContainer/Buttons" unique_id=586670514]
+layout_mode = 2
+text = "Main Menu"
+
+[node name="Button2" type="Button" parent="UI/Results Screen/VBoxContainer/Buttons" unique_id=2069210918]
+layout_mode = 2
+text = "Next Level"
+
+[node name="Button" type="Button" parent="UI" unique_id=717319045]
+layout_mode = 1
+offset_top = 32.0
+offset_right = 128.0
+offset_bottom = 64.0
+text = "Give up "
+
+[connection signal="pressed" from="UI/Button" to="scripts/Level Manager" method="on_give_up_button"]

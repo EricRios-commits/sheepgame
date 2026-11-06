@@ -1,4 +1,4 @@
-﻿@tool
+@tool
 class_name BoidObstacle
 extends Node3D
 ## static obstacle 

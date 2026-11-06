@@ -24,6 +24,7 @@ extends Node3D
 ## penned region.
 @export_range(1, 2000, 1) var number_of_spots := 100
 ## Whether penned boids snap to the pen's spots (see compute_world_spot_positions).
+@export var correct_species: StringName = &"sheep"
 @export var snap_to_spots := true
 ## Whether the debug outline of the penned region is visible while the game is running.
 ## The outline is always visible in the editor.

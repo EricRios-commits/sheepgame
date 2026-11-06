@@ -1,22 +1,37 @@
+class_name LevelManager
 extends Node3D
 
 @export var boid_system: BoidSystem
-# Is this the best way to handle it or should this script scan the scene automatically?
+@export var star_percentages: Array[float] = [0.6, 0.8, 1]
+@export var progress_bar: ProgressBar
+@export var star_indicator_scene: PackedScene
 
-@export var starPercentages: Array[float] = [0.6, 0.8, 1]
+var last_percentage = 0
+signal should_show_results(percentage: float, cutoffs: Array[float])
 
 class AmountPerSpecies:
 	var total: int
 	var insideCorrectBarn = 0
 	var insideWrongBarn = 0
 	
-	func _init(total: int):
-		self.total = total
+	func _init(total_: int):
+		self.total = total_
 
 var stats : Dictionary[int, AmountPerSpecies] # Species id to Amount
+var star_indicators: Array[StarIndicator]
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	for star_percentage in star_percentages:
+		var star_indicator = star_indicator_scene.instantiate()
+		progress_bar.add_child(star_indicator)
+		star_indicators.append(star_indicator)
+	
+	# BoidPen registers itself to the system on the first frame of execution, so 
+	# depending on execution order not all pens will be present in the system when this starts
+	# For this reason we delay for one frame
+	call_deferred("_get_pens_from_system")
+
+func _get_pens_from_system():
 	if boid_system == null:
 		push_warning("[Level Manager] '%s' has no system assigned; The level cannot be completed." % name)
 		return
@@ -32,7 +47,6 @@ func _ready() -> void:
 			stats[species_id].total += pen.number_of_spots
 		else:
 			stats[species_id] = AmountPerSpecies.new(pen.number_of_spots)
-	
 
 func _on_boid_penned(pen_index: int, species_id: int):
 	if boid_system == null:
@@ -48,9 +62,10 @@ func _on_boid_penned(pen_index: int, species_id: int):
 		stats[species_id].insideCorrectBarn += 1
 	else:
 		stats[species_id].insideWrongBarn += 1
+	# TODO: add sfx when sheep enters the barn
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	var progress = 0
 	var total_overall = 0
 	for key in stats.keys():
@@ -59,6 +74,25 @@ func _process(delta: float) -> void:
 		# progress += stat.insideCorrectBarn + stat.insideWrongBarn / 2
 		total_overall += stat.total
 	
+	if total_overall == 0:
+		return
+	
 	var percentage = float(progress) / total_overall
-	pass
+	if percentage == 1.0 && progress_bar.value < 1.0:
+		# We have finished the level
+		# I was too lazy to add another variable for the rising edge detection
+		should_show_results.emit(percentage, star_percentages)
+	
+	progress_bar.value = percentage
+	
+	# Update star indicator positions
+	var pb_width = progress_bar.get_rect().size.x
+	for i in star_indicators.size():
+		var this_percentage = star_percentages[i]
+		star_indicators[i].position.x = this_percentage * pb_width
+		star_indicators[i].set_star(percentage >= this_percentage)
+	
+
+func on_give_up_button() -> void:
+	should_show_results.emit(progress_bar.value, star_percentages)
 	
