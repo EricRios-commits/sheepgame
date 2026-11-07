@@ -1,4 +1,4 @@
-﻿class_name BoidVocabulary
+class_name BoidVocabulary
 extends RefCounted
 ## StringName <-> int conversion
 ## Used at startup only

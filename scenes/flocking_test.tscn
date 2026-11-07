@@ -15,13 +15,14 @@
 [ext_resource type="Script" uid="uid://bcbiaoan3p8p5" path="res://flocking/obstacles/boid_obstacle_source_world.gd" id="7_jvyfr"]
 [ext_resource type="Script" uid="uid://bfcj4jv4px22k" path="res://flocking/core/boid_emitter.gd" id="10_k7114"]
 [ext_resource type="Script" uid="uid://c2kshrc3t1oow" path="res://flocking/debug/boid_debug_overlay.gd" id="11_4r5p2"]
-[ext_resource type="Script" uid="uid://cfatoy1e10yl1" path="res://flocking/core/boid_pen.gd" id="14_1efgf"]
 [ext_resource type="Script" uid="uid://bh4m16gxnmuuw" path="res://flocking/presentation/boid_presenter.gd" id="15_shb5a"]
 [ext_resource type="Script" uid="uid://c7cfrpt3iasuh" path="res://flocking/presentation/boid_species_visual.gd" id="16_6x245"]
 [ext_resource type="Shader" uid="uid://dmwuwdcamd3i4" path="res://materials/boid_gait.gdshader" id="17_6x245"]
 [ext_resource type="ArrayMesh" uid="uid://cijrjnrcpjwky" path="res://Low_Poly_Farm_Animals_v1.0/sheep-edit2.blend" id="17_vrvfp"]
 [ext_resource type="MeshLibrary" uid="uid://pogebmh1yhsn" path="res://assets/mesh_libraries/walls.tres" id="19_vrvfp"]
 [ext_resource type="PackedScene" uid="uid://c7w2p252lahk" path="res://scenes/player.tscn" id="22_jvyfr"]
+[ext_resource type="Script" uid="uid://bohp2a4orq7tw" path="res://flocking/pen/boid_pen_storage.gd" id="22_x4u2u"]
+[ext_resource type="Script" uid="uid://bivryc0yy37dq" path="res://flocking/pen/boid_pen_entrance.gd" id="23_1xjow"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_w7mgy"]
 
@@ -260,11 +261,25 @@ shape = SubResource("BoxShape3D_u7jmn")
 
 [node name="BoidSystem" type="Node3D" parent="." unique_id=1636822568]
 script = ExtResource("1_7ko1b")
+rng_seed = null
+sim_hz = null
 ground = SubResource("Resource_h4t55")
 ground_source = SubResource("Resource_atv6b")
+ground_cell = null
 obstacle_sources = Array[ExtResource("6_2j614")]([SubResource("Resource_ww5jj")])
+bake_on_start = null
+profiles = null
 default_profile = ExtResource("3_nfvba")
 interactions = SubResource("Resource_psnpc")
+world_bounds = null
+use_world_bounds = null
+boid_radius = null
+obstacle_cell = null
+obstacle_max_dist = null
+slope_limit_degrees = null
+transition_stride = null
+auto_spawn = null
+run_simulation = null
 metadata/_custom_type_script = "uid://b1wnhlmks4525"
 
 [node name="BoidSpawnZone" type="Node3D" parent="." unique_id=2001783826 node_paths=PackedStringArray("system")]
@@ -293,14 +308,6 @@ script = ExtResource("11_4r5p2")
 system = NodePath("../BoidSystem")
 metadata/_custom_type_script = "uid://c2kshrc3t1oow"
 
-[node name="BoidPen" type="Node3D" parent="." unique_id=997255839 node_paths=PackedStringArray("system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16.497005, -62.851818)
-script = ExtResource("14_1efgf")
-system = NodePath("../BoidSystem")
-number_of_spots = 500
-show_gizmo_in_game = true
-metadata/_custom_type_script = "uid://cfatoy1e10yl1"
-
 [node name="Label3D" type="Label3D" parent="." unique_id=1843048041]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 11.952294, -25.122623)
 text = "Overhangs are bad"
@@ -325,3 +332,14 @@ script = ExtResource("15_shb5a")
 system = NodePath("../BoidSystem")
 visuals = Array[ExtResource("16_6x245")]([SubResource("Resource_1xjow")])
 metadata/_custom_type_script = "uid://bh4m16gxnmuuw"
+
+[node name="BoidPenStorage" type="Node3D" parent="." unique_id=1003813335 node_paths=PackedStringArray("system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17.26068, -10.402582)
+script = ExtResource("22_x4u2u")
+system = NodePath("../BoidSystem")
+metadata/_custom_type_script = "uid://bohp2a4orq7tw"
+
+[node name="BoidPenEntrance" type="Node3D" parent="." unique_id=771173911 node_paths=PackedStringArray("storage")]
+script = ExtResource("23_1xjow")
+storage = NodePath("../BoidPenStorage")
+metadata/_custom_type_script = "uid://bivryc0yy37dq"
