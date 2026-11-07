@@ -13,6 +13,7 @@ var _e_held := false
 
 
 func _ready() -> void:
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	_follow_target = get_node_or_null(follow_target_path) as Node3D
 	if _follow_target:
 		global_position = _follow_target.global_position + Vector3.UP * follow_height
@@ -28,7 +29,7 @@ func _process(delta: float) -> void:
 		rotation.y = wrapf(rotation.y + deg_to_rad(rotation_speed_degrees) * turn_input * delta, -PI, PI)
 
 	if _follow_target:
-		var destination := _follow_target.global_position + Vector3.UP * follow_height
+		var destination := _follow_target.get_global_transform_interpolated().origin + Vector3.UP * follow_height
 		global_position = global_position.lerp(destination, 1.0 - exp(-follow_speed * delta))
 
 

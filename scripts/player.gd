@@ -5,7 +5,15 @@ extends CharacterBody3D
 @export_range(0.1, 30.0, 0.1) var turn_speed: float = 12.0
 @export_range(1.0, 15.0, 0.1) var jump_speed: float = 5.0
 
+@export_range(0.1, 2.0, 0.05) var hop_duration: float = 0.25
+@export_range(0.0, 0.5, 0.01) var hop_height: float = 0.2
+@export_range(0.0, 0.3, 0.01) var hop_sideways: float = 0.12
+@export_range(0.0, 30.0, 1.0) var hop_roll_degrees: float = 13.0
+
 var _model: Node3D
+var _dog: Node3D
+var _hop_time := 0.0
+var _hop_blend := 0.0
 var _jump_requested := false
 
 # Passthrough
@@ -13,13 +21,13 @@ var _jump_requested := false
 @export var boid_emitter: BoidEmitter
 
 func _ready() -> void:
-	_model = get_node_or_null("goose2") as Node3D
+	_model = get_node_or_null("Visuals") as Node3D
+	_dog = get_node_or_null("Visuals/DogModel") as Node3D
 	if boid_system != null: 
 		# By default the emitter cannot have a reference to the system because it's outside the scene of the player
 		boid_emitter.system = boid_system
 		# so we force a restart on the boid manually
 		boid_emitter._ready()
-
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEventKey:
@@ -54,7 +62,7 @@ func _physics_process(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, move_direction.x * move_speed, acceleration * delta)
 	velocity.z = move_toward(velocity.z, move_direction.z * move_speed, acceleration * delta)
 	if is_on_floor():
-		velocity.y = jump_speed if _jump_requested else 0.0
+		velocity.y = jump_speed if _jump_requested else -0.1
 	else:
 		velocity.y -= 9.8 * delta
 	_jump_requested = false
@@ -63,3 +71,20 @@ func _physics_process(delta: float) -> void:
 	if _model and move_direction.length_squared() > 0.0:
 		var facing := atan2(move_direction.x, move_direction.z)
 		_model.rotation.y = lerp_angle(_model.rotation.y, facing, minf(turn_speed * delta, 1.0))
+
+	# Roll around the dog's forward (lengthwise) axis, with alternating hops.
+	# The visual offset never affects collisions or the direction of travel.
+	if _dog:
+		var moving := Vector2(velocity.x, velocity.z).length() > 0.1
+		var target_blend := 1.0 if is_on_floor() and moving else 0.0
+		_hop_blend = move_toward(_hop_blend, target_blend, delta * 8.0)
+		if target_blend > 0.0:
+			_hop_time = fposmod(_hop_time + delta, hop_duration * 2.0)
+		var hop_phase := _hop_time / hop_duration
+		var progress := fposmod(hop_phase, 1.0)
+		var side := 1.0 if hop_phase < 1.0 else -1.0
+		# A parabolic arc has a brisk takeoff and a decisive landing.
+		var arc := 4.0 * progress * (1.0 - progress)
+		_dog.position.x = side * arc * hop_sideways * _hop_blend
+		_dog.position.y = arc * hop_height * _hop_blend
+		_dog.rotation.z = side * arc * deg_to_rad(hop_roll_degrees) * _hop_blend
