@@ -2,6 +2,7 @@
 extends BoidInfluence
 ## Holds a preferred speed along the current direction of travel
 
+## Speed to hold along travel
 @export var speed := 1.2
 
 

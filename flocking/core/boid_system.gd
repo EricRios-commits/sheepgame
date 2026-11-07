@@ -109,10 +109,10 @@ var active_emitter_count := 0
 var emitter_positions := PackedVector2Array()
 var emitter_velocities := PackedVector2Array()
 var emitter_directions := PackedVector2Array()
-var emiter_radii := PackedFloat32Array()
+var emitter_radii := PackedFloat32Array()
 var emitter_cos_half_angles := PackedFloat32Array()
 var emitter_strengths := PackedFloat32Array()
-var emitter_kinds := PackedInt32Array()
+var emitter_kind_ids := PackedInt32Array()
 ## Strength-curve lookup tables, CURVE_LUT_SAMPLES entries per emitter, stored back to back.
 var emitter_curve_luts := PackedFloat32Array()
 
@@ -473,10 +473,10 @@ func _publish_emitters() -> void:
 	emitter_positions.resize(count)
 	emitter_velocities.resize(count)
 	emitter_directions.resize(count)
-	emiter_radii.resize(count)
+	emitter_radii.resize(count)
 	emitter_cos_half_angles.resize(count)
 	emitter_strengths.resize(count)
-	emitter_kinds.resize(count)
+	emitter_kind_ids.resize(count)
 	emitter_curve_luts.resize(count * CURVE_LUT_SAMPLES)
 	var write_index := 0
 	for emitter in _emitters:
@@ -485,10 +485,10 @@ func _publish_emitters() -> void:
 		emitter_positions[write_index] = emitter.xz()
 		emitter_velocities[write_index] = emitter.ground_velocity
 		emitter_directions[write_index] = emitter.dir_xz()
-		emiter_radii[write_index] = maxf(emitter.radius, 0.01)
+		emitter_radii[write_index] = maxf(emitter.radius, 0.01)
 		emitter_cos_half_angles[write_index] = cos(deg_to_rad(emitter.cone_half_angle_degrees))
 		emitter_strengths[write_index] = emitter.strength
-		emitter_kinds[write_index] = emitter.kind_id
+		emitter_kind_ids[write_index] = emitter.kind_id
 		var base := write_index * CURVE_LUT_SAMPLES
 		for sample_index in CURVE_LUT_SAMPLES:
 			var curve_position := float(sample_index) / float(CURVE_LUT_SAMPLES - 1)
@@ -560,96 +560,96 @@ func _stage_gather() -> void:
 ## Combination policy: prioritised acceleration allocation. Layers are visited in
 ## priority order
 func _stage_combine() -> void:
-	var n := store.active_count
-	combined_accel.resize(n)
+	var boid_count := store.active_count
+	combined_accel.resize(boid_count)
 	var layers := layer_accels
-	var max_accel := behaviour_table.max_accel
-	for i in n:
-		var max_a := max_accel[_group_of_boid[i]]
+	var group_max_accel := behaviour_table.max_accel
+	for i in boid_count:
+		var max_acceleration := group_max_accel[_group_of_boid[i]]
 		var total := Vector2.ZERO
 		var used := 0.0
-		for l in LAYER_COUNT:
-			var v := layers[l][i]
-			var len2 := v.length_squared()
-			if len2 < 1e-12:
+		for layer in LAYER_COUNT:
+			var layer_accel := layers[layer][i]
+			var length_squared := layer_accel.length_squared()
+			if length_squared < 1e-12:
 				continue
-			var room := max_a - used
+			var room := max_acceleration - used
 			if room <= 0.0:
 				break
-			var len := sqrt(len2)
-			if len > room:
-				v *= room / len
-				len = room
-			total += v
-			used += len
+			var length := sqrt(length_squared)
+			if length > room:
+				layer_accel *= room / length
+				length = room
+			total += layer_accel
+			used += length
 		combined_accel[i] = total
-	if debug_slot >= 0 and debug_slot < n:
+	if debug_slot >= 0 and debug_slot < boid_count:
 		debug_total = combined_accel[debug_slot]
-		for l in LAYER_COUNT:
-			debug_layers[l] = layers[l][debug_slot]
+		for layer in LAYER_COUNT:
+			debug_layers[layer] = layers[layer][debug_slot]
 	else:
 		debug_total = Vector2.ZERO
 		debug_layers.fill(Vector2.ZERO)
 
 
 func _stage_integrate(dt: float) -> void:
-	var n := store.active_count
-	if combined_accel.size() != n:
+	var boid_count := store.active_count
+	if combined_accel.size() != boid_count:
 		return
-	var pos := store.pos
-	var vel := store.vel
-	var spd := store.speed
-	var hdg := store.heading
-	var max_speed := behaviour_table.max_speed
-	var clamp_pos := use_world_bounds
-	var b_min := world_bounds.position
-	var b_max := world_bounds.end
-	var f := obstacles
-	var have_f := f != null
-	var r := boid_radius
-	var f_dist := PackedFloat32Array()
-	var f_w := 0
-	var f_d := 0
-	var f_ox := 0.0
-	var f_oz := 0.0
-	var f_inv := 1.0
-	var f_near := 0.0
-	if have_f:
-		f_dist = f.dist
-		f_w = f.width
-		f_d = f.depth
-		f_ox = f.origin.x
-		f_oz = f.origin.y
-		f_inv = 1.0 / f.cell
-		f_near = r + f.cell
-	for i in n:
-		var max_s := max_speed[_group_of_boid[i]]
-		var v := vel[i] + combined_accel[i] * dt
-		var s := v.length()
-		if s > max_s:
-			v *= max_s / s
-			s = max_s
-		var p := pos[i] + v * dt
-		if have_f:
-			var cx := clampi(int((p.x - f_ox) * f_inv), 0, f_w - 1)
-			var cz := clampi(int((p.y - f_oz) * f_inv), 0, f_d - 1)
-			if f_dist[cz * f_w + cx] < f_near:
-				var sm := f.sample(p)
-				var gap := sm.x - r
+	var positions := store.pos
+	var velocities := store.vel
+	var speeds := store.speed
+	var headings := store.heading
+	var group_max_speed := behaviour_table.max_speed
+	var clamp_to_bounds := use_world_bounds
+	var bounds_min := world_bounds.position
+	var bounds_max := world_bounds.end
+	var field := obstacles
+	var has_field := field != null
+	var radius := boid_radius
+	var field_dist := PackedFloat32Array()
+	var field_width := 0
+	var field_depth := 0
+	var field_origin_x := 0.0
+	var field_origin_z := 0.0
+	var field_inv_cell := 1.0
+	var field_near_threshold := 0.0
+	if has_field:
+		field_dist = field.dist
+		field_width = field.width
+		field_depth = field.depth
+		field_origin_x = field.origin.x
+		field_origin_z = field.origin.y
+		field_inv_cell = 1.0 / field.cell
+		field_near_threshold = radius + field.cell
+	for i in boid_count:
+		var boid_max_speed := group_max_speed[_group_of_boid[i]]
+		var new_velocity := velocities[i] + combined_accel[i] * dt
+		var new_speed := new_velocity.length()
+		if new_speed > boid_max_speed:
+			new_velocity *= boid_max_speed / new_speed
+			new_speed = boid_max_speed
+		var new_position := positions[i] + new_velocity * dt
+		if has_field:
+			var cx := clampi(int((new_position.x - field_origin_x) * field_inv_cell), 0, field_width - 1)
+			var cz := clampi(int((new_position.y - field_origin_z) * field_inv_cell), 0, field_depth - 1)
+			if field_dist[cz * field_width + cx] < field_near_threshold:
+				var sm := field.sample(new_position)
+				var gap := sm.x - radius
 				if gap < 0.0:
 					var nrm := Vector2(sm.y, sm.z)
-					p -= nrm * gap
-					var vn := v.dot(nrm)
+					new_position -= nrm * gap
+					var vn := new_velocity.dot(nrm)
 					if vn < 0.0:
-						v -= nrm * vn
-						s = v.length()
-		vel[i] = v
-		spd[i] = s
-		if s > 0.001:
-			hdg[i] = atan2(v.x, v.y)
-		if clamp_pos:
-			p = p.clamp(b_min, b_max)
-		pos[i] = p
+						new_velocity -= nrm * vn
+						new_speed = new_velocity.length()
+		velocities[i] = new_velocity
+		speeds[i] = new_speed
+		if new_speed > 0.001:
+			headings[i] = atan2(new_velocity.x, new_velocity.y)
+		if clamp_to_bounds:
+			new_position = new_position.clamp(bounds_min, bounds_max)
+		positions[i] = new_position
 
 
 func _stage_ground() -> void:
@@ -704,7 +704,7 @@ func _stage_transitions() -> void:
 
 func _emitter_within(p: Vector2, kind: int, dist2: float) -> bool:
 	for e in active_emitter_count:
-		if kind >= 0 and emitter_kinds[e] != kind:
+		if kind >= 0 and emitter_kind_ids[e] != kind:
 			continue
 		if (emitter_positions[e] - p).length_squared() <= dist2:
 			return true

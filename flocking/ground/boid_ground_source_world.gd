@@ -1,9 +1,11 @@
 ﻿class_name BoidGroundSourceWorld
 extends BoidGroundSource
 
+## Collision layers to take the ground from
 @export_flags_3d_physics var collision_mask := 1
 ## Rays run from max_height down to min_height (world y).
 @export var max_height := 500.0
+## Rays run from max_height down to min_height (world y).
 @export var min_height := -500.0
 
 
