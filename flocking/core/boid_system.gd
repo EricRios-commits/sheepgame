@@ -5,16 +5,27 @@ extends Node3D
 
 ## Phases of one simulation tick, in execution order. Used to index per-stage timings.
 enum Stage { SNAPSHOT, REBUILD_NEIGHBOURS, GATHER, COMBINE, INTEGRATE, GROUND, TRANSITIONS, COMMIT, PRESENT }
+## State of one spot in a BoidPenStorage.
+enum SpotState {
+	## Nobody is using the spot.
+	FREE,
+	## Claimed by a boid that has not arrived yet. Unused for now (instant snap claims and
+	## finalizes in the same step); it exists so a walk-in entry can reserve a spot.
+	RESERVED,
+	## A boid is penned on the spot.
+	OCCUPIED,
+}
 const STAGE_NAMES := ["Snapshot", "Neighbours", "Gather", "Combine", "Integrate", "Ground",
 		"Transitions", "Commit", "Present"]
-
 ## Cap on simulation ticks per physics frame. If the cap is hit, the leftover time is dropped.
 const MAX_STEPS_PER_FRAME := 4
 ## Number of samples taken from each emitter's strength curve when building its lookup table.
 const CURVE_LUT_SAMPLES := 16
 const LAYER_COUNT := BoidInfluence.LAYER_COUNT
+## Capacity of a storage that does not snap to spots.
+const UNLIMITED_CAPACITY := 1 << 30
 
-## Special states, registered in every system. PENNED is terminal and frozen, entering DEAD
+## Special states, registered in every system. PENNED is terminal and frozen; entering DEAD
 ## removes the boid in the same Commit.
 const PENNED_STATE := &"penned"
 const DEAD_STATE := &"dead"
@@ -25,15 +36,15 @@ signal spawned(count: int)
 signal present_requested
 ## Emitted at the end of every simulation tick with the tick length in seconds.
 signal ticked(sim_dt: float)
-## Emitted when a boid is accepted into a pen.
-signal boid_penned(pen_index: int, species_id: int)
+## Emitted when a boid is accepted into a storage.
+signal boid_penned(storage_index: int, species_id: int)
 ## Emitted when a boid enters the DEAD state, with its ground position at that moment.
 signal boid_died(species_id: int, position: Vector2)
 
 ## Seed for the system's random number generator. It is re-applied at the start of every
 ## spawn_all(), so spawning is deterministic.
 @export var rng_seed := 12345
-## Simulation rate, decoupled from the physics rate
+## Simulation rate in ticks per second, decoupled from the physics rate
 @export_range(5, 120) var sim_hz := 30
 ## The runtime ground. If unset, a default BoidGround is created on _ready.
 @export var ground: BoidGround
@@ -56,7 +67,7 @@ signal boid_died(species_id: int, position: Vector2)
 @export var interactions: BoidInteractionTable
 ## Region of the ground plane (x, z) the simulation takes place in, in world units.
 @export var world_bounds := Rect2(-120.0, -120.0, 240.0, 240.0)
-## If true, boids are clamped to world_bounds
+## If true, boids are clamped to world_bounds and cannot spawn outside it.
 @export var use_world_bounds := true
 ## Collision radius of a boid against obstacles, in world units. Spawn points also need
 ## 1.5x this much clearance from obstacles.
@@ -65,10 +76,11 @@ signal boid_died(species_id: int, position: Vector2)
 @export var obstacle_cell := 0.5
 ## Maximum distance, in world units, that the baked obstacle field represents.
 @export var obstacle_max_dist := 5.0
-## Ground steeper than this counts as unwalkable (0 = off).
+## Ground steeper than this counts as unwalkable, in degrees (0 = off).
 @export var slope_limit_degrees := 0.0
 ## Each boid's state transitions are evaluated once every this many ticks (staggered across
-## boids). Higher values are cheaper but make transitions react later.
+## boids). Higher values are cheaper but make transitions react later. Pen entrance checks
+## use the same stride.
 @export_range(1, 10) var transition_stride := 3
 ## If true, the system bakes (if enabled) and spawns all registered zones on startup.
 @export var auto_spawn := true
@@ -81,8 +93,8 @@ var store := BoidStore.new()
 var vocab := BoidVocabulary.new()
 ## Random number generator used for spawning. Seeded from rng_seed.
 var rng := RandomNumberGenerator.new()
-## Per-stage timing of the simulation tick (for debugging)
-var timer := BoidStageTimer.new(PackedStringArray(STAGE_NAMES))
+## Per-stage timing of the simulation tick (used for debug displays).
+var stage_timer := BoidStageTimer.new(PackedStringArray(STAGE_NAMES))
 ## Spatial structure used to find neighbours.
 var neighbours: BoidNeighbourStrategy = BoidNeighbourHash.new()
 ## Compiled per-(species, state) behaviour data. Rebuilt when the vocabulary changes.
@@ -104,31 +116,36 @@ var combined_accel := PackedVector2Array()
 ## Accelerations gathered per influence layer, then combined in priority order.
 var layer_accels: Array[PackedVector2Array] = []
 
-## Emitters published this tick
+## Emitters published this tick (active emitters only; all arrays below are parallel)
 var active_emitter_count := 0
 var emitter_positions := PackedVector2Array()
 var emitter_velocities := PackedVector2Array()
 var emitter_directions := PackedVector2Array()
-var emiter_radii := PackedFloat32Array()
+var emitter_radii := PackedFloat32Array()
 var emitter_cos_half_angles := PackedFloat32Array()
 var emitter_strengths := PackedFloat32Array()
-var emitter_kinds := PackedInt32Array()
+var emitter_kind_ids := PackedInt32Array()
 ## Strength-curve lookup tables, CURVE_LUT_SAMPLES entries per emitter, stored back to back.
 var emitter_curve_luts := PackedFloat32Array()
 
-## Registered pens, sorted by node path when pens are built. Index = BoidPen.pen_index.
-var pens: Array[BoidPen] = []
-## Per-pen arrays below are indexed by pen index.
-var pen_boid_counts := PackedInt32Array()
-var pen_capacities := PackedInt32Array()
-var pen_centers := PackedVector2Array()
-## Pen's local X axis projected onto the ground plane (unit length).
-var pen_axes_x := PackedVector2Array()
-## Pen's local Z axis projected onto the ground plane (unit length).
-var pen_axes_z := PackedVector2Array()
-var pen_half_extents := PackedVector2Array()
-## Local z of each pen's entry line (see BoidPen.get_entry_line_local_z).
-var pen_entry_lines_local_zs := PackedFloat32Array()
+
+## Registered storages, sorted by node path when they are built. Index = BoidPenStorage.storage_index.
+var storages: Array[BoidPenStorage] = []
+## Per-storage arrays below are indexed by storage index.
+var storage_boid_counts := PackedInt32Array()
+var storage_capacities := PackedInt32Array()
+
+## Registered entrances that have a valid storage, sorted by node path when they are built.
+var entrances: Array[BoidPenEntrance] = []
+## Per-entrance arrays below are indexed by entrance index.
+var entrance_centers := PackedVector2Array()
+## Entrance's local X axis projected onto the ground plane (unit length).
+var entrance_axes_x := PackedVector2Array()
+## Entrance's local Z axis projected onto the ground plane (unit length).
+var entrance_axes_z := PackedVector2Array()
+var entrance_half_extents := PackedVector2Array()
+## Index (into storages) of the storage each entrance sends boids to.
+var entrance_storage_indices := PackedInt32Array()
 
 ## Debug tap for one boid
 var debug_handle := BoidStore.INVALID_HANDLE
@@ -143,8 +160,8 @@ var debug_neighbour_pos := PackedVector2Array()
 var _zones: Array[BoidSpawnZone] = []
 var _emitters: Array[BoidEmitter] = []
 var _obstacle_nodes: Array[BoidObstacle] = []
-var _pen_spot_positions: Array[PackedVector2Array] = []
-var _pen_spot_occupied: Array[PackedByteArray] = []
+var _storage_spot_positions: Array[PackedVector2Array] = []
+var _storage_spot_states: Array[PackedByteArray] = []
 var _time_accumulator := 0.0
 var _behaviour_table_version := -1
 var _group_of_boid := PackedInt32Array()
@@ -155,12 +172,12 @@ var _warned_invalid_group := false
 var _removal_queue := PackedInt64Array()
 var _pending_state_handles := PackedInt64Array()
 var _pending_state_ids := PackedInt32Array()
-var _pending_pen_handles := PackedInt64Array()
-var _pending_pen_indices := PackedInt32Array()
+var _pending_entry_handles := PackedInt64Array()
+var _pending_entry_entrance_indices := PackedInt32Array()
 
 
 func _init() -> void:
-	for l in LAYER_COUNT:
+	for layer in LAYER_COUNT:
 		layer_accels.append(PackedVector2Array())
 	debug_layers.resize(LAYER_COUNT)
 
@@ -180,19 +197,21 @@ func _start() -> void:
 		await get_tree().physics_frame
 		bake_environment()
 	else:
-		_build_pens()
+		_build_storages_and_entrances()
 	spawn_all()
 
 
+## Called by BoidSpawnZone on _ready.
 func register_zone(zone: BoidSpawnZone) -> void:
 	if not _zones.has(zone):
 		_zones.append(zone)
 
 
+## Called by BoidEmitter on _ready. Also assigns the emitter's emitter_kind_id.
 func register_emitter(emitter: BoidEmitter) -> void:
 	if _emitters.has(emitter):
 		return
-	emitter.kind_id = vocab.emitter_kind_id(emitter.kind)
+	emitter.emitter_kind_id = vocab.emitter_kind_id(emitter.kind)
 	_emitters.append(emitter)
 
 
@@ -205,11 +224,19 @@ func register_obstacle(obstacle: BoidObstacle) -> void:
 		_obstacle_nodes.append(obstacle)
 
 
-func register_pen(pen: BoidPen) -> void:
-	if not pens.has(pen):
-		pens.append(pen)
+## Called by BoidPenStorage on _ready. Storages only get their index once they are built.
+func register_storage(storage: BoidPenStorage) -> void:
+	if not storages.has(storage):
+		storages.append(storage)
 
 
+## Called by BoidPenEntrance on _ready. Entrances only get used once they are built.
+func register_entrance(entrance: BoidPenEntrance) -> void:
+	if not entrances.has(entrance):
+		entrances.append(entrance)
+
+
+## Forces the behaviour table to be rebuilt on the next tick.
 func invalidate_table() -> void:
 	behaviour_table = null
 
@@ -225,19 +252,19 @@ func bake_environment() -> void:
 			ground = baked_ground
 		else:
 			push_error("BoidSystem: ground_source failed to bake; keeping the existing ground.")
-	_build_pens()
-	var is_heightfield := ground is BoidHeightfield
-	if _obstacle_nodes.is_empty() and obstacle_sources.is_empty() and not is_heightfield:
+	_build_storages_and_entrances()
+	var ground_is_heightfield := ground is BoidHeightfield
+	if _obstacle_nodes.is_empty() and obstacle_sources.is_empty() and not ground_is_heightfield:
 		return
 	var obstacle_field := BoidObstacleField.new()
 	obstacle_field.setup(world_bounds, obstacle_cell, obstacle_max_dist)
-	for obstacle in _obstacle_nodes:
-		obstacle.bake_into(obstacle_field)
-	if is_heightfield:
+	for obstacle_node in _obstacle_nodes:
+		obstacle_node.bake_into(obstacle_field)
+	if ground_is_heightfield:
 		obstacle_field.apply_walkable(ground, slope_limit_degrees)
-	for source in obstacle_sources:
-		if source != null:
-			source.bake_obstacles(self, obstacle_field)
+	for obstacle_source in obstacle_sources:
+		if obstacle_source != null:
+			obstacle_source.bake_obstacles(self, obstacle_field)
 	obstacle_field.compute_normals()
 	obstacles = obstacle_field
 
@@ -251,40 +278,64 @@ func save_baked(ground_path: String, obstacles_path: String) -> Error:
 	return err
 
 
-func _build_pens() -> void:
-	pens.sort_custom(func(a: BoidPen, b: BoidPen) -> bool: return str(a.get_path()) < str(b.get_path()))
-	pen_boid_counts.resize(pens.size())
-	pen_boid_counts.fill(0)
-	pen_capacities.resize(pens.size())
-	pen_centers.resize(pens.size())
-	pen_axes_x.resize(pens.size())
-	pen_axes_z.resize(pens.size())
-	pen_half_extents.resize(pens.size())
-	pen_entry_lines_local_zs.resize(pens.size())
-	_pen_spot_positions.clear()
-	_pen_spot_occupied.clear()
-	for i in pens.size():
-		var pen := pens[i]
-		pen.index = i
-		var basis := pen.global_transform.basis
-		pen_centers[i] = pen.xz()
-		pen_axes_x[i] = Vector2(basis.x.x, basis.x.z).normalized()
-		pen_axes_z[i] = Vector2(basis.z.x, basis.z.z).normalized()
-		pen_half_extents[i] = pen.trigger_half()
-		pen_entry_lines_local_zs[i] = pen.trigger_zmin()
-		var spots := pen.compute_spots()
-		var used := PackedByteArray()
-		used.resize(spots.size())
-		_pen_spot_positions.append(spots)
-		_pen_spot_occupied.append(used)
-		pen_capacities[i] = spots.size() if pen.snap_to_spots else (1 << 30)
+## Builds storages first (sorted by node path, indexed, spots laid out), then entrances
+## (sorted by node path, resolved to a storage index, geometry cached). Entrances whose
+## storage is missing or not registered with this system are dropped with a warning.
+func _build_storages_and_entrances() -> void:
+	storages.sort_custom(func(storage_a: BoidPenStorage, storage_b: BoidPenStorage) -> bool: return str(storage_a.get_path()) < str(storage_b.get_path()))
+	var storage_total := storages.size()
+	storage_boid_counts.resize(storage_total)
+	storage_boid_counts.fill(0)
+	storage_capacities.resize(storage_total)
+	_storage_spot_positions.clear()
+	_storage_spot_states.clear()
+	for i in storage_total:
+		var storage := storages[i]
+		storage.storage_index = i
+		var spot_positions := storage.compute_world_spot_positions()
+		var spot_states := PackedByteArray()
+		spot_states.resize(spot_positions.size())
+		_storage_spot_positions.append(spot_positions)
+		_storage_spot_states.append(spot_states)
+		storage_capacities[i] = spot_positions.size() if storage.snap_to_spots else UNLIMITED_CAPACITY
+
+	entrances.sort_custom(func(entrance_a: BoidPenEntrance, entrance_b: BoidPenEntrance) -> bool: return str(entrance_a.get_path()) < str(entrance_b.get_path()))
+	var usable_entrances: Array[BoidPenEntrance] = []
+	for entrance in entrances:
+		if entrance.storage == null or not storages.has(entrance.storage):
+			push_warning("BoidSystem: entrance '%s' points at a storage that is not registered with this system; it will be ignored." % entrance.name)
+			continue
+		usable_entrances.append(entrance)
+	entrances = usable_entrances
+	var entrance_total := entrances.size()
+	entrance_centers.resize(entrance_total)
+	entrance_axes_x.resize(entrance_total)
+	entrance_axes_z.resize(entrance_total)
+	entrance_half_extents.resize(entrance_total)
+	entrance_storage_indices.resize(entrance_total)
+	var entrances_per_storage := PackedInt32Array()
+	entrances_per_storage.resize(storage_total)
+	for i in entrance_total:
+		var entrance := entrances[i]
+		var entrance_basis := entrance.global_transform.basis
+		entrance_centers[i] = entrance.get_ground_position()
+		entrance_axes_x[i] = Vector2(entrance_basis.x.x, entrance_basis.x.z).normalized()
+		entrance_axes_z[i] = Vector2(entrance_basis.z.x, entrance_basis.z.z).normalized()
+		entrance_half_extents[i] = entrance.get_half_extents()
+		var storage_index := storages.find(entrance.storage)
+		entrance_storage_indices[i] = storage_index
+		entrances_per_storage[storage_index] += 1
+	for i in storage_total:
+		if entrances_per_storage[i] == 0:
+			push_warning("BoidSystem: storage '%s' has no entrances; nothing can enter it." % storages[i].name)
 
 
 # public API
 
+## Spawns boids for every registered zone (in node-path order) and returns how many were placed.
 func spawn_all() -> int:
-	_zones.sort_custom(func(a: BoidSpawnZone, b: BoidSpawnZone) -> bool:
-		return str(a.get_path()) < str(b.get_path()))
+	_zones.sort_custom(func(zone_a: BoidSpawnZone, zone_b: BoidSpawnZone) -> bool:
+		return str(zone_a.get_path()) < str(zone_b.get_path()))
 	rng.seed = rng_seed
 	var spawned_count := 0
 	for zone in _zones:
@@ -294,6 +345,7 @@ func spawn_all() -> int:
 	return spawned_count
 
 
+## Queues a state change for a boid. Applied during the Commit stage of the current tick.
 func request_state(handle: int, state_id: int) -> void:
 	_pending_state_handles.append(handle)
 	_pending_state_ids.append(state_id)
@@ -311,43 +363,47 @@ func penned_count() -> int:
 	return store.count - store.active_count
 
 
-func pen_count_of(pen_index: int) -> int:
-	return pen_boid_counts[pen_index]
+func storage_count_of(storage_index: int) -> int:
+	return storage_boid_counts[storage_index]
 
 
 func deaths_of(species_id: int) -> int:
 	return deaths_by_species[species_id] if species_id < deaths_by_species.size() else 0
 
 
+## Counts boids matching the given species and state ids (-1 matches any).
 func count_by(species_id: int = -1, state_id: int = -1) -> int:
-	var n := 0
+	var matching_count := 0
 	for i in store.count:
 		if (species_id < 0 or store.species[i] == species_id) and (state_id < 0 or store.state[i] == state_id):
-			n += 1
-	return n
+			matching_count += 1
+	return matching_count
 
 
 func check_invariants() -> bool:
 	if store.count != spawned_total - removed_total or not store.check_consistency():
 		return false
-	var in_pens := 0
-	for count in pen_boid_counts:
-		in_pens += count
-	if in_pens > store.count - store.active_count:
+	var counted_in_storages := 0
+	for boid_count_in_storage in storage_boid_counts:
+		counted_in_storages += boid_count_in_storage
+	if counted_in_storages > store.count - store.active_count:
 		return false
-	var in_pens_scan := 0
+	var counted_in_storages_by_scan := 0
 	for i in range(store.active_count, store.count):
-		if store.pen_id[i] >= 0:
-			in_pens_scan += 1
-	return in_pens_scan == in_pens
+		if store.storage_id[i] >= 0:
+			counted_in_storages_by_scan += 1
+	return counted_in_storages_by_scan == counted_in_storages
 
+
+## Fraction (0..1) of the way from the previous simulation tick to the next, for smoothing
+## rendering between ticks.
 func interpolation_alpha() -> float:
 	if not run_simulation:
 		return 1.0
-	var since := _time_accumulator + Engine.get_physics_interpolation_fraction() / float(Engine.physics_ticks_per_second)
-	return clampf(since * float(sim_hz), 0.0, 1.0)
+	var seconds_since_last_tick := _time_accumulator + Engine.get_physics_interpolation_fraction() / float(Engine.physics_ticks_per_second)
+	return clampf(seconds_since_last_tick * float(sim_hz), 0.0, 1.0)
 
-# spawingn
+# spawning
 
 func _spawn_zone(zone: BoidSpawnZone) -> int:
 	var spawn_config := zone.config
@@ -355,50 +411,48 @@ func _spawn_zone(zone: BoidSpawnZone) -> int:
 		return 0
 	var species_id := vocab.species_id(spawn_config.species)
 	var state_id := vocab.state_id(spawn_config.initial_state)
-	var centre := zone.center_xz()
+	var zone_center := zone.get_ground_position()
 	var placed := 0
 	for boid_index in spawn_config.count:
 		var ground_position := Vector2.ZERO
 		var found_position := false
 		for attempt in 20:
-			ground_position = zone.local_to_world_xz(zone.sample_local(rng))
+			ground_position = zone.local_to_world_ground(zone.sample_local_ground_position(rng))
 			if _spawn_ok(ground_position):
 				found_position = true
 				break
 		if not found_position:
 			continue
-		var h := _initial_heading(spawn_config, ground_position, centre)
-		var dir := Vector2(sin(h), cos(h))
-		store.add(ground_position, dir * spawn_config.initial_speed, h, 
-			spawn_config.initial_speed, species_id, state_id, ground.height_at(ground_position))
+		var heading := _initial_heading(spawn_config, ground_position, zone_center)
+		var direction := Vector2(sin(heading), cos(heading))
+		store.add(ground_position, direction * spawn_config.initial_speed, heading, spawn_config.initial_speed, species_id, state_id, ground.height_at(ground_position))
 		placed += 1
 	if placed < spawn_config.count:
-		push_warning("BoidSpawnZone '%s': only %d of %d boids found a legal position (off ground, in an obstacle or out of bounds)." 
-			% [zone.name, placed, spawn_config.count])
+		push_warning("BoidSpawnZone '%s': only %d of %d boids found a legal position (off ground, in an obstacle or out of bounds)." % [zone.name, placed, spawn_config.count])
 	return placed
 
 
-func _spawn_ok(xz: Vector2) -> bool:
-	if use_world_bounds and not world_bounds.has_point(xz):
+func _spawn_ok(ground_position: Vector2) -> bool:
+	if use_world_bounds and not world_bounds.has_point(ground_position):
 		return false
-	if not ground.is_over_ground(xz):
+	if not ground.is_over_ground(ground_position):
 		return false
-	if obstacles != null and obstacles.sample(xz).x < boid_radius * 1.5:
+	if obstacles != null and obstacles.sample(ground_position).x < boid_radius * 1.5:
 		return false
 	return true
 
 
-func _initial_heading(spawn_config: BoidSpawnConfig, ground_position: Vector2, zone_centre: Vector2) -> float:
+func _initial_heading(spawn_config: BoidSpawnConfig, ground_position: Vector2, zone_center: Vector2) -> float:
 	match spawn_config.heading_policy:
 		BoidSpawnConfig.HeadingPolicy.FIXED:
 			return deg_to_rad(spawn_config.fixed_heading_degrees)
 		BoidSpawnConfig.HeadingPolicy.RADIAL_OUT, BoidSpawnConfig.HeadingPolicy.TOWARD_CENTER:
-			var offset_from_centre := ground_position - zone_centre
+			var offset_from_center := ground_position - zone_center
 			if spawn_config.heading_policy == BoidSpawnConfig.HeadingPolicy.TOWARD_CENTER:
-				offset_from_centre = -offset_from_centre
-			if offset_from_centre.length_squared() < 1e-8:
+				offset_from_center = -offset_from_center
+			if offset_from_center.length_squared() < 1e-8:
 				return rng.randf() * TAU
-			return atan2(offset_from_centre.x, offset_from_centre.y)
+			return atan2(offset_from_center.x, offset_from_center.y)
 		_:
 			return rng.randf() * TAU
 
@@ -409,46 +463,47 @@ func _physics_process(delta: float) -> void:
 		return
 	var sim_dt := 1.0 / float(sim_hz)
 	_time_accumulator += delta
-	var steps := 0
-	while _time_accumulator >= sim_dt and steps < MAX_STEPS_PER_FRAME:
+	var steps_taken := 0
+	while _time_accumulator >= sim_dt and steps_taken < MAX_STEPS_PER_FRAME:
 		tick(sim_dt)
 		_time_accumulator -= sim_dt
-		steps += 1
-	if steps == MAX_STEPS_PER_FRAME:
+		steps_taken += 1
+	if steps_taken == MAX_STEPS_PER_FRAME:
 		_time_accumulator = 0.0
 
 
+## Runs one full simulation step of length sim_dt seconds.
 func tick(sim_dt: float) -> void:
 	current_sim_dt = sim_dt
-	timer.begin_tick()
-	timer.begin(Stage.SNAPSHOT)
+	stage_timer.begin_tick()
+	stage_timer.begin(Stage.SNAPSHOT)
 	_stage_snapshot()
-	timer.end(Stage.SNAPSHOT)
-	timer.begin(Stage.REBUILD_NEIGHBOURS)
+	stage_timer.end(Stage.SNAPSHOT)
+	stage_timer.begin(Stage.REBUILD_NEIGHBOURS)
 	_stage_rebuild_neighbours()
-	timer.end(Stage.REBUILD_NEIGHBOURS)
-	timer.begin(Stage.GATHER)
+	stage_timer.end(Stage.REBUILD_NEIGHBOURS)
+	stage_timer.begin(Stage.GATHER)
 	_stage_gather()
-	timer.end(Stage.GATHER)
-	timer.begin(Stage.COMBINE)
+	stage_timer.end(Stage.GATHER)
+	stage_timer.begin(Stage.COMBINE)
 	_stage_combine()
-	timer.end(Stage.COMBINE)
-	timer.begin(Stage.INTEGRATE)
+	stage_timer.end(Stage.COMBINE)
+	stage_timer.begin(Stage.INTEGRATE)
 	_stage_integrate(sim_dt)
-	timer.end(Stage.INTEGRATE)
-	timer.begin(Stage.GROUND)
+	stage_timer.end(Stage.INTEGRATE)
+	stage_timer.begin(Stage.GROUND)
 	_stage_ground()
-	timer.end(Stage.GROUND)
-	timer.begin(Stage.TRANSITIONS)
+	stage_timer.end(Stage.GROUND)
+	stage_timer.begin(Stage.TRANSITIONS)
 	_stage_transitions()
-	timer.end(Stage.TRANSITIONS)
-	timer.begin(Stage.COMMIT)
+	stage_timer.end(Stage.TRANSITIONS)
+	stage_timer.begin(Stage.COMMIT)
 	_stage_commit()
-	timer.end(Stage.COMMIT)
-	timer.begin(Stage.PRESENT)
+	stage_timer.end(Stage.COMMIT)
+	stage_timer.begin(Stage.PRESENT)
 	present_requested.emit()
-	timer.end(Stage.PRESENT)
-	timer.end_tick()
+	stage_timer.end(Stage.PRESENT)
+	stage_timer.end_tick()
 	tick_count += 1
 	ticked.emit(sim_dt)
 
@@ -464,38 +519,41 @@ func _stage_snapshot() -> void:
 	_sort_groups()
 
 
+## Copies the active emitters into flat arrays and bakes each strength curve into a lookup table.
 func _publish_emitters() -> void:
-	var count := 0
+	var active_count := 0
 	for emitter in _emitters:
 		if emitter.active:
-			count += 1
-	active_emitter_count = count
-	emitter_positions.resize(count)
-	emitter_velocities.resize(count)
-	emitter_directions.resize(count)
-	emiter_radii.resize(count)
-	emitter_cos_half_angles.resize(count)
-	emitter_strengths.resize(count)
-	emitter_kinds.resize(count)
-	emitter_curve_luts.resize(count * CURVE_LUT_SAMPLES)
+			active_count += 1
+	active_emitter_count = active_count
+	emitter_positions.resize(active_count)
+	emitter_velocities.resize(active_count)
+	emitter_directions.resize(active_count)
+	emitter_radii.resize(active_count)
+	emitter_cos_half_angles.resize(active_count)
+	emitter_strengths.resize(active_count)
+	emitter_kind_ids.resize(active_count)
+	emitter_curve_luts.resize(active_count * CURVE_LUT_SAMPLES)
 	var write_index := 0
 	for emitter in _emitters:
 		if not emitter.active:
 			continue
-		emitter_positions[write_index] = emitter.xz()
+		emitter_positions[write_index] = emitter.get_ground_position()
 		emitter_velocities[write_index] = emitter.ground_velocity
-		emitter_directions[write_index] = emitter.dir_xz()
-		emiter_radii[write_index] = maxf(emitter.radius, 0.01)
+		emitter_directions[write_index] = emitter.get_ground_facing_direction()
+		emitter_radii[write_index] = maxf(emitter.radius, 0.01)
 		emitter_cos_half_angles[write_index] = cos(deg_to_rad(emitter.cone_half_angle_degrees))
 		emitter_strengths[write_index] = emitter.strength
-		emitter_kinds[write_index] = emitter.kind_id
-		var base := write_index * CURVE_LUT_SAMPLES
+		emitter_kind_ids[write_index] = emitter.emitter_kind_id
+		var lut_base := write_index * CURVE_LUT_SAMPLES
 		for sample_index in CURVE_LUT_SAMPLES:
 			var curve_position := float(sample_index) / float(CURVE_LUT_SAMPLES - 1)
-			emitter_curve_luts[base + sample_index] = emitter.curve.sample_baked(curve_position) if emitter.curve != null else 1.0 - curve_position
+			emitter_curve_luts[lut_base + sample_index] = emitter.curve.sample_baked(curve_position) if emitter.curve != null else 1.0 - curve_position
 		write_index += 1
 
 
+## Counting sort of active boids by (species, state) group, so each group can be processed
+## as one contiguous run.
 func _sort_groups() -> void:
 	var boid_count := store.active_count
 	var group_count := behaviour_table.group_count
@@ -505,10 +563,10 @@ func _sort_groups() -> void:
 	_group_write_cursors.resize(group_count)
 	_group_of_boid.resize(boid_count)
 	_boids_sorted_by_group.resize(boid_count)
-	var species := store.species
-	var state := store.state
+	var species_ids := store.species
+	var state_ids := store.state
 	for i in boid_count:
-		var group := species[i] * state_count + state[i]
+		var group := species_ids[i] * state_count + state_ids[i]
 		if group < 0 or group >= group_count:
 			if not _warned_invalid_group:
 				push_error("BoidSystem: boid with species/state id outside the vocabulary. Register names via vocab first.")
@@ -547,109 +605,109 @@ func _stage_gather() -> void:
 		return
 	var table := behaviour_table
 	for group in table.group_count:
-		var from := _group_start_offsets[group]
-		var to := _group_start_offsets[group + 1]
-		if from == to:
+		var group_begin := _group_start_offsets[group]
+		var group_end := _group_start_offsets[group + 1]
+		if group_begin == group_end:
 			continue
-		var vmax := table.max_speed[group]
-		for e in range(table.entry_start[group], table.entry_start[group + 1]):
-			table.entry_runtime[e].apply(self, _boids_sorted_by_group, from, to, table.entry_weight[e], vmax,
-					layer_accels[table.entry_layer[e]])
+		var group_max_speed := table.max_speed[group]
+		for entry_index in range(table.entry_start[group], table.entry_start[group + 1]):
+			table.entry_runtime[entry_index].apply(self, _boids_sorted_by_group, group_begin, group_end, table.entry_weight[entry_index], group_max_speed,
+					layer_accels[table.entry_layer[entry_index]])
 
 
 ## Combination policy: prioritised acceleration allocation. Layers are visited in
 ## priority order
 func _stage_combine() -> void:
-	var n := store.active_count
-	combined_accel.resize(n)
+	var boid_count := store.active_count
+	combined_accel.resize(boid_count)
 	var layers := layer_accels
-	var max_accel := behaviour_table.max_accel
-	for i in n:
-		var max_a := max_accel[_group_of_boid[i]]
-		var total := Vector2.ZERO
-		var used := 0.0
-		for l in LAYER_COUNT:
-			var v := layers[l][i]
-			var len2 := v.length_squared()
-			if len2 < 1e-12:
+	var group_max_accel := behaviour_table.max_accel
+	for i in boid_count:
+		var boid_max_accel := group_max_accel[_group_of_boid[i]]
+		var total_accel := Vector2.ZERO
+		var used_budget := 0.0
+		for layer in LAYER_COUNT:
+			var layer_accel := layers[layer][i]
+			var length_squared := layer_accel.length_squared()
+			if length_squared < 1e-12:
 				continue
-			var room := max_a - used
-			if room <= 0.0:
+			var remaining_budget := boid_max_accel - used_budget
+			if remaining_budget <= 0.0:
 				break
-			var len := sqrt(len2)
-			if len > room:
-				v *= room / len
-				len = room
-			total += v
-			used += len
-		combined_accel[i] = total
-	if debug_slot >= 0 and debug_slot < n:
+			var length := sqrt(length_squared)
+			if length > remaining_budget:
+				layer_accel *= remaining_budget / length
+				length = remaining_budget
+			total_accel += layer_accel
+			used_budget += length
+		combined_accel[i] = total_accel
+	if debug_slot >= 0 and debug_slot < boid_count:
 		debug_total = combined_accel[debug_slot]
-		for l in LAYER_COUNT:
-			debug_layers[l] = layers[l][debug_slot]
+		for layer in LAYER_COUNT:
+			debug_layers[layer] = layers[layer][debug_slot]
 	else:
 		debug_total = Vector2.ZERO
 		debug_layers.fill(Vector2.ZERO)
 
 
-func _stage_integrate(dt: float) -> void:
-	var n := store.active_count
-	if combined_accel.size() != n:
+func _stage_integrate(sim_dt: float) -> void:
+	var boid_count := store.active_count
+	if combined_accel.size() != boid_count:
 		return
-	var pos := store.pos
-	var vel := store.vel
-	var spd := store.speed
-	var hdg := store.heading
-	var max_speed := behaviour_table.max_speed
-	var clamp_pos := use_world_bounds
-	var b_min := world_bounds.position
-	var b_max := world_bounds.end
-	var f := obstacles
-	var have_f := f != null
-	var r := boid_radius
-	var f_dist := PackedFloat32Array()
-	var f_w := 0
-	var f_d := 0
-	var f_ox := 0.0
-	var f_oz := 0.0
-	var f_inv := 1.0
-	var f_near := 0.0
-	if have_f:
-		f_dist = f.dist
-		f_w = f.width
-		f_d = f.depth
-		f_ox = f.origin.x
-		f_oz = f.origin.y
-		f_inv = 1.0 / f.cell
-		f_near = r + f.cell
-	for i in n:
-		var max_s := max_speed[_group_of_boid[i]]
-		var v := vel[i] + combined_accel[i] * dt
-		var s := v.length()
-		if s > max_s:
-			v *= max_s / s
-			s = max_s
-		var p := pos[i] + v * dt
-		if have_f:
-			var cx := clampi(int((p.x - f_ox) * f_inv), 0, f_w - 1)
-			var cz := clampi(int((p.y - f_oz) * f_inv), 0, f_d - 1)
-			if f_dist[cz * f_w + cx] < f_near:
-				var sm := f.sample(p)
-				var gap := sm.x - r
-				if gap < 0.0:
-					var nrm := Vector2(sm.y, sm.z)
-					p -= nrm * gap
-					var vn := v.dot(nrm)
-					if vn < 0.0:
-						v -= nrm * vn
-						s = v.length()
-		vel[i] = v
-		spd[i] = s
-		if s > 0.001:
-			hdg[i] = atan2(v.x, v.y)
-		if clamp_pos:
-			p = p.clamp(b_min, b_max)
-		pos[i] = p
+	var positions := store.pos
+	var velocities := store.vel
+	var speeds := store.speed
+	var headings := store.heading
+	var group_max_speed := behaviour_table.max_speed
+	var clamp_to_bounds := use_world_bounds
+	var bounds_min := world_bounds.position
+	var bounds_max := world_bounds.end
+	var field := obstacles
+	var has_field := field != null
+	var collision_radius := boid_radius
+	var field_dist := PackedFloat32Array()
+	var field_width := 0
+	var field_depth := 0
+	var field_origin_x := 0.0
+	var field_origin_z := 0.0
+	var field_inv_cell := 1.0
+	var field_near_threshold := 0.0
+	if has_field:
+		field_dist = field.dist
+		field_width = field.width
+		field_depth = field.depth
+		field_origin_x = field.origin.x
+		field_origin_z = field.origin.y
+		field_inv_cell = 1.0 / field.cell
+		field_near_threshold = collision_radius + field.cell
+	for i in boid_count:
+		var boid_max_speed := group_max_speed[_group_of_boid[i]]
+		var new_velocity := velocities[i] + combined_accel[i] * sim_dt
+		var new_speed := new_velocity.length()
+		if new_speed > boid_max_speed:
+			new_velocity *= boid_max_speed / new_speed
+			new_speed = boid_max_speed
+		var new_position := positions[i] + new_velocity * sim_dt
+		if has_field:
+			var cell_x := clampi(int((new_position.x - field_origin_x) * field_inv_cell), 0, field_width - 1)
+			var cell_z := clampi(int((new_position.y - field_origin_z) * field_inv_cell), 0, field_depth - 1)
+			if field_dist[cell_z * field_width + cell_x] < field_near_threshold:
+				var field_sample := field.sample(new_position)
+				var penetration_gap := field_sample.x - collision_radius
+				if penetration_gap < 0.0:
+					var surface_normal := Vector2(field_sample.y, field_sample.z)
+					new_position -= surface_normal * penetration_gap
+					var normal_speed := new_velocity.dot(surface_normal)
+					if normal_speed < 0.0:
+						new_velocity -= surface_normal * normal_speed
+						new_speed = new_velocity.length()
+		velocities[i] = new_velocity
+		speeds[i] = new_speed
+		if new_speed > 0.001:
+			headings[i] = atan2(new_velocity.x, new_velocity.y)
+		if clamp_to_bounds:
+			new_position = new_position.clamp(bounds_min, bounds_max)
+		positions[i] = new_position
 
 
 func _stage_ground() -> void:
@@ -657,138 +715,161 @@ func _stage_ground() -> void:
 
 
 func _stage_transitions() -> void:
-	var n := store.active_count
-	if n == 0:
+	var boid_count := store.active_count
+	if boid_count == 0:
 		return
-	var t := behaviour_table
-	var timers := store.state_timer
-	var pos := store.pos
-	var dt := current_sim_dt
+	var table := behaviour_table
+	var state_timers := store.state_timer
+	var positions := store.pos
+	var sim_dt := current_sim_dt
 	var stride := transition_stride
 	var phase := tick_count % stride
-	var n_pens := pens.size()
-	for i in n:
-		timers[i] += dt
+	var entrance_total := entrances.size()
+	for i in boid_count:
+		state_timers[i] += sim_dt
 		if (i + phase) % stride != 0:
 			continue
-		var g := _group_of_boid[i]
-		var requested := false
-		for k in range(t.tr_start[g], t.tr_start[g + 1]):
-			var trig := t.tr_trigger[k]
+		var group := _group_of_boid[i]
+		var transition_requested := false
+		for transition_index in range(table.tr_start[group], table.tr_start[group + 1]):
+			var trigger := table.tr_trigger[transition_index]
 			var hit := false
-			if trig == BoidTransition.Trigger.TIMER:
-				hit = timers[i] >= t.tr_seconds[k]
-			elif timers[i] >= t.tr_min_time[k]:
-				var any := active_emitter_count > 0 and _emitter_within(pos[i], t.tr_emitter_kind[k], t.tr_dist2[k])
-				hit = any if trig == BoidTransition.Trigger.EMITTER_NEAR else not any
+			if trigger == BoidTransition.Trigger.TIMER:
+				hit = state_timers[i] >= table.tr_seconds[transition_index]
+			elif state_timers[i] >= table.tr_min_time[transition_index]:
+				var emitter_in_range := active_emitter_count > 0 and _emitter_within(positions[i], table.tr_emitter_kind[transition_index], table.tr_dist2[transition_index])
+				hit = emitter_in_range if trigger == BoidTransition.Trigger.EMITTER_NEAR else not emitter_in_range
 			if hit:
-				request_state(store.handle_at(i), t.tr_to[k])
-				requested = true
+				request_state(store.handle_at(i), table.tr_to[transition_index])
+				transition_requested = true
 				break
-		if requested or n_pens == 0:
+		if transition_requested or entrance_total == 0:
 			continue
-		var p := pos[i]
-		for pi in n_pens:
-			if pen_boid_counts[pi] >= pen_capacities[pi]:
+		var boid_position := positions[i]
+		for entrance_index in entrance_total:
+			var storage_index := entrance_storage_indices[entrance_index]
+			if storage_boid_counts[storage_index] >= storage_capacities[storage_index]:
 				continue
-			var local := p - pen_centers[pi]
-			var lz := local.dot(pen_axes_z[pi])
-			if lz < pen_entry_lines_local_zs[pi] or lz > pen_half_extents[pi].y:
+			var offset_from_entrance := boid_position - entrance_centers[entrance_index]
+			if absf(offset_from_entrance.dot(entrance_axes_z[entrance_index])) > entrance_half_extents[entrance_index].y:
 				continue
-			if absf(local.dot(pen_axes_x[pi])) > pen_half_extents[pi].x:
+			if absf(offset_from_entrance.dot(entrance_axes_x[entrance_index])) > entrance_half_extents[entrance_index].x:
 				continue
-			_pending_pen_handles.append(store.handle_at(i))
-			_pending_pen_indices.append(pi)
+			_pending_entry_handles.append(store.handle_at(i))
+			_pending_entry_entrance_indices.append(entrance_index)
 			break
 
 
-func _emitter_within(p: Vector2, kind: int, dist2: float) -> bool:
-	for e in active_emitter_count:
-		if kind >= 0 and emitter_kinds[e] != kind:
+## True if any published emitter (of the given kind id, or any kind if negative) is within
+## the given squared distance of query_position.
+func _emitter_within(query_position: Vector2, required_kind_id: int, max_distance_squared: float) -> bool:
+	for emitter_index in active_emitter_count:
+		if required_kind_id >= 0 and emitter_kind_ids[emitter_index] != required_kind_id:
 			continue
-		if (emitter_positions[e] - p).length_squared() <= dist2:
+		if (emitter_positions[emitter_index] - query_position).length_squared() <= max_distance_squared:
 			return true
 	return false
 
 
+## Applies queued state changes, then queued storage entries, then removes dead boids.
 func _stage_commit() -> void:
 	for i in _pending_state_handles.size():
 		_apply_state(_pending_state_handles[i], _pending_state_ids[i])
 	_pending_state_handles.clear()
 	_pending_state_ids.clear()
-	for i in _pending_pen_handles.size():
-		_apply_pen(_pending_pen_handles[i], _pending_pen_indices[i])
-	_pending_pen_handles.clear()
-	_pending_pen_indices.clear()
+	for i in _pending_entry_handles.size():
+		_apply_entry(_pending_entry_handles[i], _pending_entry_entrance_indices[i])
+	_pending_entry_handles.clear()
+	_pending_entry_entrance_indices.clear()
 	if not _removal_queue.is_empty():
-		_release_pen_spots(_removal_queue)
+		_release_storage_spots(_removal_queue)
 		removed_total += store.remove_many(_removal_queue)
 		_removal_queue.clear()
 
 
-func _apply_state(handle: int, new_state: int) -> void:
+func _apply_state(handle: int, new_state_id: int) -> void:
 	var slot := store.slot_of(handle)
 	if not store.is_active_slot(slot):
 		return
-	if store.state[slot] == new_state:
+	if store.state[slot] == new_state_id:
 		return
-	if new_state == dead_state_id:
-		var sp := store.species[slot]
-		if sp >= deaths_by_species.size():
-			deaths_by_species.resize(sp + 1)
-		deaths_by_species[sp] += 1
+	if new_state_id == dead_state_id:
+		var species_id := store.species[slot]
+		if species_id >= deaths_by_species.size():
+			deaths_by_species.resize(species_id + 1)
+		deaths_by_species[species_id] += 1
 		killed_total += 1
-		store.state[slot] = new_state
+		store.state[slot] = new_state_id
 		_removal_queue.append(handle)
-		boid_died.emit(sp, store.pos[slot])
+		boid_died.emit(species_id, store.pos[slot])
 		return
-	store.state[slot] = new_state
+	store.state[slot] = new_state_id
 	store.state_timer[slot] = 0.0
-	if new_state == penned_state_id:
+	if new_state_id == penned_state_id:
 		store.freeze(slot)
-		
 
-func _apply_pen(handle: int, pen_index: int) -> void:
+
+## Handles one queued entry: checks the boid and the storage are still eligible, claims a
+## spot if the storage snaps, then finalizes the entry. A walk-in entry would claim here,
+## switch the boid to an "entering" state, and call _finalize_storage_entry on arrival.
+func _apply_entry(handle: int, entrance_index: int) -> void:
 	var slot := store.slot_of(handle)
 	if not store.is_active_slot(slot):
 		return
-	if store.state[slot] == dead_state_id or pen_boid_counts[pen_index] >= pen_capacities[pen_index]:
+	var storage_index := entrance_storage_indices[entrance_index]
+	if store.state[slot] == dead_state_id or storage_boid_counts[storage_index] >= storage_capacities[storage_index]:
 		return
-	var spot := -1
-	if pens[pen_index].snap_to_spots:
-		var used := _pen_spot_occupied[pen_index]
-		for k in used.size():
-			if used[k] == 0:
-				spot = k
-				break
-		if spot < 0:
+	var spot_index := -1
+	if storages[storage_index].snap_to_spots:
+		spot_index = _claim_spot(storage_index)
+		if spot_index < 0:
 			return
-		used[spot] = 1
-		var p := _pen_spot_positions[pen_index][spot]
-		store.pos[slot] = p
-		store.ground_h[slot] = ground.height_at(p)
+	_finalize_storage_entry(slot, storage_index, spot_index)
+
+
+## Reserves the first free spot in a storage (spots are in fill order). Returns -1 if none.
+func _claim_spot(storage_index: int) -> int:
+	var spot_states := _storage_spot_states[storage_index]
+	for spot_index in spot_states.size():
+		if spot_states[spot_index] == SpotState.FREE:
+			spot_states[spot_index] = SpotState.RESERVED
+			return spot_index
+	return -1
+
+
+## Puts a boid into a storage: moves it onto its claimed spot (if any), stops it, marks it
+## penned and frozen, and counts it. spot_index is -1 for storages that do not snap.
+func _finalize_storage_entry(slot: int, storage_index: int, spot_index: int) -> void:
+	if spot_index >= 0:
+		_storage_spot_states[storage_index][spot_index] = SpotState.OCCUPIED
+		var spot_position := _storage_spot_positions[storage_index][spot_index]
+		store.pos[slot] = spot_position
+		store.ground_h[slot] = ground.height_at(spot_position)
 	store.vel[slot] = Vector2.ZERO
 	store.speed[slot] = 0.0
 	store.state[slot] = penned_state_id
 	store.state_timer[slot] = 0.0
-	store.pen_id[slot] = pen_index
-	store.pen_spot[slot] = spot
-	pen_boid_counts[pen_index] += 1
-	var sp := store.species[slot]
+	store.storage_id[slot] = storage_index
+	store.storage_spot[slot] = spot_index
+	storage_boid_counts[storage_index] += 1
+	var species_id := store.species[slot]
 	store.freeze(slot)
-	boid_penned.emit(pen_index, sp)
+	boid_penned.emit(storage_index, species_id)
 
 
-func _release_pen_spots(handles: PackedInt64Array) -> void:
-	for h in handles:
-		var slot := store.slot_of(h)
-		if slot < store.active_count:
+## Frees the spot and count held by each boid in handles that is stored. Keyed on the
+## boid's storage_id (not on it being frozen), so a boid removed before it finishes entering
+## would not leak its spot.
+func _release_storage_spots(handles: PackedInt64Array) -> void:
+	for handle in handles:
+		var slot := store.slot_of(handle)
+		if slot < 0:
 			continue
-		var pi := store.pen_id[slot]
-		if pi < 0:
+		var storage_index := store.storage_id[slot]
+		if storage_index < 0:
 			continue
-		var sp := store.pen_spot[slot]
-		if sp >= 0:
-			_pen_spot_occupied[pi][sp] = 0
-		pen_boid_counts[pi] -= 1
-		store.pen_id[slot] = -1
+		var spot_index := store.storage_spot[slot]
+		if spot_index >= 0:
+			_storage_spot_states[storage_index][spot_index] = SpotState.FREE
+		storage_boid_counts[storage_index] -= 1
+		store.storage_id[slot] = -1

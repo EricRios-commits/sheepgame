@@ -1,4 +1,4 @@
-﻿class_name BoidInteractionTable
+class_name BoidInteractionTable
 extends Resource
 ## Per-species-pair neighbour weights
 

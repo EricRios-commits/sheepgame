@@ -5,7 +5,9 @@ extends Node3D
 ##   yellow = neighbour links   r/g/b = cohesion/alignment/separation   white = total
 ##   magenta/orange/grey = SAFETY/THREAT/AMBIENT layers   orange circles = emitter radii
 
+## System to debug
 @export var system: BoidSystem
+
 @export var show_neighbours := true
 @export var show_forces := true
 @export var show_radii := true
@@ -87,7 +89,7 @@ func _process(_delta: float) -> void:
 	if show_emitters:
 		for e in system.active_emitter_count:
 			var ep := system.emitter_positions[e]
-			_circle(Vector3(ep.x, y, ep.y), system.emiter_radii[e], Color(1.0, 0.5, 0.0, 0.6), 64)
+			_circle(Vector3(ep.x, y, ep.y), system.emitter_radii[e], Color(1.0, 0.5, 0.0, 0.6), 64)
 	if show_radii:
 		_circle(p3, system.behaviour_table.max_query_radius, Color(1, 1, 1, 0.35))
 	if show_cells and system.neighbours is BoidNeighbourHash:

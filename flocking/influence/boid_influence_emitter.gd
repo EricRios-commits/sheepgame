@@ -3,10 +3,19 @@ extends BoidInfluence
 ## Reacts to emitters of one kind (dog, predator, lure...)
 ## FLEE pushes away, ATTRACT pulls in
 
-enum Mode { FLEE, ATTRACT }
+## How the boid reacts to a matching emitter.
+enum Mode {
+	## Accelerate directly away from the emitter.
+	FLEE,
+	## Accelerate toward the emitter.
+	ATTRACT,
+}
 
+## Kind of emitter to react to. Must match BoidEmitter.kind. Emitters of other kinds are ignored.
 @export var emitter_kind: StringName = &"dog"
+## Whether boids move away from (FLEE) or toward (ATTRACT) the emitter.
 @export var mode: Mode = Mode.FLEE
+## Multiplier on this influence's strength, applied on top of the entry weight.
 @export var gain := 1.0
 ## ATTRACT only: the pull fades linearly to zero inside this distance (0 = no arrival).
 @export var arrive_radius := 0.0
@@ -20,68 +29,69 @@ func create_runtime() -> BoidInfluenceRuntime:
 	return Runtime.new(self)
 
 
+## Applies the influence each tick. Only emitters within their own radius affect a boid.
 class Runtime extends BoidInfluenceRuntime:
-	var kind: StringName = &""
-	var kind_id := -1
-	var flee := true
+	var emitter_kind: StringName = &""
+	var emitter_kind_id := -1
+	var is_flee := true
 	var gain := 1.0
-	var arrive_inv := 0.0
-	var _idx := PackedInt32Array()
+	var inverse_arrive_radius := 0.0
+	var _matching_emitter_indices := PackedInt32Array()
 
-	func _init(res: BoidInfluenceEmitter) -> void:
-		kind = res.emitter_kind
-		flee = res.mode == Mode.FLEE
-		gain = res.gain
-		arrive_inv = 1.0 / res.arrive_radius if res.arrive_radius > 0.0 else 0.0
+	func _init(source_influence: BoidInfluenceEmitter) -> void:
+		emitter_kind = source_influence.emitter_kind
+		is_flee = source_influence.mode == Mode.FLEE
+		gain = source_influence.gain
+		inverse_arrive_radius = 1.0 / source_influence.arrive_radius if source_influence.arrive_radius > 0.0 else 0.0
 
-	func setup(sys: BoidSystem) -> void:
-		kind_id = sys.vocab.emitter_kind_id(kind)
+	func setup(system: BoidSystem) -> void:
+		emitter_kind_id = system.vocab.emitter_kind_id(emitter_kind)
 
-	func apply(sys: BoidSystem, order: PackedInt32Array, from: int, to: int, weight: float,
-			_vmax: float, acc: PackedVector2Array) -> void:
-		_idx.clear()
-		for e in sys.active_emitter_count:
-			if sys.emitter_kinds[e] == kind_id:
-				_idx.append(e)
-		var m := _idx.size()
-		if m == 0:
+	func apply(system: BoidSystem, boid_order: PackedInt32Array, from_index: int, to_index: int, weight: float,
+			_max_speed: float, layer_accel: PackedVector2Array) -> void:
+		_matching_emitter_indices.clear()
+		for emitter_index in system.active_emitter_count:
+			if system.emitter_kind_ids[emitter_index] == emitter_kind_id:
+				_matching_emitter_indices.append(emitter_index)
+		var matching_count := _matching_emitter_indices.size()
+		if matching_count == 0:
 			return
-		var pos := sys.store.pos
-		var ep := sys.emitter_positions
-		var er := sys.emiter_radii
-		var edir := sys.emitter_directions
-		var ecos := sys.emitter_cos_half_angles
-		var estr := sys.emitter_strengths
-		var elut := sys.emitter_curve_luts
-		var lut_n := BoidSystem.CURVE_LUT_SAMPLES
-		var scale := weight * gain
-		for k in range(from, to):
-			var slot := order[k]
-			var p := pos[slot]
-			var a := Vector2.ZERO
-			for q in m:
-				var e := _idx[q]
-				var d := p - ep[e]
-				var d2 := d.length_squared()
-				var rad := er[e]
-				if d2 >= rad * rad:
+		var positions := system.store.pos
+		var emitter_positions := system.emitter_positions
+		var emitter_radii := system.emitter_radii
+		var emitter_directions := system.emitter_directions
+		var emitter_cos_half_angles := system.emitter_cos_half_angles
+		var emitter_strengths := system.emitter_strengths
+		var emitter_curve_luts := system.emitter_curve_luts
+		var lut_samples := BoidSystem.CURVE_LUT_SAMPLES
+		var total_scale := weight * gain
+		for order_index in range(from_index, to_index):
+			var slot := boid_order[order_index]
+			var boid_position := positions[slot]
+			var accel_sum := Vector2.ZERO
+			for matching_index in matching_count:
+				var emitter_index := _matching_emitter_indices[matching_index]
+				var offset := boid_position - emitter_positions[emitter_index]
+				var distance_squared := offset.length_squared()
+				var emitter_radius := emitter_radii[emitter_index]
+				if distance_squared >= emitter_radius * emitter_radius:
 					continue
-				var dist := sqrt(d2)
-				var dir := d / dist if dist > 1e-4 else Vector2.from_angle(float(slot) * 2.399963)
-				var fade := 1.0
-				var cone := ecos[e]
-				if cone > -0.999:
-					fade = clampf((edir[e].dot(dir) - cone) / 0.15 + 1.0, 0.0, 1.0)
-					if fade <= 0.0:
+				var distance := sqrt(distance_squared)
+				var direction_away := offset / distance if distance > 1e-4 else Vector2.from_angle(float(slot) * 2.399963)
+				var cone_fade := 1.0
+				var cos_half_angle := emitter_cos_half_angles[emitter_index]
+				if cos_half_angle > -0.999:
+					cone_fade = clampf((emitter_directions[emitter_index].dot(direction_away) - cos_half_angle) / 0.15 + 1.0, 0.0, 1.0)
+					if cone_fade <= 0.0:
 						continue
-				var u := dist / rad * float(lut_n - 1)
-				var i0 := mini(int(u), lut_n - 2)
-				var base := e * lut_n + i0
-				var s := lerpf(elut[base], elut[base + 1], u - float(i0)) * estr[e] * fade
-				if flee:
-					a += dir * s
+				var lut_position := distance / emitter_radius * float(lut_samples - 1)
+				var lut_index := mini(int(lut_position), lut_samples - 2)
+				var lut_base := emitter_index * lut_samples + lut_index
+				var strength := lerpf(emitter_curve_luts[lut_base], emitter_curve_luts[lut_base + 1], lut_position - float(lut_index)) * emitter_strengths[emitter_index] * cone_fade
+				if is_flee:
+					accel_sum += direction_away * strength
 				else:
-					if arrive_inv > 0.0:
-						s *= minf(dist * arrive_inv, 1.0)
-					a -= dir * s
-			acc[slot] += a * scale
+					if inverse_arrive_radius > 0.0:
+						strength *= minf(distance * inverse_arrive_radius, 1.0)
+					accel_sum -= direction_away * strength
+			layer_accel[slot] += accel_sum * total_scale

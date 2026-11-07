@@ -18,8 +18,11 @@ var species := PackedInt32Array()
 var state := PackedInt32Array()
 var state_timer := PackedFloat32Array()
 var scratch := PackedFloat32Array()
-var pen_id := PackedInt32Array()
-var pen_spot := PackedInt32Array()
+## Index of the BoidPenStorage this boid is held in, or -1 if it is not stored.
+var storage_id := PackedInt32Array()
+## Index of the spot the boid occupies inside its storage, or -1 if it has none
+## (not stored, or the storage does not snap to spots).
+var storage_spot := PackedInt32Array()
 
 var _id_of_slot := PackedInt32Array()
 var _slot_of_id := PackedInt32Array()
@@ -46,8 +49,8 @@ func add(p: Vector2, v: Vector2, h: float, spd: float, species_id: int, state_id
 	state.append(state_id)
 	state_timer.append(0.0)
 	scratch.append(0.0)
-	pen_id.append(-1)
-	pen_spot.append(-1)
+	storage_id.append(-1)
+	storage_spot.append(-1)
 	_id_of_slot.append(id)
 	_slot_of_id[id] = count
 	count += 1
@@ -137,8 +140,8 @@ func _remove_slot(slot: int) -> void:
 	state.resize(last)
 	state_timer.resize(last)
 	scratch.resize(last)
-	pen_id.resize(last)
-	pen_spot.resize(last)
+	storage_id.resize(last)
+	storage_spot.resize(last)
 	_id_of_slot.resize(last)
 	_slot_of_id[id] = -1
 	_gen_of_id[id] += 1
@@ -158,8 +161,8 @@ func _swap_slots(a: int, b: int) -> void:
 	_swap_f(scratch, a, b)
 	_swap_i(species, a, b)
 	_swap_i(state, a, b)
-	_swap_i(pen_id, a, b)
-	_swap_i(pen_spot, a, b)
+	_swap_i(storage_id, a, b)
+	_swap_i(storage_spot, a, b)
 	_swap_i(_id_of_slot, a, b)
 	_slot_of_id[_id_of_slot[a]] = a
 	_slot_of_id[_id_of_slot[b]] = b
@@ -190,7 +193,7 @@ func state_hash() -> int:
 	h = (h * 31 + hash(heading)) & 0xFFFFFFFF
 	h = (h * 31 + hash(species)) & 0xFFFFFFFF
 	h = (h * 31 + hash(state)) & 0xFFFFFFFF
-	h = (h * 31 + hash(pen_id)) & 0xFFFFFFFF
+	h = (h * 31 + hash(storage_id)) & 0xFFFFFFFF
 	h = (h * 31 + hash(_id_of_slot)) & 0xFFFFFFFF
 	h = (h * 31 + active_count) & 0xFFFFFFFF
 	return (h * 31 + count) & 0xFFFFFFFF
@@ -201,7 +204,7 @@ func check_consistency() -> bool:
 	if pos.size() != count or vel.size() != count or ground_h.size() != count \
 			or heading.size() != count or speed.size() != count or species.size() != count \
 			or state.size() != count or state_timer.size() != count \
-			or scratch.size() != count or pen_id.size() != count or pen_spot.size() != count \
+			or scratch.size() != count or storage_id.size() != count or storage_spot.size() != count \
 			or _id_of_slot.size() != count:
 		return false
 	if active_count < 0 or active_count > count:
@@ -214,9 +217,11 @@ func check_consistency() -> bool:
 		if _slot_of_id[id] >= 0:
 			live += 1
 	return live == count
-	
+
+
 func slot_ids() -> PackedInt32Array:
 	return _id_of_slot
+
 
 func id_generations() -> PackedInt32Array:
 	return _gen_of_id

@@ -1,4 +1,4 @@
-﻿@tool
+@tool
 class_name BoidSpawnZone
 extends Node3D
 
@@ -66,7 +66,9 @@ func _ready() -> void:
 		return
 	system.register_zone(self)
 
-func sample_local(rng: RandomNumberGenerator) -> Vector2:
+## Returns a random point inside the zone's shape, in zone-local ground coordinates
+## (local x, local z).
+func sample_local_ground_position(rng: RandomNumberGenerator) -> Vector2:
 	match shape:
 		Shape.RING:
 			return BoidSamplers.ring(rng, inner_radius, radius)
@@ -76,12 +78,14 @@ func sample_local(rng: RandomNumberGenerator) -> Vector2:
 			return BoidSamplers.disc(rng, radius)
 
 
-func local_to_world_xz(local_position: Vector2) -> Vector2:
-	var world_position := global_transform * Vector3(local_position.x, 0.0, local_position.y)
+## Converts a zone-local ground position (local x, local z) to a world ground position.
+func local_to_world_ground(local_ground_position: Vector2) -> Vector2:
+	var world_position := global_transform * Vector3(local_ground_position.x, 0.0, local_ground_position.y)
 	return Vector2(world_position.x, world_position.z)
 
 
-func center_xz() -> Vector2:
+## Global position projected onto the ground plane (x -> x, z -> y).
+func get_ground_position() -> Vector2:
 	return Vector2(global_position.x, global_position.z)
 
 func _get_configuration_warnings() -> PackedStringArray:
@@ -133,9 +137,9 @@ func _redraw() -> void:
 			_circle(radius)
 
 
-func _circle(radius: float, segments: int = 48) -> void:
+func _circle(r: float, segments: int = 48) -> void:
 	_gizmo_immediate_mesh.surface_begin(Mesh.PRIMITIVE_LINE_STRIP)
 	for i in segments + 1:
 		var angle := TAU * float(i) / float(segments)
-		_gizmo_immediate_mesh.surface_add_vertex(Vector3(cos(angle) * radius, 0.05, sin(angle) * radius))
+		_gizmo_immediate_mesh.surface_add_vertex(Vector3(cos(angle) * r, 0.05, sin(angle) * r))
 	_gizmo_immediate_mesh.surface_end()

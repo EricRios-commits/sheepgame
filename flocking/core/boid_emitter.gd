@@ -24,7 +24,7 @@ extends Node3D
 @export var facing_degrees := 0.0
 
 ## Index assigned to this emitter's kind. -1 until resolved.
-var kind_id := -1
+var emitter_kind_id := -1
 ## Velocity on the ground (XZ) plane, in world units per second. Updated every physics frame.
 var ground_velocity := Vector2.ZERO
 var _previous_ground_position := Vector2.ZERO
@@ -42,18 +42,18 @@ func _exit_tree() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	var ground_position := xz()
+	var ground_position := get_ground_position()
 	if _has_previous_position and delta > 0.0:
 		ground_velocity = (ground_position - _previous_ground_position) / delta
 	_previous_ground_position = ground_position
 	_has_previous_position = true
 
 
-func xz() -> Vector2:
+func get_ground_position() -> Vector2:
 	return Vector2(global_position.x, global_position.z)
 
 
-func dir_xz() -> Vector2:
+func get_ground_facing_direction() -> Vector2:
 	if face_velocity and ground_velocity.length_squared() > 0.01:
 		return ground_velocity.normalized()
 	var a := global_rotation.y + deg_to_rad(facing_degrees)

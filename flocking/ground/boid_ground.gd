@@ -2,6 +2,7 @@ class_name BoidGround
 extends Resource
 ## Ground strategy
 
+## Default height for flat ground
 @export var flat_height := 0.0
 
 
