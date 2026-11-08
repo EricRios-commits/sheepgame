@@ -1,4 +1,4 @@
-﻿class_name BoidSpeciesVisual
+class_name BoidSpeciesVisual
 extends Resource
 ## How one species looks. Looked up by species name when the presenter starts.
 

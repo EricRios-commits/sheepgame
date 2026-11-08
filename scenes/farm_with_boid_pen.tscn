@@ -1,13 +1,8 @@
 [gd_scene format=3 uid="uid://xswox3knp46t"]
 
-[ext_resource type="Script" uid="uid://cfatoy1e10yl1" path="res://flocking/core/boid_pen.gd" id="1_b6xpb"]
 [ext_resource type="PackedScene" uid="uid://dhpmrqffx0y1m" path="res://scenes/farm_graphic.tscn" id="2_b6xpb"]
 
 [node name="BoidPen" type="Node3D" unique_id=2141528733]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7459297, 0, 0.07459068)
-script = ExtResource("1_b6xpb")
-size = Vector2(12, 12)
-metadata/_custom_type_script = "uid://cfatoy1e10yl1"
 
 [node name="farm_building" parent="." unique_id=211494034 instance=ExtResource("2_b6xpb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.362199, 0, -35.4805)

@@ -1,4 +1,4 @@
-﻿class_name BoidObstacleSource
+class_name BoidObstacleSource
 extends Resource
 ## Where static obstacles come from (besides hand-authored ones)
 

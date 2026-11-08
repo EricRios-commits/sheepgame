@@ -1,4 +1,4 @@
-﻿@tool
+@tool
 class_name BoidPenStorage
 extends Node3D
 ## Where penned boids are kept. One or more BoidPenEntrance nodes point at a storage and send
@@ -32,6 +32,10 @@ const COUNTER_ONLY_COLOR := Color(0.6, 0.6, 0.6)
 		size = new_value
 		_redraw_gizmo()
 		update_configuration_warnings()
+
+# Name of the species that belong to this pen
+@export var correct_species: StringName = &"sheep"
+
 ## Number of spots that can be occupied. Spots are laid out in a jittered grid inside the
 ## rectangle. Only used when snap_to_spots is on. The actual count can be lower if the
 ## rectangle is too small.

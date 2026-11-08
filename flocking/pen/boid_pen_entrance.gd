@@ -1,4 +1,4 @@
-﻿@tool
+@tool
 class_name BoidPenEntrance
 extends Node3D
 ## Gate that sends boids into a BoidPenStorage. Any boid inside the rectangle (centred on the

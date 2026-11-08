@@ -134,5 +134,5 @@ material_override = SubResource("StandardMaterial3D_prwr8")
 mesh = SubResource("ArrayMesh_nirj8")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2126961090]
-transform = Transform3D(1, 0, 0, 0, 1, -1.0199324e-07, 0, 1.0199324e-07, 1, 0, -0.5314648, -1.5998695e-09)
+transform = Transform3D(1, 0, 0, 0, 1, -1.0199324e-07, 0, 1.0199324e-07, 1, 0, -0.4531865, 6.3839876e-09)
 shape = SubResource("BoxShape3D_x15ge")

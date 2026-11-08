@@ -39,6 +39,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	var input_direction := Vector2.ZERO
+	var speed_multiplier := 1
 	if Input.is_physical_key_pressed(KEY_A):
 		input_direction.x -= 1.0
 	if Input.is_physical_key_pressed(KEY_D):
@@ -47,6 +48,9 @@ func _physics_process(delta: float) -> void:
 		input_direction.y -= 1.0
 	if Input.is_physical_key_pressed(KEY_S):
 		input_direction.y += 1.0
+	if Input.is_physical_key_pressed(KEY_SHIFT):
+		speed_multiplier = 2
+		
 	input_direction = input_direction.normalized()
 
 	var move_direction := Vector3.ZERO
@@ -59,8 +63,8 @@ func _physics_process(delta: float) -> void:
 		move_direction = (camera_right.normalized() * input_direction.x
 			- camera_forward.normalized() * input_direction.y).normalized()
 
-	velocity.x = move_toward(velocity.x, move_direction.x * move_speed, acceleration * delta)
-	velocity.z = move_toward(velocity.z, move_direction.z * move_speed, acceleration * delta)
+	velocity.x = move_toward(velocity.x, move_direction.x * move_speed * speed_multiplier, acceleration * delta)
+	velocity.z = move_toward(velocity.z, move_direction.z * move_speed * speed_multiplier, acceleration * delta)
 	if is_on_floor():
 		velocity.y = jump_speed if _jump_requested else -0.1
 	else:

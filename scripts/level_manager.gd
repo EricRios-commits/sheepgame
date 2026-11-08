@@ -38,20 +38,22 @@ func _get_pens_from_system():
 	boid_system.boid_penned.connect(_on_boid_penned)
 	
 	# Get info from pens
-	if len(boid_system.pens) <= 0:
+	if len(boid_system.storages) <= 0:
 		push_warning("[Level Manager] Boid system has no pens assigned.")
 		return;
-	for pen in boid_system.pens:
-		var species_id = boid_system.vocab.species_id(pen.correct_species)
+	for storage in boid_system.storages:
+		var species_id = boid_system.vocab.species_id(storage.correct_species)
 		if stats.has(species_id):
-			stats[species_id].total += pen.number_of_spots
+			stats[species_id].total += storage.number_of_spots
 		else:
-			stats[species_id] = AmountPerSpecies.new(pen.number_of_spots)
+			stats[species_id] = AmountPerSpecies.new(storage.number_of_spots)
 
-func _on_boid_penned(pen_index: int, species_id: int):
+func _on_boid_penned(storage_index: int, species_id: int):
 	if boid_system == null:
 		return
-	var pen = boid_system.pens[pen_index]
+	var pen := boid_system.storages[storage_index]
+	if pen == null:
+		return # Plain storage, not part of scoring
 	var pen_species_id = boid_system.vocab.species_id(pen.correct_species)
 	
 	if !stats.has(pen_species_id):
@@ -60,7 +62,7 @@ func _on_boid_penned(pen_index: int, species_id: int):
 	
 	if pen_species_id == species_id:
 		stats[species_id].insideCorrectBarn += 1
-	else:
+	elif stats.has(species_id):
 		stats[species_id].insideWrongBarn += 1
 	# TODO: add sfx when sheep enters the barn
 
