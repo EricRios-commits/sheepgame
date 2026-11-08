@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://dovt8c21nw46q"
-path="res://.godot/imported/mud_puddle.glb-82bf9ba0df669b393492ec8b207071ca.scn"
+path="res://.godot/imported/mud_puddle.glb-59fa8c4d0b48e5c2f0eeacdb4e38a388.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/mud_puddle.glb"
-dest_files=["res://.godot/imported/mud_puddle.glb-82bf9ba0df669b393492ec8b207071ca.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/mud_puddle.glb"
+dest_files=["res://.godot/imported/mud_puddle.glb-59fa8c4d0b48e5c2f0eeacdb4e38a388.scn"]
 
 [params]
 

@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bnhabayikiya2"
-path="res://.godot/imported/lamb.glb-2497902ef5958a7a799efcef38cee39f.scn"
+path="res://.godot/imported/lamb.glb-fe92e87027c9eb40f8037fff61450776.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/lamb.glb"
-dest_files=["res://.godot/imported/lamb.glb-2497902ef5958a7a799efcef38cee39f.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/lamb.glb"
+dest_files=["res://.godot/imported/lamb.glb-fe92e87027c9eb40f8037fff61450776.scn"]
 
 [params]
 

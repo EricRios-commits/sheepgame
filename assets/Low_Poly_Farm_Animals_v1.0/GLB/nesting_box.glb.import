@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://dy4gpe3k4ypv1"
-path="res://.godot/imported/nesting_box.glb-a3204b95ec7f17b5aa3c5e775c9df86a.scn"
+path="res://.godot/imported/nesting_box.glb-13e19c44b693fc5e9596d291931121f3.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/nesting_box.glb"
-dest_files=["res://.godot/imported/nesting_box.glb-a3204b95ec7f17b5aa3c5e775c9df86a.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/nesting_box.glb"
+dest_files=["res://.godot/imported/nesting_box.glb-13e19c44b693fc5e9596d291931121f3.scn"]
 
 [params]
 

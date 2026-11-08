@@ -19,6 +19,11 @@ config/icon="res://icon.svg"
 
 Global="*uid://br15dlly2aqjg"
 
+[audio]
+
+buses/default_bus_layout="uid://bd54k8tyj8kbg"
+
+
 [display]
 
 window/stretch/mode="canvas_items"

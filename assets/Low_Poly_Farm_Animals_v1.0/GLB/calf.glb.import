@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bbngrqufp8ntd"
-path="res://.godot/imported/calf.glb-d04334d00e868a518a26f22ca6f0290a.scn"
+path="res://.godot/imported/calf.glb-99ca70ece1ad61bfe84789af4f4282b1.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/calf.glb"
-dest_files=["res://.godot/imported/calf.glb-d04334d00e868a518a26f22ca6f0290a.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/calf.glb"
+dest_files=["res://.godot/imported/calf.glb-99ca70ece1ad61bfe84789af4f4282b1.scn"]
 
 [params]
 

@@ -795,7 +795,7 @@ transform = Transform3D(-0.003585494, 0, 0.99999356, 0, 1, 0, -0.99999356, 0, -0
 script = ExtResource("16_7abrx")
 system = NodePath("../../../scripts/BoidSystem")
 size = Vector2(14, 10)
-number_of_spots = 20
+number_of_spots = 10
 
 [node name="BoidPenEntrance" type="Node3D" parent="WhitePen/WhiteSheepManager" unique_id=858881866 node_paths=PackedStringArray("storage")]
 transform = Transform3D(0.6912075, 0, 0, 0, 1, 0, 0, 0, 1, 23.950905, 0.026062727, 0.9370556)
@@ -901,7 +901,7 @@ script = ExtResource("16_7abrx")
 system = NodePath("../../../scripts/BoidSystem")
 size = Vector2(14, 10)
 correct_species = &"orange_sheep"
-number_of_spots = 20
+number_of_spots = 10
 
 [node name="BoidOrangePenEntrance" type="Node3D" parent="OrangePen/OrangeSheepManager" unique_id=1229496163 node_paths=PackedStringArray("storage")]
 transform = Transform3D(0.6912075, 0, 0, 0, 1, 0, 0, 0, 1, -24.195261, 0.026, 0)

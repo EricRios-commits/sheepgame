@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://lr3y5bemu4cf"
-path="res://.godot/imported/turkey.glb-ecfbaf9c7b43b799fa05f95029d12693.scn"
+path="res://.godot/imported/turkey.glb-e19d37b8e28addceb8977ef7ee64e1dc.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/turkey.glb"
-dest_files=["res://.godot/imported/turkey.glb-ecfbaf9c7b43b799fa05f95029d12693.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/turkey.glb"
+dest_files=["res://.godot/imported/turkey.glb-e19d37b8e28addceb8977ef7ee64e1dc.scn"]
 
 [params]
 

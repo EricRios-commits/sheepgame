@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://00yniptotum0"
-path="res://.godot/imported/duck.glb-11477e2ebfea6f12facc2b1db7746cc2.scn"
+path="res://.godot/imported/duck.glb-e926b0626d4518836ae999789d64c5be.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/duck.glb"
-dest_files=["res://.godot/imported/duck.glb-11477e2ebfea6f12facc2b1db7746cc2.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/duck.glb"
+dest_files=["res://.godot/imported/duck.glb-e926b0626d4518836ae999789d64c5be.scn"]
 
 [params]
 

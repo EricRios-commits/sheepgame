@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://dpgq7mtx58i8e"
-path="res://.godot/imported/black_cow.glb-861fd4bf99a3326cf8dde34f7bb8d6a8.scn"
+path="res://.godot/imported/black_cow.glb-294b189f53cc1940b344d281851f1a41.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/black_cow.glb"
-dest_files=["res://.godot/imported/black_cow.glb-861fd4bf99a3326cf8dde34f7bb8d6a8.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/black_cow.glb"
+dest_files=["res://.godot/imported/black_cow.glb-294b189f53cc1940b344d281851f1a41.scn"]
 
 [params]
 

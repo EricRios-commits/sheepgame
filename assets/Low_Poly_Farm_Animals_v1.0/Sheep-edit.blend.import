@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://dpek7875hef7r"
-path="res://.godot/imported/Sheep-edit.blend-32308108e73c646848407bb5e28eb6a6.scn"
+path="res://.godot/imported/Sheep-edit.blend-9babddeea1f0f60c45f3ad32e43fa69f.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/Sheep-edit.blend"
-dest_files=["res://.godot/imported/Sheep-edit.blend-32308108e73c646848407bb5e28eb6a6.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/Sheep-edit.blend"
+dest_files=["res://.godot/imported/Sheep-edit.blend-9babddeea1f0f60c45f3ad32e43fa69f.scn"]
 
 [params]
 

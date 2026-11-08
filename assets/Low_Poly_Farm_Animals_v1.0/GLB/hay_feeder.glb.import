@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://b4dra6nhkkjux"
-path="res://.godot/imported/hay_feeder.glb-86c515c4a1eab049ed31e4338641022d.scn"
+path="res://.godot/imported/hay_feeder.glb-14164b06ebfdc5b4353f2c8a5f1750d1.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/hay_feeder.glb"
-dest_files=["res://.godot/imported/hay_feeder.glb-86c515c4a1eab049ed31e4338641022d.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/hay_feeder.glb"
+dest_files=["res://.godot/imported/hay_feeder.glb-14164b06ebfdc5b4353f2c8a5f1750d1.scn"]
 
 [params]
 

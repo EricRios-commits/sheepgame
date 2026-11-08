@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://c61bxnvyosf52"
-path="res://.godot/imported/goat.glb-7897eb2556ea95dc6f7a5e4a3307fd1f.scn"
+path="res://.godot/imported/goat.glb-1e08f337a14022f3d436012a2ab38c8b.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/goat.glb"
-dest_files=["res://.godot/imported/goat.glb-7897eb2556ea95dc6f7a5e4a3307fd1f.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/goat.glb"
+dest_files=["res://.godot/imported/goat.glb-1e08f337a14022f3d436012a2ab38c8b.scn"]
 
 [params]
 

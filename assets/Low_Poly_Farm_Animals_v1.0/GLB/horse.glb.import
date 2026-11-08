@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bem8iehosicmj"
-path="res://.godot/imported/horse.glb-2b23f756fa481e1646b00d6730b67bba.scn"
+path="res://.godot/imported/horse.glb-edf059f04f8c515f8f8bc2cd572439de.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/horse.glb"
-dest_files=["res://.godot/imported/horse.glb-2b23f756fa481e1646b00d6730b67bba.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/horse.glb"
+dest_files=["res://.godot/imported/horse.glb-edf059f04f8c515f8f8bc2cd572439de.scn"]
 
 [params]
 

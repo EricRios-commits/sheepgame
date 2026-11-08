@@ -4,12 +4,12 @@ importer="ArrayMesh"
 importer_version=1
 type="ArrayMesh"
 uid="uid://b1cl7kmvdw7n1"
-path="res://.godot/imported/sheep.glb-e1078775b143706f01ff69a6632732ec.res"
+path="res://.godot/imported/sheep.glb-7844492c2bed14752c6ec502ac4aff92.res"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/sheep.glb"
-dest_files=["res://.godot/imported/sheep.glb-e1078775b143706f01ff69a6632732ec.res"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/sheep.glb"
+dest_files=["res://.godot/imported/sheep.glb-7844492c2bed14752c6ec502ac4aff92.res"]
 
 [params]
 

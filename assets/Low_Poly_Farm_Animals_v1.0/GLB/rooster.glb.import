@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://16rulfb7dfl1"
-path="res://.godot/imported/rooster.glb-dade0c52b9c8538ed18818ea2b520d84.scn"
+path="res://.godot/imported/rooster.glb-0b4b64450dc688390367d68301a84539.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/rooster.glb"
-dest_files=["res://.godot/imported/rooster.glb-dade0c52b9c8538ed18818ea2b520d84.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/rooster.glb"
+dest_files=["res://.godot/imported/rooster.glb-0b4b64450dc688390367d68301a84539.scn"]
 
 [params]
 

@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bw7si11pw38uf"
-path="res://.godot/imported/goose.glb-4f6f32a4b591e9588388130341424385.scn"
+path="res://.godot/imported/goose.glb-1f7f7457ca131a7c28248bd0e82403e3.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/goose.glb"
-dest_files=["res://.godot/imported/goose.glb-4f6f32a4b591e9588388130341424385.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/goose.glb"
+dest_files=["res://.godot/imported/goose.glb-1f7f7457ca131a7c28248bd0e82403e3.scn"]
 
 [params]
 

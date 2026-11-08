@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://c7ohvu2kutpfq"
-path="res://.godot/imported/donkey.glb-6791115794980299af8931f9a6cadb80.scn"
+path="res://.godot/imported/donkey.glb-d499204fea16f8440767fdcda2f918fe.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/GLB/donkey.glb"
-dest_files=["res://.godot/imported/donkey.glb-6791115794980299af8931f9a6cadb80.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/GLB/donkey.glb"
+dest_files=["res://.godot/imported/donkey.glb-d499204fea16f8440767fdcda2f918fe.scn"]
 
 [params]
 

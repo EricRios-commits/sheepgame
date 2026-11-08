@@ -1,4 +1,4 @@
-﻿class_name BoidBehaviourTable
+class_name BoidBehaviourTable
 extends RefCounted
 ## Flat, array-indexed compilation of the authored profiles 
 

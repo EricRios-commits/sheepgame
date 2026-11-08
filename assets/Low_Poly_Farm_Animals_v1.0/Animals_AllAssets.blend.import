@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://d6tox2v0frg7"
-path="res://.godot/imported/Animals_AllAssets.blend-db2129116c36697dd56f02e757b030bc.scn"
+path="res://.godot/imported/Animals_AllAssets.blend-49deefd93d8f890a0bea17fb53db0dd2.scn"
 
 [deps]
 
-source_file="res://Low_Poly_Farm_Animals_v1.0/Animals_AllAssets.blend"
-dest_files=["res://.godot/imported/Animals_AllAssets.blend-db2129116c36697dd56f02e757b030bc.scn"]
+source_file="res://assets/Low_Poly_Farm_Animals_v1.0/Animals_AllAssets.blend"
+dest_files=["res://.godot/imported/Animals_AllAssets.blend-49deefd93d8f890a0bea17fb53db0dd2.scn"]
 
 [params]
 

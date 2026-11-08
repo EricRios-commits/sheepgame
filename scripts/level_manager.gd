@@ -30,6 +30,7 @@ func _ready() -> void:
 	# depending on execution order not all pens will be present in the system when this starts
 	# For this reason we delay for one frame
 	call_deferred("_get_pens_from_system")
+	Global.audio_manager.next_bgm()
 
 func _get_pens_from_system():
 	if boid_system == null:
@@ -47,6 +48,7 @@ func _get_pens_from_system():
 			stats[species_id].total += storage.number_of_spots
 		else:
 			stats[species_id] = AmountPerSpecies.new(storage.number_of_spots)
+		print("%d has total of %d" % [species_id, storage.number_of_spots])
 
 func _on_boid_penned(storage_index: int, species_id: int):
 	if boid_system == null:
@@ -64,16 +66,17 @@ func _on_boid_penned(storage_index: int, species_id: int):
 		stats[species_id].insideCorrectBarn += 1
 	elif stats.has(species_id):
 		stats[species_id].insideWrongBarn += 1
-	# TODO: add sfx when sheep enters the barn
+	
+	Global.audio_manager.trigger_sfx("sheep_baa")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	var progress = 0
 	var total_overall = 0
+	
 	for key in stats.keys():
 		var stat = stats[key]
-		progress += stat.insideCorrectBarn 
-		# progress += stat.insideCorrectBarn + stat.insideWrongBarn / 2
+		progress += stat.insideCorrectBarn + stat.insideWrongBarn / 3 # So that the player is less scammed
 		total_overall += stat.total
 	
 	if total_overall == 0:
@@ -93,7 +96,10 @@ func _process(_delta: float) -> void:
 		var this_percentage = star_percentages[i]
 		star_indicators[i].position.x = this_percentage * pb_width
 		star_indicators[i].set_star(percentage >= this_percentage)
+		if last_percentage < this_percentage && percentage >= this_percentage:
+			Global.audio_manager.trigger_sfx("star_achieved", i)
 	
+	last_percentage = percentage
 
 func on_give_up_button() -> void:
 	should_show_results.emit(progress_bar.value, star_percentages)
