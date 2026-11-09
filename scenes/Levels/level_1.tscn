@@ -12,16 +12,13 @@
 [ext_resource type="PackedScene" uid="uid://b4pr8n61wffyh" path="res://Low_Poly_Farm_Assets/Assets/fence_gate.tscn" id="5_4p1o3"]
 [ext_resource type="Script" uid="uid://cnxce80poaxm2" path="res://flocking/core/boid_species_profile.gd" id="6_yhe24"]
 [ext_resource type="Resource" uid="uid://cvvq0q35rcgcb" path="res://assets/boids_resources/sheep_behaviour.tres" id="7_x5rd6"]
-[ext_resource type="Script" uid="uid://djd0d4276h66b" path="res://scripts/results_screen.gd" id="7_xxpsm"]
-[ext_resource type="PackedScene" uid="uid://dqblpdwrhl3q0" path="res://scenes/star_results_hollow.tscn" id="8_j85eu"]
 [ext_resource type="Script" uid="uid://bh4m16gxnmuuw" path="res://flocking/presentation/boid_presenter.gd" id="8_sl41b"]
-[ext_resource type="PackedScene" uid="uid://b0imtefhtlpp0" path="res://scenes/star_results_filled.tscn" id="9_4p1o3"]
 [ext_resource type="Script" uid="uid://c7cfrpt3iasuh" path="res://flocking/presentation/boid_species_visual.gd" id="9_f2xmq"]
 [ext_resource type="Resource" uid="uid://3yvh757yqh84" path="res://assets/boids_resources/sheep_visual.tres" id="10_81i13"]
 [ext_resource type="Script" uid="uid://c5bgv6dso0k4e" path="res://scripts/level_manager.gd" id="11_xf47x"]
-[ext_resource type="PackedScene" uid="uid://d4kbdpvujqm8n" path="res://scenes/star_gameplay.tscn" id="12_6vd05"]
 [ext_resource type="Script" uid="uid://p4stixdtom0l" path="res://flocking/core/boid_spawn_zone.gd" id="13_t6mv3"]
 [ext_resource type="Script" uid="uid://ddho2emmyrsog" path="res://flocking/core/boid_spawn_config.gd" id="14_jxar1"]
+[ext_resource type="PackedScene" uid="uid://4t33kdqn7xj5" path="res://scenes/ui.tscn" id="15_4xsrm"]
 [ext_resource type="ArrayMesh" uid="uid://b1ij20rnulvqa" path="res://assets/meshes/apple_tree.tres" id="18_7o3do"]
 [ext_resource type="PackedScene" uid="uid://d2bu1bbq21dnd" path="res://scenes/pen.tscn" id="24_mqh5v"]
 
@@ -109,11 +106,10 @@ system = NodePath("../BoidSystem")
 visuals = Array[ExtResource("9_f2xmq")]([ExtResource("10_81i13")])
 metadata/_custom_type_script = "uid://bh4m16gxnmuuw"
 
-[node name="Level Manager" type="Node3D" parent="scripts" unique_id=1883404399 node_paths=PackedStringArray("boid_system", "progress_bar")]
+[node name="Level Manager" type="Node3D" parent="scripts" unique_id=1883404399 node_paths=PackedStringArray("boid_system", "ui")]
 script = ExtResource("11_xf47x")
 boid_system = NodePath("../BoidSystem")
-progress_bar = NodePath("../../UI/ProgressBar")
-star_indicator_scene = ExtResource("12_6vd05")
+ui = NodePath("../../UI")
 
 [node name="BoidSpawnZone" type="Node3D" parent="scripts" unique_id=1447653587 node_paths=PackedStringArray("system")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.496952, 0, -1.8082609)
@@ -123,6 +119,8 @@ config = SubResource("Resource_pc6eh")
 shape = 1
 size = Vector2(10, 10)
 metadata/_custom_type_script = "uid://p4stixdtom0l"
+
+[node name="UI" parent="." unique_id=298481423 instance=ExtResource("15_4xsrm")]
 
 [node name="Trees" type="Node3D" parent="." unique_id=2001116940]
 
@@ -217,71 +215,6 @@ transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, 
 
 [node name="Fence_Gate" parent="FencesEnclosing" unique_id=355494656 instance=ExtResource("5_4p1o3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.081, -0.001, -0.006)
-
-[node name="UI" type="Control" parent="." unique_id=1132753755]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ProgressBar" type="ProgressBar" parent="UI" unique_id=1532938446]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 32.0
-grow_horizontal = 2
-max_value = 1.0
-
-[node name="Results Screen" type="PanelContainer" parent="UI" unique_id=1640528008 node_paths=PackedStringArray("level_manager")]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("7_xxpsm")
-level_manager = NodePath("../../scripts/Level Manager")
-star_hollow = ExtResource("8_j85eu")
-star_filled = ExtResource("9_4p1o3")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Results Screen" unique_id=904217484]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="UI/Results Screen/VBoxContainer" unique_id=1249502465]
-layout_mode = 2
-text = "YOU WIN"
-horizontal_alignment = 1
-
-[node name="Stars" type="HBoxContainer" parent="UI/Results Screen/VBoxContainer" unique_id=1768372737]
-layout_mode = 2
-
-[node name="Buttons" type="HBoxContainer" parent="UI/Results Screen/VBoxContainer" unique_id=952726607]
-layout_mode = 2
-theme_override_constants/separation = 20
-alignment = 1
-
-[node name="Button" type="Button" parent="UI/Results Screen/VBoxContainer/Buttons" unique_id=1992109423]
-layout_mode = 2
-text = "Main Menu"
-
-[node name="Button2" type="Button" parent="UI/Results Screen/VBoxContainer/Buttons" unique_id=1116490008]
-layout_mode = 2
-text = "Next Level"
-
-[node name="Button" type="Button" parent="UI" unique_id=1593315481]
-layout_mode = 1
-offset_top = 32.0
-offset_right = 128.0
-offset_bottom = 64.0
-text = "Give up "
 
 [node name="Pen" parent="." unique_id=1020403270 instance=ExtResource("24_mqh5v")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 17.433, 0, 0)

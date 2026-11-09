@@ -14,16 +14,13 @@
 [ext_resource type="Resource" uid="uid://3yvh757yqh84" path="res://assets/boids_resources/sheep_visual.tres" id="10_l61k0"]
 [ext_resource type="Resource" uid="uid://74l66wwelnkk" path="res://assets/boids_resources/orange_sheep_visual.tres" id="11_5ytgs"]
 [ext_resource type="Script" uid="uid://c5bgv6dso0k4e" path="res://scripts/level_manager.gd" id="12_moj4v"]
-[ext_resource type="PackedScene" uid="uid://d4kbdpvujqm8n" path="res://scenes/star_gameplay.tscn" id="13_04xhx"]
 [ext_resource type="Script" uid="uid://p4stixdtom0l" path="res://flocking/core/boid_spawn_zone.gd" id="14_y6tmf"]
 [ext_resource type="Script" uid="uid://ddho2emmyrsog" path="res://flocking/core/boid_spawn_config.gd" id="15_r0w8p"]
 [ext_resource type="Script" uid="uid://bohp2a4orq7tw" path="res://flocking/pen/boid_pen_storage.gd" id="16_7abrx"]
+[ext_resource type="PackedScene" uid="uid://4t33kdqn7xj5" path="res://scenes/ui.tscn" id="16_ttcij"]
 [ext_resource type="Material" uid="uid://be5j3dpaer8uw" path="res://materials/grass_2.tres" id="17_f2tki"]
 [ext_resource type="Script" uid="uid://bivryc0yy37dq" path="res://flocking/pen/boid_pen_entrance.gd" id="17_gv2sh"]
 [ext_resource type="PackedScene" uid="uid://c0ak38sjbhatk" path="res://Low_Poly_Farm_Assets/Assets/straw_pack.tscn" id="19_452xl"]
-[ext_resource type="Script" uid="uid://djd0d4276h66b" path="res://scripts/results_screen.gd" id="20_f4msn"]
-[ext_resource type="PackedScene" uid="uid://dqblpdwrhl3q0" path="res://scenes/star_results_hollow.tscn" id="21_40h3w"]
-[ext_resource type="PackedScene" uid="uid://b0imtefhtlpp0" path="res://scenes/star_results_filled.tscn" id="22_yd0ew"]
 [ext_resource type="PackedScene" uid="uid://c7w2p252lahk" path="res://scenes/player.tscn" id="23_tbcna"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_rbuvs"]
@@ -635,11 +632,10 @@ system = NodePath("../BoidSystem")
 visuals = Array[ExtResource("9_4c4jv")]([ExtResource("10_l61k0"), ExtResource("11_5ytgs")])
 metadata/_custom_type_script = "uid://bh4m16gxnmuuw"
 
-[node name="Level Manager" type="Node3D" parent="scripts" unique_id=47424823 node_paths=PackedStringArray("boid_system", "progress_bar")]
+[node name="Level Manager" type="Node3D" parent="scripts" unique_id=47424823 node_paths=PackedStringArray("boid_system", "ui")]
 script = ExtResource("12_moj4v")
 boid_system = NodePath("../BoidSystem")
-progress_bar = NodePath("../../UI/ProgressBar")
-star_indicator_scene = ExtResource("13_04xhx")
+ui = NodePath("../../UI")
 
 [node name="BoidOrangeSpawnZone" type="Node3D" parent="scripts" unique_id=297647242 node_paths=PackedStringArray("system")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0)
@@ -658,6 +654,8 @@ config = SubResource("Resource_n24u3")
 shape = 1
 size = Vector2(10, 10)
 metadata/_custom_type_script = "uid://p4stixdtom0l"
+
+[node name="UI" parent="." unique_id=298481423 instance=ExtResource("16_ttcij")]
 
 [node name="FloorEnvironment" type="Node3D" parent="." unique_id=1262089767]
 
@@ -906,71 +904,6 @@ transform = Transform3D(0.6912075, 0, 0, 0, 1, 0, 0, 0, 1, -24.195261, 0.026, 0)
 script = ExtResource("17_gv2sh")
 storage = NodePath("../BoidOrangePenStorage")
 show_gizmo_in_game = true
-
-[node name="UI" type="Control" parent="." unique_id=1666903832]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ProgressBar" type="ProgressBar" parent="UI" unique_id=438180022]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 32.0
-grow_horizontal = 2
-max_value = 1.0
-
-[node name="Results Screen" type="PanelContainer" parent="UI" unique_id=806952663 node_paths=PackedStringArray("level_manager")]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("20_f4msn")
-level_manager = NodePath("../../scripts/Level Manager")
-star_hollow = ExtResource("21_40h3w")
-star_filled = ExtResource("22_yd0ew")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Results Screen" unique_id=1384357951]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="UI/Results Screen/VBoxContainer" unique_id=1883650658]
-layout_mode = 2
-text = "YOU WIN"
-horizontal_alignment = 1
-
-[node name="Stars" type="HBoxContainer" parent="UI/Results Screen/VBoxContainer" unique_id=992497912]
-layout_mode = 2
-
-[node name="Buttons" type="HBoxContainer" parent="UI/Results Screen/VBoxContainer" unique_id=1625087497]
-layout_mode = 2
-theme_override_constants/separation = 20
-alignment = 1
-
-[node name="Button" type="Button" parent="UI/Results Screen/VBoxContainer/Buttons" unique_id=93637629]
-layout_mode = 2
-text = "Main Menu"
-
-[node name="Button2" type="Button" parent="UI/Results Screen/VBoxContainer/Buttons" unique_id=1504840156]
-layout_mode = 2
-text = "Next Level"
-
-[node name="Button" type="Button" parent="UI" unique_id=947610645]
-layout_mode = 1
-offset_top = 32.0
-offset_right = 128.0
-offset_bottom = 64.0
-text = "Give up "
 
 [node name="WorldBoundaries" type="StaticBody3D" parent="." unique_id=1715718943]
 collision_layer = 3

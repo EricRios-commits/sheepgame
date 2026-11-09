@@ -6,7 +6,6 @@ extends Control
 @export var result_star_filled: PackedScene
 
 @export var main_scene: PackedScene
-@export var self_scene: PackedScene
 @export var next_scene: PackedScene
 
 @onready var results_screen = $"Results Screen"
@@ -67,10 +66,7 @@ func on_main_menu() -> void:
 	get_tree().change_scene_to_packed(main_scene)
 
 func on_restart_level() -> void:
-	if self_scene == null:
-		push_error("[Level Manager] Self scene is not set up")
-		return
-	get_tree().change_scene_to_packed(self_scene)
+	get_tree().reload_current_scene()
 
 func on_next_level() -> void:
 	if next_scene == null:
