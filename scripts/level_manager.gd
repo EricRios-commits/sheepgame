@@ -3,11 +3,10 @@ extends Node3D
 
 @export var boid_system: BoidSystem
 @export var star_percentages: Array[float] = [0.6, 0.8, 1]
-@export var progress_bar: ProgressBar
-@export var star_indicator_scene: PackedScene
+@export var ui: UI
 
 var last_percentage = 0
-signal should_show_results(percentage: float, cutoffs: Array[float])
+var stars_achieved = -1
 
 class AmountPerSpecies:
 	var total: int
@@ -18,13 +17,13 @@ class AmountPerSpecies:
 		self.total = total_
 
 var stats : Dictionary[int, AmountPerSpecies] # Species id to Amount
-var star_indicators: Array[StarIndicator]
 
 func _ready() -> void:
+	star_percentages.sort()
 	for star_percentage in star_percentages:
-		var star_indicator = star_indicator_scene.instantiate()
-		progress_bar.add_child(star_indicator)
-		star_indicators.append(star_indicator)
+		ui.setup_star(star_percentage)
+	# This is a bit roundabout because ui does not have all the data to show
+	ui.on_finish_attempt.connect(on_give_up_button)
 	
 	# BoidPen registers itself to the system on the first frame of execution, so 
 	# depending on execution order not all pens will be present in the system when this starts
@@ -83,24 +82,22 @@ func _process(_delta: float) -> void:
 		return
 	
 	var percentage = float(progress) / total_overall
-	if percentage == 1.0 && progress_bar.value < 1.0:
+	if percentage == 1.0 && last_percentage < 1.0:
 		# We have finished the level
 		# I was too lazy to add another variable for the rising edge detection
-		should_show_results.emit(percentage, star_percentages)
+		ui.should_show_results(percentage, star_percentages)
 	
-	progress_bar.value = percentage
+	var next_cutoff_idx = stars_achieved + 1
+	if next_cutoff_idx < star_percentages.size():
+		# We can get more stars
+		var next_cutoff = star_percentages[next_cutoff_idx]
+		if percentage >= next_cutoff:
+			Global.audio_manager.trigger_sfx("star_achieved", next_cutoff_idx)
 	
-	# Update star indicator positions
-	var pb_width = progress_bar.get_rect().size.x
-	for i in star_indicators.size():
-		var this_percentage = star_percentages[i]
-		star_indicators[i].position.x = this_percentage * pb_width
-		star_indicators[i].set_star(percentage >= this_percentage)
-		if last_percentage < this_percentage && percentage >= this_percentage:
-			Global.audio_manager.trigger_sfx("star_achieved", i)
+	ui.update_progress(percentage)
 	
 	last_percentage = percentage
 
 func on_give_up_button() -> void:
-	should_show_results.emit(progress_bar.value, star_percentages)
+	ui.should_show_results(last_percentage, star_percentages)
 	

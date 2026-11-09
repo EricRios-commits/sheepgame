@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://coi3xkwi1hwaj"]
+
+[ext_resource type="Texture2D" uid="uid://b1j3kwtmtyniv" path="res://Low_Poly_Farm_Assets/textures/color_1024x1024.jpg" id="1_vplca"]
+[ext_resource type="ArrayMesh" uid="uid://b1ij20rnulvqa" path="res://assets/meshes/apple_tree.tres" id="2_viusy"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3pho0"]
+albedo_texture = ExtResource("1_vplca")
+
+[node name="tree_c030" type="MeshInstance3D" unique_id=1170277751]
+transform = Transform3D(-0.22452079, -0.3888819, 0, 0, 0, 0.35776, -0.3888819, 0.22452079, 0, 0, 0, 0)
+layers = 2
+material_override = SubResource("StandardMaterial3D_3pho0")
+mesh = ExtResource("2_viusy")

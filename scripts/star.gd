@@ -9,7 +9,6 @@ var state = false
 
 func _ready() -> void:
 	set_star(false)
-	
 
 func set_star(gotten: bool):
 	star_hollow.visible = !gotten
