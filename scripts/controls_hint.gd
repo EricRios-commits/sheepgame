@@ -35,14 +35,16 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	_draw_key(Vector2(65, 0), KEY_SIZE, "W", 0, 22)
-	_draw_key(Vector2(15, 50), KEY_SIZE, "A", 1, 22)
-	_draw_key(Vector2(65, 50), KEY_SIZE, "S", 2, 22)
-	_draw_key(Vector2(115, 50), KEY_SIZE, "D", 3, 22)
-	_draw_key(Vector2(15, 100), SPACE_SIZE, "SPACE", 6, 15)
+	var offset = Vector2(0,-50)
+	
+	_draw_key(Vector2(65, 0) + offset, KEY_SIZE, "W", 0, 22)
+	_draw_key(Vector2(15, 50) + offset, KEY_SIZE, "A", 1, 22)
+	_draw_key(Vector2(65, 50) + offset, KEY_SIZE, "S", 2, 22)
+	_draw_key(Vector2(115, 50) + offset, KEY_SIZE, "D", 3, 22)
+	_draw_key(Vector2(15, 100) + offset, SPACE_SIZE, "SPACE", 6, 15)
 
-	_draw_key(Vector2(203, 50), KEY_SIZE, "Q", 4, 22)
-	_draw_key(Vector2(261, 50), KEY_SIZE, "E", 5, 22)
+	_draw_key(Vector2(203, 50) + offset, KEY_SIZE, "Q", 4, 22)
+	_draw_key(Vector2(261, 50) + offset, KEY_SIZE, "E", 5, 22)
 
 
 func _draw_key(pos: Vector2, key_size: Vector2, label: String, index: int, font_size: int) -> void:

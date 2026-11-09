@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dqblpdwrhl3q0" path="res://scenes/star_results_hollow.tscn" id="3_8dubc"]
 [ext_resource type="PackedScene" uid="uid://b0imtefhtlpp0" path="res://scenes/star_results_filled.tscn" id="4_p7vwb"]
 [ext_resource type="PackedScene" uid="uid://diu7h1xch8rck" path="res://scenes/main_menu/main_menu_3d.tscn" id="5_wm3ai"]
+[ext_resource type="Script" uid="uid://dw10y3expc02y" path="res://scripts/controls_hint.gd" id="6_8dubc"]
 
 [node name="UI" type="Control" unique_id=298481423]
 layout_mode = 3
@@ -82,11 +83,24 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 352.0
 offset_top = -23.0
 grow_horizontal = 2
 grow_vertical = 0
 horizontal_alignment = 1
 vertical_alignment = 2
+
+[node name="Control" type="Control" parent="." unique_id=690887869]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -102.0
+offset_right = 260.0
+offset_bottom = -2.0
+grow_vertical = 0
+pivot_offset_ratio = Vector2(0, 1)
+script = ExtResource("6_8dubc")
 
 [connection signal="pressed" from="Button" to="." method="on_finish_attempt_btn"]
 [connection signal="pressed" from="Results Screen/VBoxContainer/Buttons/Main Menu" to="." method="on_main_menu"]
