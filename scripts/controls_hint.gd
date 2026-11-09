@@ -1,7 +1,6 @@
 extends Control
 
-# The keys mirror the physical keys used by player.gd and isometric_camera.gd.
-const KEYS := [KEY_W, KEY_A, KEY_S, KEY_D, KEY_Q, KEY_E, KEY_SPACE]
+const ACTIONS := ["move_forward", "move_left", "move_back", "move_right", "camera_left", "camera_right", "jump"]
 const KEY_SIZE := Vector2(44.0, 44.0)
 const SPACE_SIZE := Vector2(144.0, 38.0)
 const PRESS_TRANSITION := 0.16
@@ -24,8 +23,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	var changed := false
-	for index in KEYS.size():
-		var target := 1.0 if Input.is_physical_key_pressed(KEYS[index]) else 0.0
+	for index in ACTIONS.size():
+		var target := 1.0 if Input.is_action_pressed(ACTIONS[index]) else 0.0
 		var next := move_toward(_press_progress[index], target, delta / PRESS_TRANSITION)
 		if next != _press_progress[index]:
 			_press_progress[index] = next
@@ -35,14 +34,21 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	_draw_key(Vector2(65, 0), KEY_SIZE, "W", 0, 22)
-	_draw_key(Vector2(15, 50), KEY_SIZE, "A", 1, 22)
-	_draw_key(Vector2(65, 50), KEY_SIZE, "S", 2, 22)
-	_draw_key(Vector2(115, 50), KEY_SIZE, "D", 3, 22)
-	_draw_key(Vector2(15, 100), SPACE_SIZE, "SPACE", 6, 15)
+	_draw_key(Vector2(65, 0), KEY_SIZE, _action_label(0), 0, 22)
+	_draw_key(Vector2(15, 50), KEY_SIZE, _action_label(1), 1, 22)
+	_draw_key(Vector2(65, 50), KEY_SIZE, _action_label(2), 2, 22)
+	_draw_key(Vector2(115, 50), KEY_SIZE, _action_label(3), 3, 22)
+	_draw_key(Vector2(15, 100), SPACE_SIZE, _action_label(6), 6, 15)
 
-	_draw_key(Vector2(203, 50), KEY_SIZE, "Q", 4, 22)
-	_draw_key(Vector2(261, 50), KEY_SIZE, "E", 5, 22)
+	_draw_key(Vector2(203, 50), KEY_SIZE, _action_label(4), 4, 22)
+	_draw_key(Vector2(261, 50), KEY_SIZE, _action_label(5), 5, 22)
+
+
+func _action_label(index: int) -> String:
+	for event in InputMap.action_get_events(ACTIONS[index]):
+		if event is InputEventKey:
+			return (event.as_text_physical_keycode() if event.physical_keycode != 0 else event.as_text_keycode()).to_upper()
+	return ACTIONS[index].replace("_", " ").to_upper()
 
 
 func _draw_key(pos: Vector2, key_size: Vector2, label: String, index: int, font_size: int) -> void:
