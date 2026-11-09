@@ -84,7 +84,7 @@ grow_vertical = 2
 scale = Vector2(1.2184786, 1.0653656)
 theme_override_fonts/font = ExtResource("2_4pl3l")
 theme_override_font_sizes/font_size = 55
-text = "Heap o'Sheeps"
+text = "Heap o'Sheep"
 
 [connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]
