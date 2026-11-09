@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c068axpe0uibv" path="res://scenes/main_menu/main_menu_ui.tscn" id="3_0306b"]
 [ext_resource type="ArrayMesh" uid="uid://1kfnhmh7sy7s" path="res://assets/meshes/orange_tree.tres" id="3_osdka"]
 [ext_resource type="ArrayMesh" uid="uid://rq1dpu6nvfr1" path="res://assets/meshes/pumpkin_field.tres" id="4_bblcg"]
-[ext_resource type="PackedScene" uid="uid://bxypa1mt5qr2k" path="res://scenes/levels/level_1.tscn" id="4_owgyp"]
+[ext_resource type="PackedScene" uid="uid://bxypa1mt5qr2k" path="res://scenes/Levels/level_1.tscn" id="4_owgyp"]
 [ext_resource type="ArrayMesh" uid="uid://neqmfpankc8d" path="res://assets/meshes/big_tree.tres" id="4_wag37"]
 [ext_resource type="ArrayMesh" uid="uid://6gprgxfefrf2" path="res://assets/meshes/mixed_field.tres" id="5_umn0r"]
 

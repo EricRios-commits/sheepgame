@@ -1,15 +1,21 @@
 class_name UI
 extends Control
 
+@export_group("UI Graphics")
 @export var star_indicator_scene: PackedScene
 @export var result_star_hollow: PackedScene
 @export var result_star_filled: PackedScene
 
+@export_group("Scenes")
 @export var main_scene: PackedScene
 @export var next_scene: PackedScene
 
+@export_group("")
+@export_multiline() var scene_help: String
+
 @onready var results_screen = $"Results Screen"
 @onready var results_star_container = $"Results Screen/VBoxContainer/Stars"
+@onready var bottom_text = $Label
 
 signal on_finish_attempt()
 
@@ -18,6 +24,7 @@ var star_percentages: Array[float] = []
 var star_indicators: Array[StarIndicator] = []
 
 func _ready():
+	bottom_text.text = scene_help
 	results_screen.visible = false
 
 func setup_star(percentage: float):

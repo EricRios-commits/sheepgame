@@ -75,7 +75,7 @@ func _process(_delta: float) -> void:
 	
 	for key in stats.keys():
 		var stat = stats[key]
-		progress += stat.insideCorrectBarn + stat.insideWrongBarn / 3 # So that the player is less scammed
+		progress += stat.insideCorrectBarn + float(stat.insideWrongBarn) / 3 # So that the player is less scammed
 		total_overall += stat.total
 	
 	if total_overall == 0:

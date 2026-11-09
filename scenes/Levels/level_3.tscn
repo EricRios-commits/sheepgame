@@ -1203,3 +1203,4 @@ transform = Transform3D(-4.371139e-08, -1.0000001, 4.3711392e-08, 0, -4.3711392e
 shape = SubResource("WorldBoundaryShape3D_q7rag")
 
 [node name="UI" parent="." unique_id=298481423 instance=ExtResource("22_2q2jy")]
+scene_help = "Each sheep has a color and should go into the specific colored barn."

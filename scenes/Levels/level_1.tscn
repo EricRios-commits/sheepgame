@@ -86,7 +86,7 @@ shadow_bias = 0.035
 directional_shadow_mode = 0
 
 [node name="Player" parent="." unique_id=317266410 node_paths=PackedStringArray("boid_system") instance=ExtResource("1_l5ivm")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -13.035425, -0.047151513, 4.3788223)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.035425, -0.047151513, 4.3788223)
 boid_system = NodePath("../scripts/BoidSystem")
 
 [node name="scripts" type="Node" parent="." unique_id=310030960]
@@ -121,6 +121,9 @@ size = Vector2(10, 10)
 metadata/_custom_type_script = "uid://p4stixdtom0l"
 
 [node name="UI" parent="." unique_id=298481423 instance=ExtResource("15_4xsrm")]
+scene_help = "W/A/S/D to move, Left Shift to sprint, Space to jump
+Q/E to rotate the camera, Mouse wheel to zoom in/out
+Get the sheep to the barn"
 
 [node name="Trees" type="Node3D" parent="." unique_id=2001116940]
 

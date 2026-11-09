@@ -76,6 +76,18 @@ text = "Restart Level"
 layout_mode = 2
 text = "Next Level"
 
+[node name="Label" type="Label" parent="." unique_id=1303028438]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+grow_horizontal = 2
+grow_vertical = 0
+horizontal_alignment = 1
+vertical_alignment = 2
+
 [connection signal="pressed" from="Button" to="." method="on_finish_attempt_btn"]
 [connection signal="pressed" from="Results Screen/VBoxContainer/Buttons/Main Menu" to="." method="on_main_menu"]
 [connection signal="pressed" from="Results Screen/VBoxContainer/Buttons/Restart Level" to="." method="on_restart_level"]
