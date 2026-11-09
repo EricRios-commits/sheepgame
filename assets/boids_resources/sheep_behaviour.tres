@@ -43,10 +43,21 @@ influence = SubResource("Resource_2i47q")
 weight = 10.0
 metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
 
+[sub_resource type="Resource" id="Resource_al1i3"]
+script = ExtResource("5_7o0r5")
+emitter_kind = &"pen_lure"
+mode = 1
+metadata/_custom_type_script = "uid://6cikbviab3ep"
+
+[sub_resource type="Resource" id="Resource_ruxvt"]
+script = ExtResource("3_wajvl")
+influence = SubResource("Resource_al1i3")
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
 [sub_resource type="Resource" id="Resource_wt37s"]
 script = ExtResource("2_ruxvt")
 max_speed = 3.0
-influences = Array[ExtResource("3_wajvl")]([SubResource("Resource_tgjpg"), SubResource("Resource_n4chu"), SubResource("Resource_6b5q0")])
+influences = Array[ExtResource("3_wajvl")]([SubResource("Resource_tgjpg"), SubResource("Resource_n4chu"), SubResource("Resource_6b5q0"), SubResource("Resource_ruxvt")])
 metadata/_custom_type_script = "uid://bis4gpcq54r1r"
 
 [resource]
