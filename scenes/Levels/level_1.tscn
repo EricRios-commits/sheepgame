@@ -22,11 +22,8 @@
 [ext_resource type="PackedScene" uid="uid://d4kbdpvujqm8n" path="res://scenes/star_gameplay.tscn" id="12_6vd05"]
 [ext_resource type="Script" uid="uid://p4stixdtom0l" path="res://flocking/core/boid_spawn_zone.gd" id="13_t6mv3"]
 [ext_resource type="Script" uid="uid://ddho2emmyrsog" path="res://flocking/core/boid_spawn_config.gd" id="14_jxar1"]
-[ext_resource type="Script" uid="uid://bohp2a4orq7tw" path="res://flocking/pen/boid_pen_storage.gd" id="15_d0wj5"]
-[ext_resource type="Script" uid="uid://bivryc0yy37dq" path="res://flocking/pen/boid_pen_entrance.gd" id="16_1n1l4"]
 [ext_resource type="ArrayMesh" uid="uid://b1ij20rnulvqa" path="res://assets/meshes/apple_tree.tres" id="18_7o3do"]
-[ext_resource type="PackedScene" uid="uid://b6uswonu6fvhk" path="res://assets/environment/farmbuilding_c_004.tscn" id="25_7o3do"]
-[ext_resource type="Script" uid="uid://bfcj4jv4px22k" path="res://flocking/core/boid_emitter.gd" id="27_31oqk"]
+[ext_resource type="PackedScene" uid="uid://d2bu1bbq21dnd" path="res://scenes/pen.tscn" id="24_mqh5v"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_pa8r4"]
 ground_bottom_color = Color(0.64705884, 0.654902, 0.67058825, 1)
@@ -61,6 +58,21 @@ metadata/_custom_type_script = "uid://ddho2emmyrsog"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fcfvj"]
 albedo_texture = ExtResource("2_l5ivm")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_31oqk"]
+size = Vector3(1, 4.32959, 7.1262817)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_x7jkp"]
+size = Vector3(1, 4.32959, 4.5557137)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0qwwm"]
+size = Vector3(1, 4.32959, 20.437012)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8w0r3"]
+size = Vector3(1, 4.32959, 44.399292)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_t4umt"]
+size = Vector3(1, 4.32959, 44.399292)
 
 [node name="Level1" type="Node3D" unique_id=1071458856]
 
@@ -144,6 +156,12 @@ layers = 2
 material_override = SubResource("StandardMaterial3D_fcfvj")
 mesh = ExtResource("18_7o3do")
 
+[node name="tree_c035" type="MeshInstance3D" parent="Trees" unique_id=1561010658]
+transform = Transform3D(-0.22452079, -0.3888819, 0, 0, 0, 0.35776, -0.3888819, 0.22452079, 0, 9.333585, 1.6973999, -8.867325)
+layers = 2
+material_override = SubResource("StandardMaterial3D_fcfvj")
+mesh = ExtResource("18_7o3do")
+
 [node name="Floor" parent="." unique_id=444543483 instance=ExtResource("3_xxpsm")]
 transform = Transform3D(1.7, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
@@ -167,6 +185,12 @@ transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, 
 [node name="Fence6" parent="FencesEnclosing" unique_id=1459234558 instance=ExtResource("4_j85eu")]
 transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 3.9168487, 1.1920929e-07, 1.9114494)
 
+[node name="Fence15" parent="FencesEnclosing" unique_id=758610984 instance=ExtResource("4_j85eu")]
+transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 4.931852, 1.1920929e-07, 1.9114494)
+
+[node name="Fence16" parent="FencesEnclosing" unique_id=1412187685 instance=ExtResource("4_j85eu")]
+transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 5.701675, 1.1920929e-07, 1.9114494)
+
 [node name="Fence7" parent="FencesEnclosing" unique_id=1229958745 instance=ExtResource("4_j85eu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.7)
 
@@ -184,6 +208,12 @@ transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, 
 
 [node name="Fence12" parent="FencesEnclosing" unique_id=1818422300 instance=ExtResource("4_j85eu")]
 transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 3.9168487, 1.1920929e-07, -5.6)
+
+[node name="Fence13" parent="FencesEnclosing" unique_id=2141950505 instance=ExtResource("4_j85eu")]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 4.9548717, 1.1920929e-07, -5.6)
+
+[node name="Fence14" parent="FencesEnclosing" unique_id=1975709141 instance=ExtResource("4_j85eu")]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 5.60869, 1.1920929e-07, -5.6)
 
 [node name="Fence_Gate" parent="FencesEnclosing" unique_id=355494656 instance=ExtResource("5_4p1o3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.081, -0.001, -0.006)
@@ -253,32 +283,40 @@ offset_right = 128.0
 offset_bottom = 64.0
 text = "Give up "
 
-[node name="Pen" type="Node3D" parent="." unique_id=1885929795]
+[node name="Pen" parent="." unique_id=1020403270 instance=ExtResource("24_mqh5v")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 17.433, 0, 0)
 
-[node name="BoidPenStorage" type="Node3D" parent="Pen" unique_id=490299164 node_paths=PackedStringArray("system")]
-transform = Transform3D(0.99999356, 0, 0.0035854501, 0, 1, 0, -0.0035854501, 0, 0.99999356, 0, 0, -1.556)
-script = ExtResource("15_d0wj5")
-system = NodePath("../../scripts/BoidSystem")
-number_of_spots = 20
+[node name="Bounds" type="StaticBody3D" parent="." unique_id=601405917]
+collision_layer = 2
+collision_mask = 3
 
-[node name="BoidPenEntrance" type="Node3D" parent="Pen" unique_id=889234548 node_paths=PackedStringArray("storage")]
-transform = Transform3D(-3.021364e-08, 0, -1, 0, 1, 0, 0.6912075, 0, -4.371139e-08, 0, 0, -6.828)
-script = ExtResource("16_1n1l4")
-storage = NodePath("../BoidPenStorage")
-entry_mode = 1
-show_gizmo_in_game = true
+[node name="Wall" type="CollisionShape3D" parent="Bounds" unique_id=1454988072]
+transform = Transform3D(0.980348, 0, -0.19727598, 0, 1, 0, 0.19727598, 0, 0.980348, 7.965713, 1.6647949, 7.5609846)
+shape = SubResource("BoxShape3D_31oqk")
 
-[node name="GFX" parent="Pen" unique_id=890400107 instance=ExtResource("25_7o3do")]
-transform = Transform3D(0.001, 0, 0, 0, 0.001, 0, 0, 0, 0.001, 0, 3.297, 0)
+[node name="Wall2" type="CollisionShape3D" parent="Bounds" unique_id=1431597734]
+transform = Transform3D(0.8161319, 0, 0.5778656, 0, 1, 0, -0.5778656, 0, 0.8161319, 8.255351, 1.6647949, -5.8655066)
+shape = SubResource("BoxShape3D_x7jkp")
 
-[node name="PenLure" type="Node3D" parent="Pen" unique_id=160717413 node_paths=PackedStringArray("system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.1602385e-07, 0, -9.517519)
-script = ExtResource("27_31oqk")
-system = NodePath("../../scripts/BoidSystem")
-kind = &"pen_lure"
-radius = 5.0
-strength = 10.0
-metadata/_custom_type_script = "uid://bfcj4jv4px22k"
+[node name="Wall3" type="CollisionShape3D" parent="Bounds" unique_id=1933399696]
+transform = Transform3D(0.9999728, 0, 0.007368058, 0, 1, 0, -0.007368058, 0, 0.9999728, 8.255351, 1.6647949, -8.096413)
+shape = SubResource("BoxShape3D_x7jkp")
+
+[node name="OuterBound" type="CollisionShape3D" parent="Bounds" unique_id=178770354]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.403662, 1.665, -0.010009766)
+shape = SubResource("BoxShape3D_0qwwm")
+
+[node name="OuterBound4" type="CollisionShape3D" parent="Bounds" unique_id=165066704]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.43316, 1.665, -0.010009766)
+shape = SubResource("BoxShape3D_0qwwm")
+
+[node name="OuterBound2" type="CollisionShape3D" parent="Bounds" unique_id=1632045342]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.17523193, 1.665, -10.237379)
+shape = SubResource("BoxShape3D_8w0r3")
+
+[node name="OuterBound3" type="CollisionShape3D" parent="Bounds" unique_id=1006076054]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.17523193, 1.665, 10.103231)
+shape = SubResource("BoxShape3D_t4umt")
 
 [editable path="Floor"]
+[editable path="Pen"]
