@@ -39,6 +39,7 @@ static func build(sys: BoidSystem) -> BoidBehaviourTable:
 			profiles.append(p)
 	vocab.state_id(BoidSystem.PENNED_STATE)
 	vocab.state_id(BoidSystem.DEAD_STATE)
+	vocab.state_id(BoidSystem.ENTERING_STATE)
 	var all := profiles.duplicate()
 	if fallback != null:
 		all.append(fallback)
@@ -67,7 +68,7 @@ static func build(sys: BoidSystem) -> BoidBehaviourTable:
 		for st in t.n_states:
 			var stname: StringName = vocab.state_names[st] if st < vocab.state_names.size() else &""
 			var sb: BoidStateBehaviour = null
-			if stname == BoidSystem.PENNED_STATE or stname == BoidSystem.DEAD_STATE:
+			if stname == BoidSystem.PENNED_STATE or stname == BoidSystem.DEAD_STATE or stname == BoidSystem.ENTERING_STATE:
 				t._add_group(sys, null)
 				continue
 			if prof != null:

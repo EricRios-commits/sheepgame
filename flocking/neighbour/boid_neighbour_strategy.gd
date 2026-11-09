@@ -3,7 +3,7 @@ extends RefCounted
 ## Swappable neighbour search
 ##
 ## Contract:
-##  - rebuild() once per tick from the store; reuses internal buffers.
+##  - rebuild() once per tick from the store. Reuses internal buffers.
 ##  - query() fills a caller-provided buffer (no allocation) with slots whose position is
 ##    within `radius` of `center` (inclusive), excluding `exclude_slot` (pass -1 to exclude
 ##    nothing). Returns the number written, never more than out.size().

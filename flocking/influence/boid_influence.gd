@@ -29,7 +29,7 @@ const LAYER_COUNT := 4
 @export var layer: Layer = Layer.AMBIENT
 
 
-## Creates the object that applies this influence each tick. The base class returns null;
+## Creates the object that applies this influence each tick. The base class returns null
 ## subclasses override this.
 func create_runtime() -> BoidInfluenceRuntime:
 	return null
