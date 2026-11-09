@@ -10,7 +10,7 @@
 
 [sub_resource type="Resource" id="Resource_wmlgg"]
 script = ExtResource("4_3285w")
-cohesion = 1.0
+cohesion = 1.5
 alignment = 0.1
 metadata/_custom_type_script = "uid://c8aeuk4jxy5uf"
 
@@ -47,6 +47,7 @@ metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
 script = ExtResource("5_7o0r5")
 emitter_kind = &"pen_lure"
 mode = 1
+layer = 0
 metadata/_custom_type_script = "uid://6cikbviab3ep"
 
 [sub_resource type="Resource" id="Resource_ruxvt"]
@@ -54,13 +55,82 @@ script = ExtResource("3_wajvl")
 influence = SubResource("Resource_al1i3")
 metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
 
+[sub_resource type="Resource" id="Resource_3285w"]
+script = ExtResource("7_3b1gk")
+to_state = &"guided"
+emitter_kind = &"player"
+distance = 5.0
+metadata/_custom_type_script = "uid://cnmijcpbub6nh"
+
 [sub_resource type="Resource" id="Resource_wt37s"]
 script = ExtResource("2_ruxvt")
 max_speed = 3.0
 influences = Array[ExtResource("3_wajvl")]([SubResource("Resource_tgjpg"), SubResource("Resource_n4chu"), SubResource("Resource_6b5q0"), SubResource("Resource_ruxvt")])
+transitions = Array[ExtResource("7_3b1gk")]([SubResource("Resource_3285w")])
+metadata/_custom_type_script = "uid://bis4gpcq54r1r"
+
+[sub_resource type="Resource" id="Resource_7o0r5"]
+script = ExtResource("4_3285w")
+cohesion = 1.5
+separation = 4.0
+metadata/_custom_type_script = "uid://c8aeuk4jxy5uf"
+
+[sub_resource type="Resource" id="Resource_v66r0"]
+script = ExtResource("3_wajvl")
+influence = SubResource("Resource_7o0r5")
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_3b1gk"]
+script = ExtResource("5_7o0r5")
+emitter_kind = &"player"
+gain = 10.0
+metadata/_custom_type_script = "uid://6cikbviab3ep"
+
+[sub_resource type="Resource" id="Resource_dkt32"]
+script = ExtResource("3_wajvl")
+influence = SubResource("Resource_3b1gk")
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_st5xi"]
+script = ExtResource("6_v66r0")
+margin = 1.0
+slide = 0.0
+brake = 0.0
+metadata/_custom_type_script = "uid://bhsg8vp4eqtob"
+
+[sub_resource type="Resource" id="Resource_1opq5"]
+script = ExtResource("3_wajvl")
+influence = SubResource("Resource_st5xi")
+weight = 10.0
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_edj3a"]
+script = ExtResource("5_7o0r5")
+emitter_kind = &"pen_lure"
+mode = 1
+layer = 0
+metadata/_custom_type_script = "uid://6cikbviab3ep"
+
+[sub_resource type="Resource" id="Resource_e0wtl"]
+script = ExtResource("3_wajvl")
+influence = SubResource("Resource_edj3a")
+metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
+
+[sub_resource type="Resource" id="Resource_wajvl"]
+script = ExtResource("7_3b1gk")
+trigger = 2
+seconds = 4.0
+metadata/_custom_type_script = "uid://cnmijcpbub6nh"
+
+[sub_resource type="Resource" id="Resource_6bnxd"]
+script = ExtResource("2_ruxvt")
+state = &"guided"
+max_speed = 3.0
+influences = Array[ExtResource("3_wajvl")]([SubResource("Resource_v66r0"), SubResource("Resource_dkt32"), SubResource("Resource_1opq5"), SubResource("Resource_e0wtl")])
+transitions = Array[ExtResource("7_3b1gk")]([SubResource("Resource_wajvl")])
 metadata/_custom_type_script = "uid://bis4gpcq54r1r"
 
 [resource]
 script = ExtResource("1_al1i3")
-states = Array[ExtResource("2_ruxvt")]([SubResource("Resource_wt37s")])
+states = Array[ExtResource("2_ruxvt")]([SubResource("Resource_wt37s"), SubResource("Resource_6bnxd")])
 metadata/_custom_type_script = "uid://cnxce80poaxm2"
