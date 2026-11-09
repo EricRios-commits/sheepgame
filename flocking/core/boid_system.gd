@@ -980,7 +980,7 @@ func _finalize_storage_entry(slot: int, storage_index: int, spot_index: int) -> 
 	store.state[slot] = penned_state_id
 	store.state_timer[slot] = 0.0
 	var species_id := store.species[slot]
-	store.freeze(slot)
+#	store.freeze(slot)
 	boid_penned.emit(storage_index, species_id)
 
 
