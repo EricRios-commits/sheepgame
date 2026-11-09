@@ -51,6 +51,9 @@ signal ticked(sim_dt: float)
 signal boid_penned(storage_index: int, species_id: int)
 ## Emitted when a boid enters the DEAD state, with its ground position at that moment.
 signal boid_died(species_id: int, position: Vector2)
+## Identity-preserving companions; old signal signatures remain compatible with Classic.
+signal boid_died_identified(handle: int, species_id: int, position: Vector2)
+signal boid_penned_identified(handle: int, storage_index: int, species_id: int)
 
 ## Seed for the system's random number generator. It is re-applied at the start of every
 ## spawn_all(), so spawning is deterministic.
@@ -835,6 +838,7 @@ func _apply_state(handle: int, new_state_id: int) -> void:
 		store.state[slot] = new_state_id
 		_removal_queue.append(handle)
 		boid_died.emit(species_id, store.pos[slot])
+		boid_died_identified.emit(handle, species_id, store.pos[slot])
 		return
 	store.state[slot] = new_state_id
 	store.state_timer[slot] = 0.0
@@ -982,6 +986,7 @@ func _finalize_storage_entry(slot: int, storage_index: int, spot_index: int) -> 
 	var species_id := store.species[slot]
 #	store.freeze(slot)
 	boid_penned.emit(storage_index, species_id)
+	boid_penned_identified.emit(store.handle_at(slot), storage_index, species_id)
 
 
 ## Frees the spot and count held by each boid in handles that is stored. Keyed on the

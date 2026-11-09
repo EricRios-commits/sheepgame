@@ -11,18 +11,17 @@ config_version=5
 [application]
 
 config/name="sheepgame"
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/main_menu/main_menu_3d.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
 [audio]
 
-buses/default_bus_layout="uid://bd54k8tyj8kbg"
+buses/default_bus_layout="res://default_bus_layout.tres"
 
 [autoload]
 
-MCPRuntimeServer="*res://addons/godot_mcp_toolkit/runtime/mcp_runtime_server.gd"
-Global="*uid://br15dlly2aqjg"
+Global="*res://debug/global.gd"
 
 [display]
 
@@ -40,6 +39,7 @@ enabled=PackedStringArray("res://addons/rider-plugin/plugin.cfg")
 [filesystem]
 
 enabled=PackedStringArray("res://addons/rider-plugin/plugin.cfg")
+import/blender/enabled=false
 
 [input]
 

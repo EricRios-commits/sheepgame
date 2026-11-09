@@ -1,0 +1,58 @@
+[gd_resource type="Resource" script_class="BoidSpeciesProfile" format=3]
+
+[ext_resource type="Script" path="res://flocking/core/boid_species_profile.gd" id="1"]
+[ext_resource type="Script" path="res://flocking/core/boid_state_behaviour.gd" id="2"]
+[ext_resource type="Script" path="res://flocking/influence/boid_influence_entry.gd" id="3"]
+[ext_resource type="Script" path="res://flocking/influence/boid_influence_downhill.gd" id="4"]
+[ext_resource type="Script" path="res://flocking/influence/boid_influence_cruise.gd" id="5"]
+[ext_resource type="Script" path="res://flocking/influence/boid_influence_flock.gd" id="6"]
+[ext_resource type="Script" path="res://flocking/influence/boid_influence_emitter.gd" id="7"]
+[ext_resource type="Script" path="res://flocking/influence/boid_influence_obstacle.gd" id="8"]
+
+[sub_resource type="Resource" id="drive"]
+script = ExtResource("4")
+[sub_resource type="Resource" id="drive_entry"]
+script = ExtResource("3")
+influence = SubResource("drive")
+[sub_resource type="Resource" id="cruise"]
+script = ExtResource("5")
+speed = 5.0
+[sub_resource type="Resource" id="cruise_entry"]
+script = ExtResource("3")
+influence = SubResource("cruise")
+weight = 0.6
+[sub_resource type="Resource" id="flock"]
+script = ExtResource("6")
+perception_radius = 8.0
+separation_radius = 1.15
+cohesion = 0.35
+alignment = 0.5
+separation = 3.0
+[sub_resource type="Resource" id="flock_entry"]
+script = ExtResource("3")
+influence = SubResource("flock")
+weight = 0.65
+[sub_resource type="Resource" id="bark"]
+script = ExtResource("7")
+emitter_kind = &"bark"
+[sub_resource type="Resource" id="bark_entry"]
+script = ExtResource("3")
+influence = SubResource("bark")
+[sub_resource type="Resource" id="rock"]
+script = ExtResource("8")
+margin = 3.5
+slide = 1.4
+brake = 0.35
+[sub_resource type="Resource" id="rock_entry"]
+script = ExtResource("3")
+influence = SubResource("rock")
+weight = 18.0
+[sub_resource type="Resource" id="running"]
+script = ExtResource("2")
+max_speed = 6.2
+max_accel = 16.0
+influences = Array[ExtResource("3")]([SubResource("rock_entry"), SubResource("bark_entry"), SubResource("flock_entry"), SubResource("drive_entry"), SubResource("cruise_entry")])
+
+[resource]
+script = ExtResource("1")
+states = Array[ExtResource("2")]([SubResource("running")])

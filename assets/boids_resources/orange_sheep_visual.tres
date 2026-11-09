@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="BoidSpeciesVisual" format=3 uid="uid://74l66wwelnkk"]
 
 [ext_resource type="Shader" uid="uid://dmwuwdcamd3i4" path="res://materials/boid_gait.gdshader" id="1_syv32"]
-[ext_resource type="ArrayMesh" uid="uid://cijrjnrcpjwky" path="res://assets/Low_Poly_Farm_Animals_v1.0/sheep-edit2.blend" id="2_m560r"]
+[ext_resource type="ArrayMesh" path="res://assets/meshes/sheep_portable.tres" id="2_m560r"]
 [ext_resource type="Script" uid="uid://c7cfrpt3iasuh" path="res://flocking/presentation/boid_species_visual.gd" id="3_6uvev"]
 [ext_resource type="Texture2D" uid="uid://byueus3hd40l4" path="res://assets/Low_Poly_Farm_Animals_v1.0/sheep-edit2-albedo.png" id="4_albtx"]
 
