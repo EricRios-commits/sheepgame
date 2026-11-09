@@ -13,6 +13,7 @@
 [ext_resource type="AudioStream" uid="uid://d3yye7qjffyv8" path="res://audio/sfx/star/star_1.mp3" id="11_m1k83"]
 [ext_resource type="AudioStream" uid="uid://cadxn4vpr03pu" path="res://audio/sfx/star/star_2.mp3" id="12_oummu"]
 [ext_resource type="AudioStream" uid="uid://d3jksolrq3qnj" path="res://audio/sfx/star/star_3.mp3" id="13_hssp1"]
+[ext_resource type="Script" uid="uid://birupfc67u1g" path="res://scenes/audio_debug.gd" id="14_2y2jw"]
 
 [sub_resource type="Resource" id="Resource_aoitu"]
 script = ExtResource("6_8igv3")
@@ -35,6 +36,8 @@ sfx_descriptions = Array[ExtResource("6_8igv3")]([SubResource("Resource_aoitu"),
 stream = ExtResource("2_njtn3")
 bus = &"BGM"
 
-[node name="SFX Stream Player" type="AudioStreamPlayer" parent="." unique_id=1981512974]
+[node name="Audio Debug" type="Node" parent="." unique_id=1467032936 node_paths=PackedStringArray("audio_manager")]
+script = ExtResource("14_2y2jw")
+audio_manager = NodePath("..")
 
 [connection signal="finished" from="BGM Stream Player" to="." method="on_bgm_stream_player_finished"]

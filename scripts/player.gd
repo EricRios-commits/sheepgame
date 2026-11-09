@@ -19,10 +19,13 @@ var _jump_requested := false
 # Passthrough
 @export var boid_system: BoidSystem = null
 @export var boid_emitter: BoidEmitter
+@export var initial_camera_spin: float = -90.0
 
 func _ready() -> void:
 	_model = get_node_or_null("Visuals") as Node3D
 	_dog = get_node_or_null("Visuals/DogModel") as Node3D
+	var camera_tilt = get_node("CameraPivot/CameraTilt") as Node3D
+	camera_tilt.rotation.y = (initial_camera_spin / 180) * PI
 	if boid_system != null: 
 		# By default the emitter cannot have a reference to the system because it's outside the scene of the player
 		boid_emitter.system = boid_system

@@ -2,9 +2,13 @@ extends Node
 
 @export var audio_manager: AudioManager
 
+var enabled = false
+
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey:
+	if enabled && event is InputEventKey:
 		var key_event = event as InputEventKey
+		if !key_event.pressed:
+			return
 		if key_event.keycode == KEY_SPACE:
 			audio_manager.next_bgm()
 		if key_event.keycode == KEY_BACKSPACE:

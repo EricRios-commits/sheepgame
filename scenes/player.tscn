@@ -18,7 +18,7 @@ boid_emitter = NodePath("BoidEmitter")
 [node name="Visuals" type="Node3D" parent="." unique_id=833043004]
 
 [node name="DogModel" parent="Visuals" unique_id=1617664544 instance=ExtResource("2_dqkch")]
-transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 0, 0, 0)
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=255108407]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
@@ -28,10 +28,11 @@ shape = SubResource("CapsuleShape3D_tbgi4")
 transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
 script = ExtResource("3_qhqgy")
 follow_target_path = NodePath("..")
+follow_height = 1.2
 camera = NodePath("CameraTilt/Camera3D")
 
 [node name="CameraTilt" type="Node3D" parent="CameraPivot" unique_id=707493815]
-transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0)
+transform = Transform3D(-4.371139e-08, 0.7071067, -0.7071067, 0, 0.7071067, 0.7071067, 1, 3.0908616e-08, -3.0908616e-08, -30.333433, 30.333433, -3.233265e-06)
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot/CameraTilt" unique_id=444507165]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 113.37771)

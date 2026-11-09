@@ -53,7 +53,7 @@ data = {
 image = SubResource("Image_ww5jj")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3tr07"]
-size = Vector3(1.4055235, 0.76948225, 0.07011789)
+size = Vector3(2, 2, 1)
 
 [resource]
 item/0/name = "fence_p042"
@@ -64,3 +64,4 @@ item/0/shapes = [SubResource("BoxShape3D_3tr07"), Transform3D(1, 0, 0, 0, 1, 0, 
 item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item/0/navigation_layers = 1
 item/0/preview = SubResource("ImageTexture_jkjg0")
+metadata/_editor_source_scene = "res://assets/mesh_libraries/walls.tscn"

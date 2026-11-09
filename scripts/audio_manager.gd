@@ -5,12 +5,25 @@ extends Node
 @export var sfx_descriptions: Array[SFXDescriptor]
 
 @onready var bgm = $"BGM Stream Player"
-@onready var sfx = $"SFX Stream Player"
+var last_bgm_index = -1
+
+func _ready() -> void:
+	for i in sfx_descriptions.size():
+		var desc = sfx_descriptions[i];
+		AudioServer.add_bus(i + 2)
+		AudioServer.set_bus_name(i + 2, desc.id)
+		var dedicated_player = AudioStreamPlayer.new()
+		dedicated_player.bus = desc.id
+		add_child(dedicated_player)
+		desc.player = dedicated_player
 
 func next_bgm():
 	bgm.stop()
 	var index = int(randf()*background_tracks.size())
+	while index == last_bgm_index:
+		index = int(randf()*background_tracks.size())
 	bgm.stream = background_tracks[index]
+	last_bgm_index = index
 	bgm.play()
 
 func stop_bgm():
@@ -27,9 +40,9 @@ func trigger_sfx(id: StringName, variant: int = -1):
 				index = variant
 			
 			# This might cause some problems when sfx overlap
-			sfx.stop()
-			sfx.stream = desc.variants[index]
-			sfx.play()
+			desc.player.stop()
+			desc.player.stream = desc.variants[index]
+			desc.player.play()
 				
 			return
 	push_error("[Audio Manager] could not play sfx with id %s" % id)

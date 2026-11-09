@@ -43,7 +43,7 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_rsepv")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3tr07"]
-size = Vector3(1.4055235, 0.76948225, 0.07011789)
+size = Vector3(2, 2, 1)
 
 [node name="Fence" type="Node3D" unique_id=1236831645]
 metadata/_edit_group_ = true
@@ -55,6 +55,8 @@ mesh = SubResource("ArrayMesh_nokgm")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="fence_p042" unique_id=1989862789]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, -2.9802322e-08, -3.7252903e-09)
+collision_layer = 2
+collision_mask = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="fence_p042/StaticBody3D" unique_id=61683870]
 shape = SubResource("BoxShape3D_3tr07")

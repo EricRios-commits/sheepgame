@@ -18,6 +18,7 @@
 [ext_resource type="Script" uid="uid://p4stixdtom0l" path="res://flocking/core/boid_spawn_zone.gd" id="14_y6tmf"]
 [ext_resource type="Script" uid="uid://ddho2emmyrsog" path="res://flocking/core/boid_spawn_config.gd" id="15_r0w8p"]
 [ext_resource type="Script" uid="uid://bohp2a4orq7tw" path="res://flocking/pen/boid_pen_storage.gd" id="16_7abrx"]
+[ext_resource type="Material" uid="uid://be5j3dpaer8uw" path="res://materials/grass_2.tres" id="17_f2tki"]
 [ext_resource type="Script" uid="uid://bivryc0yy37dq" path="res://flocking/pen/boid_pen_entrance.gd" id="17_gv2sh"]
 [ext_resource type="PackedScene" uid="uid://c0ak38sjbhatk" path="res://Low_Poly_Farm_Assets/Assets/straw_pack.tscn" id="19_452xl"]
 [ext_resource type="Script" uid="uid://djd0d4276h66b" path="res://scripts/results_screen.gd" id="20_f4msn"]
@@ -58,9 +59,6 @@ script = ExtResource("15_r0w8p")
 count = 10
 heading_policy = 2
 metadata/_custom_type_script = "uid://ddho2emmyrsog"
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6f6oh"]
-albedo_color = Color(0.47058824, 0.56078434, 0.27450982, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x15ge"]
 
@@ -617,7 +615,7 @@ shadow_bias = 0.035
 directional_shadow_mode = 0
 
 [node name="Player" parent="." unique_id=317266410 node_paths=PackedStringArray("boid_system") instance=ExtResource("23_tbcna")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 4.5358667, -0.047151513, -7.190441)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5358667, -0.047151513, -7.190441)
 boid_system = NodePath("../scripts/BoidSystem")
 
 [node name="scripts" type="Node" parent="." unique_id=1050292416]
@@ -668,7 +666,7 @@ transform = Transform3D(42.106167, 0, 0, 0, 1, 0, 0, 0, 19.717987, -0.75619453, 
 use_collision = true
 collision_layer = 3
 collision_mask = 3
-material = SubResource("StandardMaterial3D_6f6oh")
+material = ExtResource("17_f2tki")
 
 [node name="WhiteSheepPen" type="CSGBox3D" parent="FloorEnvironment/Floor" unique_id=1842749641]
 transform = Transform3D(0.29999992, 0, 0, 0, 0.9999998, 0, 0, 0, 0.99999994, 0.65, 0, 0)
