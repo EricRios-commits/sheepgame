@@ -1,7 +1,7 @@
 class_name BoidSystem
 extends Node3D
 ## Owner of all simulation state for one interacting group. The class has grown way too large
-## should probably be split, but I'm lazy
+## should probably be split, but I'm lazy. This should 100% be split into like 6 classes, but works for now
 
 ## Phases of one simulation tick, in execution order. Used to index per-stage timings.
 enum Stage { SNAPSHOT, REBUILD_NEIGHBOURS, GATHER, COMBINE, INTEGRATE, GROUND, TRANSITIONS, COMMIT, PRESENT }
@@ -10,7 +10,7 @@ enum SpotState {
 	## Nobody is using the spot.
 	FREE,
 	## Claimed by a boid that has not arrived yet. Unused for now (instant snap claims and
-	## finalizes in the same step); it exists so a walk-in entry can reserve a spot.
+	## finalizes in the same step) it exists so a walk-in entry can reserve a spot.
 	RESERVED,
 	## A boid is penned on the spot.
 	OCCUPIED,
@@ -24,11 +24,22 @@ const CURVE_LUT_SAMPLES := 16
 const LAYER_COUNT := BoidInfluence.LAYER_COUNT
 ## Capacity of a storage that does not snap to spots.
 const UNLIMITED_CAPACITY := 1 << 30
+## Distance to its spot, in world units, over which a walking boid fades out obstacle
+## avoidance, so spots close to a wall can still be reached.
+const WALK_AVOIDANCE_FADE_DISTANCE := 2.0
+## A walking boid is snapped onto its spot if it takes longer than its straight-line travel
+## time times this factor, plus WALK_TIMEOUT_SECONDS. Safety net for boids that get stuck.
+const WALK_TIMEOUT_FACTOR := 3.0
+const WALK_TIMEOUT_SECONDS := 2.0
 
-## Special states, registered in every system. PENNED is terminal and frozen; entering DEAD
+## Special states, registered in every system. PENNED is terminal and frozen, entering DEAD
 ## removes the boid in the same Commit.
 const PENNED_STATE := &"penned"
 const DEAD_STATE := &"dead"
+## State of a boid walking from a walking BoidPenEntrance to its spot in a storage. Normal
+## steering is bypassed while in it: the system walks the boid toward its spot at constant
+## speed, deflected around obstacles. Only DEAD can be requested for a boid in this state.
+const ENTERING_STATE := &"entering"
 
 ## Emitted after spawn_all() with the number of boids actually placed.
 signal spawned(count: int)
@@ -110,13 +121,14 @@ var tick_count := 0
 var current_sim_dt := 0.0
 var penned_state_id := -1
 var dead_state_id := -1
+var entering_state_id := -1
 
 ## Final combined acceleration per active boid for this tick.
 var combined_accel := PackedVector2Array()
 ## Accelerations gathered per influence layer, then combined in priority order.
 var layer_accels: Array[PackedVector2Array] = []
 
-## Emitters published this tick (active emitters only; all arrays below are parallel)
+## Emitters published this tick (active emitters only. all arrays below are parallel)
 var active_emitter_count := 0
 var emitter_positions := PackedVector2Array()
 var emitter_velocities := PackedVector2Array()
@@ -132,6 +144,7 @@ var emitter_curve_luts := PackedFloat32Array()
 ## Registered storages, sorted by node path when they are built. Index = BoidPenStorage.storage_index.
 var storages: Array[BoidPenStorage] = []
 ## Per-storage arrays below are indexed by storage index.
+## Boids held per storage, including boids still walking in.
 var storage_boid_counts := PackedInt32Array()
 var storage_capacities := PackedInt32Array()
 
@@ -146,6 +159,8 @@ var entrance_axes_z := PackedVector2Array()
 var entrance_half_extents := PackedVector2Array()
 ## Index (into storages) of the storage each entrance sends boids to.
 var entrance_storage_indices := PackedInt32Array()
+## Walk speed of each entrance in world units per second, or 0 if it places boids instantly.
+var entrance_walk_speeds := PackedFloat32Array()
 
 ## Debug tap for one boid
 var debug_handle := BoidStore.INVALID_HANDLE
@@ -174,6 +189,15 @@ var _pending_state_handles := PackedInt64Array()
 var _pending_state_ids := PackedInt32Array()
 var _pending_entry_handles := PackedInt64Array()
 var _pending_entry_entrance_indices := PackedInt32Array()
+## Boids currently walking into a storage, with their walk speeds and time limits
+## (parallel arrays).
+var _entering_handles := PackedInt64Array()
+var _entering_speeds := PackedFloat32Array()
+var _entering_time_limits := PackedFloat32Array()
+var _pending_arrival_handles := PackedInt64Array()
+## Scratch list of the slots of this tick's walkers, and the obstacle influence that steers them.
+var _walk_slots := PackedInt32Array()
+var _walk_avoidance: BoidInfluenceRuntime
 
 
 func _init() -> void:
@@ -313,6 +337,7 @@ func _build_storages_and_entrances() -> void:
 	entrance_axes_z.resize(entrance_total)
 	entrance_half_extents.resize(entrance_total)
 	entrance_storage_indices.resize(entrance_total)
+	entrance_walk_speeds.resize(entrance_total)
 	var entrances_per_storage := PackedInt32Array()
 	entrances_per_storage.resize(storage_total)
 	for i in entrance_total:
@@ -322,6 +347,7 @@ func _build_storages_and_entrances() -> void:
 		entrance_axes_x[i] = Vector2(entrance_basis.x.x, entrance_basis.x.z).normalized()
 		entrance_axes_z[i] = Vector2(entrance_basis.z.x, entrance_basis.z.z).normalized()
 		entrance_half_extents[i] = entrance.get_half_extents()
+		entrance_walk_speeds[i] = entrance.walk_speed if entrance.entry_mode == BoidPenEntrance.EntryMode.WALK else 0.0
 		var storage_index := storages.find(entrance.storage)
 		entrance_storage_indices[i] = storage_index
 		entrances_per_storage[storage_index] += 1
@@ -386,10 +412,8 @@ func check_invariants() -> bool:
 	var counted_in_storages := 0
 	for boid_count_in_storage in storage_boid_counts:
 		counted_in_storages += boid_count_in_storage
-	if counted_in_storages > store.count - store.active_count:
-		return false
 	var counted_in_storages_by_scan := 0
-	for i in range(store.active_count, store.count):
+	for i in store.count:
 		if store.storage_id[i] >= 0:
 			counted_in_storages_by_scan += 1
 	return counted_in_storages_by_scan == counted_in_storages
@@ -515,6 +539,7 @@ func _stage_snapshot() -> void:
 		_behaviour_table_version = vocab.version
 		penned_state_id = vocab.state_id(PENNED_STATE)
 		dead_state_id = vocab.state_id(DEAD_STATE)
+		entering_state_id = vocab.state_id(ENTERING_STATE)
 	_publish_emitters()
 	_sort_groups()
 
@@ -708,6 +733,7 @@ func _stage_integrate(sim_dt: float) -> void:
 		if clamp_to_bounds:
 			new_position = new_position.clamp(bounds_min, bounds_max)
 		positions[i] = new_position
+	_walk_entering_boids(sim_dt)
 
 
 func _stage_ground() -> void:
@@ -725,6 +751,7 @@ func _stage_transitions() -> void:
 	var stride := transition_stride
 	var phase := tick_count % stride
 	var entrance_total := entrances.size()
+	var storage_ids := store.storage_id
 	for i in boid_count:
 		state_timers[i] += sim_dt
 		if (i + phase) % stride != 0:
@@ -743,7 +770,7 @@ func _stage_transitions() -> void:
 				request_state(store.handle_at(i), table.tr_to[transition_index])
 				transition_requested = true
 				break
-		if transition_requested or entrance_total == 0:
+		if transition_requested or entrance_total == 0 or storage_ids[i] >= 0:
 			continue
 		var boid_position := positions[i]
 		for entrance_index in entrance_total:
@@ -771,7 +798,8 @@ func _emitter_within(query_position: Vector2, required_kind_id: int, max_distanc
 	return false
 
 
-## Applies queued state changes, then queued storage entries, then removes dead boids.
+## Applies queued state changes, then queued storage entries, then walkers that arrived,
+## then removes dead boids.
 func _stage_commit() -> void:
 	for i in _pending_state_handles.size():
 		_apply_state(_pending_state_handles[i], _pending_state_ids[i])
@@ -781,6 +809,9 @@ func _stage_commit() -> void:
 		_apply_entry(_pending_entry_handles[i], _pending_entry_entrance_indices[i])
 	_pending_entry_handles.clear()
 	_pending_entry_entrance_indices.clear()
+	for handle in _pending_arrival_handles:
+		_apply_arrival(handle)
+	_pending_arrival_handles.clear()
 	if not _removal_queue.is_empty():
 		_release_storage_spots(_removal_queue)
 		removed_total += store.remove_many(_removal_queue)
@@ -792,6 +823,8 @@ func _apply_state(handle: int, new_state_id: int) -> void:
 	if not store.is_active_slot(slot):
 		return
 	if store.state[slot] == new_state_id:
+		return
+	if store.state[slot] == entering_state_id and new_state_id != dead_state_id:
 		return
 	if new_state_id == dead_state_id:
 		var species_id := store.species[slot]
@@ -809,22 +842,28 @@ func _apply_state(handle: int, new_state_id: int) -> void:
 		store.freeze(slot)
 
 
-## Handles one queued entry: checks the boid and the storage are still eligible, claims a
-## spot if the storage snaps, then finalizes the entry. A walk-in entry would claim here,
-## switch the boid to an "entering" state, and call _finalize_storage_entry on arrival.
+## Handles one queued entry: checks the boid and the storage are still eligible, reserves a
+## spot if the storage snaps, records the boid's place in the storage, then either finalizes
+## the entry at once or, for a walking entrance, starts the walk.
 func _apply_entry(handle: int, entrance_index: int) -> void:
 	var slot := store.slot_of(handle)
 	if not store.is_active_slot(slot):
 		return
 	var storage_index := entrance_storage_indices[entrance_index]
-	if store.state[slot] == dead_state_id or storage_boid_counts[storage_index] >= storage_capacities[storage_index]:
+	if store.storage_id[slot] >= 0 or store.state[slot] == dead_state_id or storage_boid_counts[storage_index] >= storage_capacities[storage_index]:
 		return
 	var spot_index := -1
 	if storages[storage_index].snap_to_spots:
 		spot_index = _claim_spot(storage_index)
 		if spot_index < 0:
 			return
-	_finalize_storage_entry(slot, storage_index, spot_index)
+	store.storage_id[slot] = storage_index
+	store.storage_spot[slot] = spot_index
+	storage_boid_counts[storage_index] += 1
+	if spot_index >= 0 and entrance_walk_speeds[entrance_index] > 0.0:
+		_begin_walk(slot, handle, entrance_walk_speeds[entrance_index])
+	else:
+		_finalize_storage_entry(slot, storage_index, spot_index)
 
 
 ## Reserves the first free spot in a storage (spots are in fill order). Returns -1 if none.
@@ -837,8 +876,99 @@ func _claim_spot(storage_index: int) -> int:
 	return -1
 
 
-## Puts a boid into a storage: moves it onto its claimed spot (if any), stops it, marks it
-## penned and frozen, and counts it. spot_index is -1 for storages that do not snap.
+## Puts a boid into the ENTERING state. From now on _walk_entering_boids moves it. The boid
+## gets a time limit proportional to its straight-line distance, as a safety net.
+func _begin_walk(slot: int, handle: int, walk_speed: float) -> void:
+	var target := _storage_spot_positions[store.storage_id[slot]][store.storage_spot[slot]]
+	store.state[slot] = entering_state_id
+	store.state_timer[slot] = 0.0
+	store.vel[slot] = Vector2.ZERO
+	store.speed[slot] = 0.0
+	_entering_handles.append(handle)
+	_entering_speeds.append(walk_speed)
+	_entering_time_limits.append(store.pos[slot].distance_to(target) / walk_speed * WALK_TIMEOUT_FACTOR + WALK_TIMEOUT_SECONDS)
+
+
+## Moves every entering boid toward its spot at a constant speed, overriding this tick's
+## steering result.
+func _walk_entering_boids(sim_dt: float) -> void:
+	if _entering_handles.is_empty():
+		return
+	var positions := store.pos
+	var velocities := store.vel
+	var speeds := store.speed
+	var headings := store.heading
+	var state_timers := store.state_timer
+	_walk_slots.clear()
+	var keep_count := 0
+	for read_index in _entering_handles.size():
+		var handle := _entering_handles[read_index]
+		var slot := store.slot_of(handle)
+		if not store.is_active_slot(slot) or store.state[slot] != entering_state_id:
+			continue
+		if state_timers[slot] > _entering_time_limits[read_index]:
+			positions[slot] = _storage_spot_positions[store.storage_id[slot]][store.storage_spot[slot]]
+			velocities[slot] = Vector2.ZERO
+			speeds[slot] = 0.0
+			_pending_arrival_handles.append(handle)
+			continue
+		_entering_handles[keep_count] = handle
+		_entering_speeds[keep_count] = _entering_speeds[read_index]
+		_entering_time_limits[keep_count] = _entering_time_limits[read_index]
+		_walk_slots.append(slot)
+		keep_count += 1
+	_entering_handles.resize(keep_count)
+	_entering_speeds.resize(keep_count)
+	_entering_time_limits.resize(keep_count)
+	var avoidance := layer_accels[BoidInfluence.Layer.SAFETY]
+	for slot in _walk_slots:
+		avoidance[slot] = Vector2.ZERO
+	_get_walk_avoidance().apply(self, _walk_slots, 0, keep_count, 1.0, 0.0, avoidance)
+	for i in keep_count:
+		var slot := _walk_slots[i]
+		var walk_speed := _entering_speeds[i]
+		var target := _storage_spot_positions[store.storage_id[slot]][store.storage_spot[slot]]
+		var to_target := target - positions[slot]
+		var distance := to_target.length()
+		var step := walk_speed * sim_dt
+		if distance <= step:
+			positions[slot] = target
+			velocities[slot] = Vector2.ZERO
+			speeds[slot] = 0.0
+			_pending_arrival_handles.append(_entering_handles[i])
+			continue
+		var direction := to_target / distance
+		var avoidance_fade := clampf(distance / WALK_AVOIDANCE_FADE_DISTANCE, 0.0, 1.0)
+		var steered := direction * walk_speed + avoidance[slot] * (walk_speed * avoidance_fade)
+		var steered_length := steered.length()
+		if steered_length > 1e-4:
+			direction = steered / steered_length
+		positions[slot] = positions[slot] + direction * step
+		velocities[slot] = direction * walk_speed
+		speeds[slot] = walk_speed
+		headings[slot] = atan2(direction.x, direction.y)
+
+
+## The obstacle influence used to steer walkers, with default settings. Created on first use.
+func _get_walk_avoidance() -> BoidInfluenceRuntime:
+	if _walk_avoidance == null:
+		_walk_avoidance = BoidInfluenceObstacle.new().create_runtime()
+		_walk_avoidance.setup(self)
+	return _walk_avoidance
+
+
+## Finalizes a walking boid that reached its spot, unless it left the ENTERING state
+## (for example it was killed) in the meantime.
+func _apply_arrival(handle: int) -> void:
+	var slot := store.slot_of(handle)
+	if not store.is_active_slot(slot) or store.state[slot] != entering_state_id:
+		return
+	_finalize_storage_entry(slot, store.storage_id[slot], store.storage_spot[slot])
+
+
+## Completes an entry: moves the boid onto its reserved spot (if any), marks the spot
+## occupied, stops the boid, marks it penned and frozen, and announces it. The boid's place
+## in the storage (storage_id, storage_spot, count) was recorded when the spot was claimed.
 func _finalize_storage_entry(slot: int, storage_index: int, spot_index: int) -> void:
 	if spot_index >= 0:
 		_storage_spot_states[storage_index][spot_index] = SpotState.OCCUPIED
@@ -849,9 +979,6 @@ func _finalize_storage_entry(slot: int, storage_index: int, spot_index: int) -> 
 	store.speed[slot] = 0.0
 	store.state[slot] = penned_state_id
 	store.state_timer[slot] = 0.0
-	store.storage_id[slot] = storage_index
-	store.storage_spot[slot] = spot_index
-	storage_boid_counts[storage_index] += 1
 	var species_id := store.species[slot]
 	store.freeze(slot)
 	boid_penned.emit(storage_index, species_id)

@@ -144,7 +144,7 @@ transform = Transform3D(1, 0, 0, 0, 0.7842481, 0.62044734, 0, -0.62044734, 0.784
 [node name="Obstacles" type="Node3D" parent="." unique_id=296821372]
 
 [node name="BoidObstacle" type="Node3D" parent="Obstacles" unique_id=2127955159 node_paths=PackedStringArray("system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.04155, 0, 8.434094)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7937303, -9.536743e-07, -2.9801736)
 script = ExtResource("1_atv6b")
 system = NodePath("../../BoidSystem")
 shape = 1
@@ -164,7 +164,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.47460938, 0)
 shape = SubResource("BoxShape3D_u7jmn")
 
 [node name="BoidObstacle2" type="Node3D" parent="Obstacles" unique_id=279034518 node_paths=PackedStringArray("system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.7981906, 0, -0.4220848)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1841035, -4.7683716e-07, -3.1909409)
 script = ExtResource("1_atv6b")
 system = NodePath("../../BoidSystem")
 shape = 1
@@ -261,29 +261,15 @@ shape = SubResource("BoxShape3D_u7jmn")
 
 [node name="BoidSystem" type="Node3D" parent="." unique_id=1636822568]
 script = ExtResource("1_7ko1b")
-rng_seed = null
-sim_hz = null
 ground = SubResource("Resource_h4t55")
 ground_source = SubResource("Resource_atv6b")
-ground_cell = null
 obstacle_sources = Array[ExtResource("6_2j614")]([SubResource("Resource_ww5jj")])
-bake_on_start = null
-profiles = null
 default_profile = ExtResource("3_nfvba")
 interactions = SubResource("Resource_psnpc")
-world_bounds = null
-use_world_bounds = null
-boid_radius = null
-obstacle_cell = null
-obstacle_max_dist = null
-slope_limit_degrees = null
-transition_stride = null
-auto_spawn = null
-run_simulation = null
 metadata/_custom_type_script = "uid://b1wnhlmks4525"
 
 [node name="BoidSpawnZone" type="Node3D" parent="." unique_id=2001783826 node_paths=PackedStringArray("system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3868637, 4.6215286, -21.08759)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3868637, 1.9630537, 18.952515)
 script = ExtResource("3_v8eyb")
 system = NodePath("../BoidSystem")
 config = SubResource("Resource_104nh")
@@ -291,7 +277,7 @@ config = SubResource("Resource_104nh")
 [node name="DebugPanel" parent="." unique_id=1183930503 instance=ExtResource("6_v8eyb")]
 
 [node name="BoidEmitter" type="Node3D" parent="." unique_id=1220959143 node_paths=PackedStringArray("system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1685772, -10.395665)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1685772, -21.94593)
 script = ExtResource("10_k7114")
 system = NodePath("../BoidSystem")
 radius = 5.0
@@ -334,7 +320,7 @@ visuals = Array[ExtResource("16_6x245")]([SubResource("Resource_1xjow")])
 metadata/_custom_type_script = "uid://bh4m16gxnmuuw"
 
 [node name="BoidPenStorage" type="Node3D" parent="." unique_id=1003813335 node_paths=PackedStringArray("system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 17.26068, -10.402582)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.41894245, -9.503237)
 script = ExtResource("22_x4u2u")
 system = NodePath("../BoidSystem")
 metadata/_custom_type_script = "uid://bohp2a4orq7tw"
@@ -342,4 +328,5 @@ metadata/_custom_type_script = "uid://bohp2a4orq7tw"
 [node name="BoidPenEntrance" type="Node3D" parent="." unique_id=771173911 node_paths=PackedStringArray("storage")]
 script = ExtResource("23_1xjow")
 storage = NodePath("../BoidPenStorage")
+entry_mode = 1
 metadata/_custom_type_script = "uid://bivryc0yy37dq"

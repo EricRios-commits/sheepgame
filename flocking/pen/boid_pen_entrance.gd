@@ -5,6 +5,15 @@ extends Node3D
 ## node, rotated with its yaw) is sent to the storage, unless the storage is full. Several
 ## entrances can point at the same storage.
 
+## How boids move from the entrance into the storage.
+enum EntryMode {
+	## The boid is placed on its spot at once.
+	INSTANT,
+	## The boid walks to its spot at walk_speed, heading straight for it but steering around
+	## obstacles. Needs a storage with snap_to_spots on.
+	WALK,
+}
+
 const GIZMO_HEIGHT := 0.06
 const ENTRANCE_COLOR := Color(0.3, 0.6, 1.0)
 const LINK_COLOR := Color(0.3, 0.6, 1.0, 0.5)
@@ -22,6 +31,16 @@ const LINK_COLOR := Color(0.3, 0.6, 1.0, 0.5)
 	set(new_value):
 		size = new_value
 		_redraw_gizmo()
+## How boids move into the storage. INSTANT places them on their spot immediately. WALK has
+## them walk there at a constant speed, heading straight for the spot but steering around
+## obstacles. They ignore dogs and flockmates on the way, and keep their usual speed-driven
+## animation. WALK needs the storage to have snap_to_spots on. Otherwise boids enter instantly.
+@export var entry_mode: EntryMode = EntryMode.INSTANT:
+	set(new_value):
+		entry_mode = new_value
+		update_configuration_warnings()
+## Speed, in world units per second, at which boids walk to their spot. Only used by WALK.
+@export_range(0.1, 20.0, 0.1, "or_greater") var walk_speed := 2.0
 ## Whether the debug outline of the entrance is visible while the game is running.
 ## The outline is always visible in the editor.
 @export var show_gizmo_in_game := false
@@ -71,6 +90,8 @@ func _get_configuration_warnings() -> PackedStringArray:
 		warnings.append("No BoidPenStorage assigned. This entrance will not send boids anywhere.")
 	elif storage.system == null:
 		warnings.append("The assigned storage has no BoidSystem, so this entrance will not register.")
+	if entry_mode == EntryMode.WALK and storage != null and not storage.snap_to_spots:
+		warnings.append("WALK needs a storage with snap_to_spots on; boids will enter instantly.")
 	return warnings
 
 

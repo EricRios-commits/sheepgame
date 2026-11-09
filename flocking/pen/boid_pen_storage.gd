@@ -49,7 +49,7 @@ const COUNTER_ONLY_COLOR := Color(0.6, 0.6, 0.6)
 @export var show_gizmo_in_game := false
 
 ## Index of this storage in the BoidSystem's storage list (storages are sorted by node path).
-## Assigned when the system builds its storages; -1 until then.
+## Assigned when the system builds its storages. -1 until then.
 var storage_index := -1
 
 var _gizmo_instance: MeshInstance3D
