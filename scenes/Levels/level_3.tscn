@@ -22,6 +22,8 @@
 [ext_resource type="Script" uid="uid://bohp2a4orq7tw" path="res://flocking/pen/boid_pen_storage.gd" id="20_rw574"]
 [ext_resource type="Script" uid="uid://bivryc0yy37dq" path="res://flocking/pen/boid_pen_entrance.gd" id="21_n0vmk"]
 [ext_resource type="PackedScene" uid="uid://4t33kdqn7xj5" path="res://scenes/ui.tscn" id="22_2q2jy"]
+[ext_resource type="PackedScene" uid="uid://diu7h1xch8rck" path="res://scenes/main_menu/main_menu_3d.tscn" id="23_m0526"]
+[ext_resource type="PackedScene" uid="uid://c4vggd0or5yau" path="res://scenes/Levels/level_2.tscn" id="24_xgqp6"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_8whyh"]
 ground_bottom_color = Color(0.64705884, 0.654902, 0.67058825, 1)
@@ -1203,4 +1205,6 @@ transform = Transform3D(-4.371139e-08, -1.0000001, 4.3711392e-08, 0, -4.3711392e
 shape = SubResource("WorldBoundaryShape3D_q7rag")
 
 [node name="UI" parent="." unique_id=298481423 instance=ExtResource("22_2q2jy")]
+main_scene = ExtResource("23_m0526")
+next_scene = ExtResource("24_xgqp6")
 scene_help = "Each sheep has a color and should go into the specific colored barn."

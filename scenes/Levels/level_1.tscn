@@ -19,6 +19,8 @@
 [ext_resource type="Script" uid="uid://p4stixdtom0l" path="res://flocking/core/boid_spawn_zone.gd" id="13_t6mv3"]
 [ext_resource type="Script" uid="uid://ddho2emmyrsog" path="res://flocking/core/boid_spawn_config.gd" id="14_jxar1"]
 [ext_resource type="PackedScene" uid="uid://4t33kdqn7xj5" path="res://scenes/ui.tscn" id="15_4xsrm"]
+[ext_resource type="PackedScene" uid="uid://diu7h1xch8rck" path="res://scenes/main_menu/main_menu_3d.tscn" id="16_0r5j3"]
+[ext_resource type="PackedScene" uid="uid://b6kwso6u0y84v" path="res://scenes/Levels/level_4.tscn" id="17_d0wj5"]
 [ext_resource type="ArrayMesh" uid="uid://b1ij20rnulvqa" path="res://assets/meshes/apple_tree.tres" id="18_7o3do"]
 [ext_resource type="PackedScene" uid="uid://d2bu1bbq21dnd" path="res://scenes/pen.tscn" id="24_mqh5v"]
 
@@ -121,6 +123,8 @@ size = Vector2(10, 10)
 metadata/_custom_type_script = "uid://p4stixdtom0l"
 
 [node name="UI" parent="." unique_id=298481423 instance=ExtResource("15_4xsrm")]
+main_scene = ExtResource("16_0r5j3")
+next_scene = ExtResource("17_d0wj5")
 scene_help = "W/A/S/D to move, Left Shift to sprint, Space to jump
 Q/E to rotate the camera, Mouse wheel to zoom in/out
 Get the sheep to the barn"

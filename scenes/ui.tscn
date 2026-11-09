@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://d4kbdpvujqm8n" path="res://scenes/star_gameplay.tscn" id="2_x4jx1"]
 [ext_resource type="PackedScene" uid="uid://dqblpdwrhl3q0" path="res://scenes/star_results_hollow.tscn" id="3_8dubc"]
 [ext_resource type="PackedScene" uid="uid://b0imtefhtlpp0" path="res://scenes/star_results_filled.tscn" id="4_p7vwb"]
-[ext_resource type="PackedScene" uid="uid://diu7h1xch8rck" path="res://scenes/main_menu/main_menu_3d.tscn" id="5_wm3ai"]
 [ext_resource type="Script" uid="uid://dw10y3expc02y" path="res://scripts/controls_hint.gd" id="6_8dubc"]
 
 [node name="UI" type="Control" unique_id=298481423]
@@ -18,7 +17,6 @@ script = ExtResource("1_gdt2y")
 star_indicator_scene = ExtResource("2_x4jx1")
 result_star_hollow = ExtResource("3_8dubc")
 result_star_filled = ExtResource("4_p7vwb")
-main_scene = ExtResource("5_wm3ai")
 
 [node name="Button" type="Button" parent="." unique_id=483059856]
 layout_mode = 1

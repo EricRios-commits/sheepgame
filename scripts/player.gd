@@ -51,6 +51,8 @@ func _physics_process(delta: float) -> void:
 		move_direction = (camera_right.normalized() * input_direction.x
 			- camera_forward.normalized() * input_direction.y)
 
+	var speed_multiplier = (2.0 if Input.is_action_pressed("sprint") else 1.0)
+
 	velocity.x = move_toward(velocity.x, move_direction.x * move_speed * speed_multiplier, acceleration * delta)
 	velocity.z = move_toward(velocity.z, move_direction.z * move_speed * speed_multiplier, acceleration * delta)
 	if is_on_floor():

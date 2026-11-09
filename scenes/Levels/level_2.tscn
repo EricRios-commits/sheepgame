@@ -20,6 +20,7 @@
 [ext_resource type="PackedScene" uid="uid://4t33kdqn7xj5" path="res://scenes/ui.tscn" id="16_ttcij"]
 [ext_resource type="Material" uid="uid://be5j3dpaer8uw" path="res://materials/grass_2.tres" id="17_f2tki"]
 [ext_resource type="Script" uid="uid://bivryc0yy37dq" path="res://flocking/pen/boid_pen_entrance.gd" id="17_gv2sh"]
+[ext_resource type="PackedScene" uid="uid://diu7h1xch8rck" path="res://scenes/main_menu/main_menu_3d.tscn" id="17_rbuvs"]
 [ext_resource type="PackedScene" uid="uid://c0ak38sjbhatk" path="res://Low_Poly_Farm_Assets/Assets/straw_pack.tscn" id="19_452xl"]
 [ext_resource type="PackedScene" uid="uid://c7w2p252lahk" path="res://scenes/player.tscn" id="23_tbcna"]
 
@@ -656,6 +657,8 @@ size = Vector2(10, 10)
 metadata/_custom_type_script = "uid://p4stixdtom0l"
 
 [node name="UI" parent="." unique_id=298481423 instance=ExtResource("16_ttcij")]
+main_scene = ExtResource("17_rbuvs")
+next_scene = ExtResource("17_rbuvs")
 scene_help = "🎶 Sliiide to the left 🎶,
 🎶 Sliiide to the right 🎶,
 🎶 Criss Crosssss 🎶,

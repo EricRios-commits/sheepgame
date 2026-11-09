@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://p4stixdtom0l" path="res://flocking/core/boid_spawn_zone.gd" id="13_35g73"]
 [ext_resource type="Script" uid="uid://ddho2emmyrsog" path="res://flocking/core/boid_spawn_config.gd" id="14_rlgrm"]
 [ext_resource type="Material" uid="uid://be5j3dpaer8uw" path="res://materials/grass_2.tres" id="15_mndr2"]
+[ext_resource type="PackedScene" uid="uid://diu7h1xch8rck" path="res://scenes/main_menu/main_menu_3d.tscn" id="16_1eq62"]
 [ext_resource type="PackedScene" uid="uid://dqe102s2lmfqj" path="res://scenes/Levels/level_3.tscn" id="16_vujtu"]
 [ext_resource type="PackedScene" uid="uid://d2bu1bbq21dnd" path="res://scenes/pen.tscn" id="18_bu5vv"]
 [ext_resource type="PackedScene" uid="uid://4t33kdqn7xj5" path="res://scenes/ui.tscn" id="20_mndr2"]
@@ -141,6 +142,7 @@ surface_material_override/0 = ExtResource("15_mndr2")
 shape = SubResource("BoxShape3D_i2tgm")
 
 [node name="UI" parent="." unique_id=298481423 instance=ExtResource("20_mndr2")]
+main_scene = ExtResource("16_1eq62")
 next_scene = ExtResource("16_vujtu")
 scene_help = "Each barn has a limited capacity, so don't force everything into one"
 
