@@ -65,6 +65,7 @@ func _on_boid_penned(storage_index: int, species_id: int):
 		stats[species_id].insideCorrectBarn += 1
 	elif stats.has(species_id):
 		stats[species_id].insideWrongBarn += 1
+		ui.show_wrong_barn_label()
 	
 	Global.audio_manager.trigger_sfx("sheep_baa")
 
