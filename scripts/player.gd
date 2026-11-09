@@ -32,29 +32,14 @@ func _ready() -> void:
 		# so we force a restart on the boid manually
 		boid_emitter._ready()
 
-func _unhandled_key_input(event: InputEvent) -> void:
-	if event is InputEventKey:
-		var key_event := event as InputEventKey
-		if key_event.physical_keycode == KEY_SPACE and key_event.pressed and not key_event.echo:
-			_jump_requested = true
-			get_viewport().set_input_as_handled()
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("jump") and not event.is_echo():
+		_jump_requested = true
+		get_viewport().set_input_as_handled()
 
 
 func _physics_process(delta: float) -> void:
-	var input_direction := Vector2.ZERO
-	var speed_multiplier := 1
-	if Input.is_physical_key_pressed(KEY_A):
-		input_direction.x -= 1.0
-	if Input.is_physical_key_pressed(KEY_D):
-		input_direction.x += 1.0
-	if Input.is_physical_key_pressed(KEY_W):
-		input_direction.y -= 1.0
-	if Input.is_physical_key_pressed(KEY_S):
-		input_direction.y += 1.0
-	if Input.is_physical_key_pressed(KEY_SHIFT):
-		speed_multiplier = 2
-		
-	input_direction = input_direction.normalized()
+	var input_direction := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 
 	var move_direction := Vector3.ZERO
 	var camera := get_viewport().get_camera_3d()
@@ -64,7 +49,7 @@ func _physics_process(delta: float) -> void:
 		camera_right.y = 0.0
 		camera_forward.y = 0.0
 		move_direction = (camera_right.normalized() * input_direction.x
-			- camera_forward.normalized() * input_direction.y).normalized()
+			- camera_forward.normalized() * input_direction.y)
 
 	velocity.x = move_toward(velocity.x, move_direction.x * move_speed * speed_multiplier, acceleration * delta)
 	velocity.z = move_toward(velocity.z, move_direction.z * move_speed * speed_multiplier, acceleration * delta)

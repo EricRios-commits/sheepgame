@@ -8,8 +8,6 @@ extends Node3D
 @export var camera: Camera3D
 
 var _follow_target: Node3D
-var _q_held := false
-var _e_held := false
 
 
 func _ready() -> void:
@@ -20,48 +18,10 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	var turn_input := 0.0
-	if _q_held:
-		turn_input += 1.0
-	if _e_held:
-		turn_input -= 1.0
+	var turn_input := Input.get_axis("camera_right", "camera_left")
 	if turn_input != 0.0:
 		rotation.y = wrapf(rotation.y + deg_to_rad(rotation_speed_degrees) * turn_input * delta, -PI, PI)
 
 	if _follow_target:
 		var destination := _follow_target.get_global_transform_interpolated().origin + Vector3.UP * follow_height
 		global_position = global_position.lerp(destination, 1.0 - exp(-follow_speed * delta))
-
-
-func _unhandled_key_input(event: InputEvent) -> void:
-	if event is not InputEventKey:
-		return
-
-	var key_event := event as InputEventKey
-	if key_event.echo:
-		return
-
-	match key_event.physical_keycode:
-		KEY_Q:
-			_q_held = key_event.pressed
-			get_viewport().set_input_as_handled()
-		KEY_E:
-			_e_held = key_event.pressed
-			get_viewport().set_input_as_handled()
-
-# Mouse scroll to change the FOV
-func _unhandled_input(event: InputEvent) -> void:
-	if event is not InputEventMouseButton:
-		return
-	
-	var evt = event as InputEventMouseButton
-	if evt.button_index == MOUSE_BUTTON_WHEEL_UP:
-		camera.size *= 1.1
-	elif evt.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-		camera.size /= 1.1
-	
-
-func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
-		_q_held = false
-		_e_held = false
