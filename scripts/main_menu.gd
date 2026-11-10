@@ -1,5 +1,8 @@
 extends Control
 
+func _ready():
+	Global.audio_manager.next_bgm()
+
 func _on_start_button_pressed() -> void:
 	# This cannot be a preload because that leads to a circular dependency
 	var first_level = load("res://scenes/Levels/level_1.tscn")

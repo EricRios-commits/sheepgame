@@ -13,6 +13,7 @@ extends Control
 @export_group("")
 @export_multiline() var scene_help: String
 
+@onready var top_text = $"Results Screen/VBoxContainer/Label"
 @onready var results_screen = $"Results Screen"
 @onready var results_star_container = $"Results Screen/VBoxContainer/Stars"
 @onready var bottom_text = $Label
@@ -62,6 +63,7 @@ func should_show_results(percentage: float, cutoffs: Array[float]):
 			
 	# TODO: Show other stats from the play
 	
+	top_text.visible = (percentage >= cutoffs[0])
 	results_screen.visible = true
 	pass
 	
