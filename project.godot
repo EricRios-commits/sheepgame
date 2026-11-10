@@ -32,10 +32,6 @@ window/stretch/aspect="expand"
 
 project/assembly_name="sheepgame"
 
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/rider-plugin/plugin.cfg")
-
 [filesystem]
 
 enabled=PackedStringArray("res://addons/rider-plugin/plugin.cfg")

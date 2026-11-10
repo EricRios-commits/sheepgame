@@ -2,7 +2,7 @@
 	https://reodesuxz.itch.io/low-poly-farm-animals-pack
 
 - Low Poly Farm Assets
-    https://www.cgtrader.com/free-3d-models/exterior/other/lowpoly-farm-pack-ready-farm-collection-lowpoly
+	https://www.cgtrader.com/free-3d-models/exterior/other/lowpoly-farm-pack-ready-farm-collection-lowpoly
 
 - Background music from Pixibay:
 	https://pixabay.com/music/folk-agriculture-farming-farm-music-551390/
