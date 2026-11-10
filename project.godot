@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="sheepgame"
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="uid://diu7h1xch8rck"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -21,7 +21,6 @@ buses/default_bus_layout="uid://bd54k8tyj8kbg"
 
 [autoload]
 
-MCPRuntimeServer="*res://addons/godot_mcp_toolkit/runtime/mcp_runtime_server.gd"
 Global="*uid://br15dlly2aqjg"
 
 [display]

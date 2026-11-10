@@ -18,6 +18,7 @@ extends Control
 @onready var results_star_container = $"Results Screen/VBoxContainer/Stars"
 @onready var bottom_text = $Label
 @onready var wrong_barn_label = $WrongBarnLabel
+@onready var next_button = $"Results Screen/VBoxContainer/Buttons/Next Level"
 
 signal on_finish_attempt()
 
@@ -31,6 +32,7 @@ var wrong_barn_tween: Tween
 func _ready():
 	bottom_text.text = scene_help
 	results_screen.visible = false
+	next_button.visible = false
 
 func setup_star(percentage: float):
 	var star_indicator = star_indicator_scene.instantiate()
@@ -63,7 +65,10 @@ func should_show_results(percentage: float, cutoffs: Array[float]):
 			
 	# TODO: Show other stats from the play
 	
-	top_text.visible = (percentage >= cutoffs[0])
+	if percentage >= cutoffs[0]:
+		top_text.visible = true
+		next_button.visible = true
+	
 	results_screen.visible = true
 	pass
 	
