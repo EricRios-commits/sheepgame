@@ -19,6 +19,13 @@ func capture_frame(label: String) -> void:
 	root.get_texture().get_image().save_png(directory.path_join("downhill-v3-%s.png" % label))
 
 func run() -> void:
+	var orange = load("res://assets/boids_resources/orange_sheep_behaviour.tres")
+	var guided = orange.find_state(&"guided")
+	check(guided != null, "Mixed Classic species explicitly cover upstream guided vocabulary")
+	if guided != null:
+		var idle = orange.find_state(&"idle")
+		check(guided.influences == idle.influences and guided.max_speed == idle.max_speed,
+			"Orange guided fallback preserves its existing idle steering")
 	var menu = load("res://scenes/main_menu/main_menu_3d.tscn").instantiate()
 	root.add_child(menu)
 	var buttons: Array[Node] = menu.find_children("*", "Button", true, false)

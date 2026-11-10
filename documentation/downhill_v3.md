@@ -1,6 +1,14 @@
 # Downhill Herd v3
 
-Sole writer; preserved the supplied dirty v2 base. Local branch `feature/downhill-herd-v3`; no commits, agents, installs, downloads, shared Classic edits or configuration changes.
+Sole writer; preserved the supplied dirty v2 base. Implementation-stage constraints and results below are historical; publication integration is recorded here.
+
+## Publication integration
+
+At the user's request, committed the complete v2/v3 source as `473d934` on `feature/downhill-herd-v3` and integrated `origin/Matteo` at `5f25ed9`. Resolved title-screen conflicts by preserving both mode buttons, upstream's on-demand Classic scene loading, and its new title-screen flock. Incoming Classic level fixes, remappable inputs, guided-white-sheep behaviour and wrong-barn UI are retained.
+
+Mixed-species Classic levels exposed an upstream missing `guided` behaviour for orange sheep. The global vocabulary includes white sheep's new state, so the behaviour table warns even though orange sheep previously fell back to idle. Added an explicit orange `guided` entry referencing exactly the existing idle influences/speed, without adding transitions or changing flocking calculations. A regression failed before this resource fix and passed afterward.
+
+Post-integration verification: editor import and all fifteen strict suites pass with exit 0 and no engine/script diagnostics; default Forward+ Classic/menu regression, two-resolution interface test and ordinary title-screen boot also pass without diagnostics. No PR or merge into the upstream Matteo/main branch is requested. Earlier no-commit/local-only statements describe development before publication authorization.
 
 ## Bounded work plan
 

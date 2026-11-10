@@ -4,8 +4,8 @@
 [ext_resource type="PackedScene" uid="uid://d4kbdpvujqm8n" path="res://scenes/star_gameplay.tscn" id="2_x4jx1"]
 [ext_resource type="PackedScene" uid="uid://dqblpdwrhl3q0" path="res://scenes/star_results_hollow.tscn" id="3_8dubc"]
 [ext_resource type="PackedScene" uid="uid://b0imtefhtlpp0" path="res://scenes/star_results_filled.tscn" id="4_p7vwb"]
-[ext_resource type="PackedScene" uid="uid://diu7h1xch8rck" path="res://scenes/main_menu/main_menu_3d.tscn" id="5_wm3ai"]
 [ext_resource type="Script" uid="uid://dw10y3expc02y" path="res://scripts/controls_hint.gd" id="6_8dubc"]
+[ext_resource type="FontFile" uid="uid://cygci47g3aict" path="res://addons/fonts/Hello Farmer Font by Keithzo.ttf" id="6_p7vwb"]
 
 [node name="UI" type="Control" unique_id=298481423]
 layout_mode = 3
@@ -18,7 +18,6 @@ script = ExtResource("1_gdt2y")
 star_indicator_scene = ExtResource("2_x4jx1")
 result_star_hollow = ExtResource("3_8dubc")
 result_star_filled = ExtResource("4_p7vwb")
-main_scene = ExtResource("5_wm3ai")
 
 [node name="Button" type="Button" parent="." unique_id=483059856]
 layout_mode = 1
@@ -101,6 +100,19 @@ offset_bottom = -2.0
 grow_vertical = 0
 pivot_offset_ratio = Vector2(0, 1)
 script = ExtResource("6_8dubc")
+
+[node name="WrongBarnLabel" type="Label" parent="." unique_id=2099993571]
+visible = false
+layout_mode = 1
+offset_left = 160.0
+offset_top = 64.0
+offset_right = 271.0
+offset_bottom = 96.0
+rotation = -0.2617994
+theme_override_colors/font_color = Color(0.42843685, 0, 0.031678073, 1)
+theme_override_fonts/font = ExtResource("6_p7vwb")
+theme_override_font_sizes/font_size = 18
+text = "Wrong barn!"
 
 [connection signal="pressed" from="Button" to="." method="on_finish_attempt_btn"]
 [connection signal="pressed" from="Results Screen/VBoxContainer/Buttons/Main Menu" to="." method="on_main_menu"]

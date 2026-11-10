@@ -16,12 +16,16 @@ extends Control
 @onready var results_screen = $"Results Screen"
 @onready var results_star_container = $"Results Screen/VBoxContainer/Stars"
 @onready var bottom_text = $Label
+@onready var wrong_barn_label = $WrongBarnLabel
 
 signal on_finish_attempt()
 
 # Yes this is basically a copy of what is already present in level_manager
 var star_percentages: Array[float] = []
 var star_indicators: Array[StarIndicator] = []
+
+# to keep just one tween going 
+var wrong_barn_tween: Tween
 
 func _ready():
 	bottom_text.text = scene_help
@@ -60,6 +64,19 @@ func should_show_results(percentage: float, cutoffs: Array[float]):
 	
 	results_screen.visible = true
 	pass
+	
+func show_wrong_barn_label() -> void:
+	if wrong_barn_tween:
+		wrong_barn_tween.kill()
+	
+	wrong_barn_label.modulate.a = 1.0
+	wrong_barn_label.show()
+	
+	wrong_barn_tween = create_tween()
+	wrong_barn_tween.tween_interval(2.0)
+	wrong_barn_tween.tween_property(wrong_barn_label, "modulate:a", 0.0, 0.5)
+	wrong_barn_tween.tween_callback(wrong_barn_label.hide)
+	
 
 # UI Button callbacks
 
@@ -80,3 +97,4 @@ func on_next_level() -> void:
 		push_error("[Level Manager] Next scene is not set up")
 		return
 	get_tree().change_scene_to_packed(next_scene)
+	

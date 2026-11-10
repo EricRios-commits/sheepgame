@@ -1,7 +1,5 @@
 extends Control
 
-@export var target_level: PackedScene
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	var classic := $VBoxContainer/StartButton
@@ -24,10 +22,8 @@ func _process(delta: float) -> void:
 
 
 func _on_start_button_pressed() -> void:
-	if target_level:
-		get_tree().change_scene_to_packed(target_level)
-	else:
-		get_tree().change_scene_to_file("res://scenes/Levels/level_1.tscn")
+	# Load on demand to preserve upstream's circular-dependency fix.
+	get_tree().change_scene_to_file("res://scenes/Levels/level_1.tscn")
 
 func _on_downhill_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/downhill/downhill_level_01.tscn")

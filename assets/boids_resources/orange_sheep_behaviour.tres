@@ -49,8 +49,15 @@ max_speed = 3.0
 influences = Array[ExtResource("3_wajvl")]([SubResource("Resource_tgjpg"), SubResource("Resource_n4chu"), SubResource("Resource_6b5q0")])
 metadata/_custom_type_script = "uid://bis4gpcq54r1r"
 
+[sub_resource type="Resource" id="Resource_guided_fallback"]
+script = ExtResource("2_ruxvt")
+state = &"guided"
+max_speed = 3.0
+influences = Array[ExtResource("3_wajvl")]([SubResource("Resource_tgjpg"), SubResource("Resource_n4chu"), SubResource("Resource_6b5q0")])
+metadata/_custom_type_script = "uid://bis4gpcq54r1r"
+
 [resource]
 script = ExtResource("1_al1i3")
 species = &"orange_sheep"
-states = Array[ExtResource("2_ruxvt")]([SubResource("Resource_wt37s")])
+states = Array[ExtResource("2_ruxvt")]([SubResource("Resource_wt37s"), SubResource("Resource_guided_fallback")])
 metadata/_custom_type_script = "uid://cnxce80poaxm2"

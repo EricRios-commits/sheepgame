@@ -2,7 +2,7 @@
 
 The playable third iteration is documented in [downhill_v3.md](downhill_v3.md), including its bounded plan, all eleven acceptance exercises, exact tuning, changed files, captures and honest verification limitations. [downhill_v2.md](downhill_v2.md) preserves the earlier verified base and its history.
 
-Worktree: `C:/Users/alvar/Desktop/SheepGame-downhill`, branch `feature/downhill-herd-v3`. Changes remain local and uncommitted. Original SheepGame and shared Classic files are unchanged by v3.
+Worktree: `C:/Users/alvar/Desktop/SheepGame-downhill`, branch `feature/downhill-herd-v3`. The v2/v3 implementation is committed at `473d934`. Publication integration incorporates `origin/Matteo` at `5f25ed9`, retaining its Classic level/input/UI improvements and title-screen flock alongside both mode buttons. The original SheepGame working directory remains untouched. See the v3 publication note for the small mixed-species compatibility fix and post-integration checks.
 
 Launch this worktree's `project.godot` in Godot 4.7. The ordinary 3D menu offers Downhill Herd, Classic Puzzle and Quit. Downhill loads `scenes/downhill/downhill_level_01.tscn`; Classic starts original level 1. Automated drivers exist only under tests.
 
