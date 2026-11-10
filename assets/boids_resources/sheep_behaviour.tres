@@ -47,7 +47,7 @@ metadata/_custom_type_script = "uid://djyd2nvfcfeqr"
 script = ExtResource("5_7o0r5")
 emitter_kind = &"pen_lure"
 mode = 1
-layer = 0
+layer = 2
 metadata/_custom_type_script = "uid://6cikbviab3ep"
 
 [sub_resource type="Resource" id="Resource_ruxvt"]

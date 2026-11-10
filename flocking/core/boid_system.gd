@@ -69,6 +69,10 @@ signal boid_penned_identified(handle: int, storage_index: int, species_id: int)
 @export var ground_cell := 1.0
 ## Extra obstacle sources besides BoidObstacle nodes
 @export var obstacle_sources: Array[BoidObstacleSource] = []
+## Obstacle source baked into a separate field used only while ENTERING. If unset, walkers
+## avoid the normal `obstacles` field.
+@export var entering_obstacle_source: BoidObstacleSource
+var entering_obstacles: BoidObstacleField
 ## On: bake ground and obstacles at startup
 ## Off: use the `ground` and `obstacles` resources exactly as assigned
 @export var bake_on_start := true
@@ -150,6 +154,8 @@ var storages: Array[BoidPenStorage] = []
 ## Boids held per storage, including boids still walking in.
 var storage_boid_counts := PackedInt32Array()
 var storage_capacities := PackedInt32Array()
+var _storage_centers := PackedVector2Array()
+var _entering_phases := PackedByteArray()
 
 ## Registered entrances that have a valid storage, sorted by node path when they are built.
 var entrances: Array[BoidPenEntrance] = []
@@ -280,6 +286,13 @@ func bake_environment() -> void:
 		else:
 			push_error("BoidSystem: ground_source failed to bake; keeping the existing ground.")
 	_build_storages_and_entrances()
+	entering_obstacles = null
+	if entering_obstacle_source != null:
+		var entering_field := BoidObstacleField.new()
+		entering_field.setup(world_bounds, obstacle_cell, obstacle_max_dist)
+		entering_obstacle_source.bake_obstacles(self, entering_field)
+		entering_field.compute_normals()
+		entering_obstacles = entering_field
 	var ground_is_heightfield := ground is BoidHeightfield
 	if _obstacle_nodes.is_empty() and obstacle_sources.is_empty() and not ground_is_heightfield:
 		return
@@ -316,6 +329,7 @@ func _build_storages_and_entrances() -> void:
 	storage_capacities.resize(storage_total)
 	_storage_spot_positions.clear()
 	_storage_spot_states.clear()
+	_storage_centers.resize(storage_total)
 	for i in storage_total:
 		var storage := storages[i]
 		storage.storage_index = i
@@ -324,6 +338,7 @@ func _build_storages_and_entrances() -> void:
 		spot_states.resize(spot_positions.size())
 		_storage_spot_positions.append(spot_positions)
 		_storage_spot_states.append(spot_states)
+		_storage_centers[i] = Vector2(storage.global_position.x, storage.global_position.z)
 		storage_capacities[i] = spot_positions.size() if storage.snap_to_spots else UNLIMITED_CAPACITY
 
 	entrances.sort_custom(func(entrance_a: BoidPenEntrance, entrance_b: BoidPenEntrance) -> bool: return str(entrance_a.get_path()) < str(entrance_b.get_path()))
@@ -708,7 +723,10 @@ func _stage_integrate(sim_dt: float) -> void:
 		field_origin_z = field.origin.y
 		field_inv_cell = 1.0 / field.cell
 		field_near_threshold = collision_radius + field.cell
+	var state_ids := store.state
 	for i in boid_count:
+		if state_ids[i] == entering_state_id:
+			continue
 		var boid_max_speed := group_max_speed[_group_of_boid[i]]
 		var new_velocity := velocities[i] + combined_accel[i] * sim_dt
 		var new_speed := new_velocity.length()
@@ -865,6 +883,8 @@ func _apply_entry(handle: int, entrance_index: int) -> void:
 	store.storage_spot[slot] = spot_index
 	storage_boid_counts[storage_index] += 1
 	if spot_index >= 0 and entrance_walk_speeds[entrance_index] > 0.0:
+		if storages[storage_index].snap_to_spots and storage_boid_counts[storage_index] == storage_capacities[storage_index]:
+			storages[storage_index].filled.emit()
 		_begin_walk(slot, handle, entrance_walk_speeds[entrance_index])
 	else:
 		_finalize_storage_entry(slot, storage_index, spot_index)
@@ -880,21 +900,26 @@ func _claim_spot(storage_index: int) -> int:
 	return -1
 
 
-## Puts a boid into the ENTERING state. From now on _walk_entering_boids moves it. The boid
-## gets a time limit proportional to its straight-line distance, as a safety net.
+## Puts a boid into the ENTERING state. From now on _walk_entering_boids moves it. It first
+## walks to the center of its storage, then to its spot. The boid gets a time limit
+## proportional to the full path length (via the center), as a safety net.
 func _begin_walk(slot: int, handle: int, walk_speed: float) -> void:
-	var target := _storage_spot_positions[store.storage_id[slot]][store.storage_spot[slot]]
+	var storage_index := store.storage_id[slot]
+	var spot := _storage_spot_positions[storage_index][store.storage_spot[slot]]
+	var center := _storage_centers[storage_index]
+	var path_length := store.pos[slot].distance_to(center) + center.distance_to(spot)
 	store.state[slot] = entering_state_id
 	store.state_timer[slot] = 0.0
 	store.vel[slot] = Vector2.ZERO
 	store.speed[slot] = 0.0
 	_entering_handles.append(handle)
 	_entering_speeds.append(walk_speed)
-	_entering_time_limits.append(store.pos[slot].distance_to(target) / walk_speed * WALK_TIMEOUT_FACTOR + WALK_TIMEOUT_SECONDS)
+	_entering_phases.append(0)
+	_entering_time_limits.append(path_length / walk_speed * WALK_TIMEOUT_FACTOR + WALK_TIMEOUT_SECONDS)
 
 
-## Moves every entering boid toward its spot at a constant speed, overriding this tick's
-## steering result.
+## Moves every entering boid at a constant speed, overriding this tick's steering result. Each
+## boid first walks to the center of its storage, then to its spot.
 func _walk_entering_boids(sim_dt: float) -> void:
 	if _entering_handles.is_empty():
 		return
@@ -919,30 +944,42 @@ func _walk_entering_boids(sim_dt: float) -> void:
 		_entering_handles[keep_count] = handle
 		_entering_speeds[keep_count] = _entering_speeds[read_index]
 		_entering_time_limits[keep_count] = _entering_time_limits[read_index]
+		_entering_phases[keep_count] = _entering_phases[read_index]
 		_walk_slots.append(slot)
 		keep_count += 1
 	_entering_handles.resize(keep_count)
 	_entering_speeds.resize(keep_count)
 	_entering_time_limits.resize(keep_count)
+	_entering_phases.resize(keep_count)
 	var avoidance := layer_accels[BoidInfluence.Layer.SAFETY]
 	for slot in _walk_slots:
 		avoidance[slot] = Vector2.ZERO
-	_get_walk_avoidance().apply(self, _walk_slots, 0, keep_count, 1.0, 0.0, avoidance)
+	var walk_avoidance := _get_walk_avoidance() as BoidInfluenceObstacle.Runtime
+	walk_avoidance.field_override = entering_obstacles
+	walk_avoidance.apply(self, _walk_slots, 0, keep_count, 1.0, 0.0, avoidance)
 	for i in keep_count:
 		var slot := _walk_slots[i]
+		var storage_index := store.storage_id[slot]
+		var spot := _storage_spot_positions[storage_index][store.storage_spot[slot]]
+		var heads_to_center := _entering_phases[i] == 0
+		var target := _storage_centers[storage_index] if heads_to_center else spot
 		var walk_speed := _entering_speeds[i]
-		var target := _storage_spot_positions[store.storage_id[slot]][store.storage_spot[slot]]
 		var to_target := target - positions[slot]
 		var distance := to_target.length()
 		var step := walk_speed * sim_dt
 		if distance <= step:
 			positions[slot] = target
-			velocities[slot] = Vector2.ZERO
-			speeds[slot] = 0.0
-			_pending_arrival_handles.append(_entering_handles[i])
+			if heads_to_center:
+				_entering_phases[i] = 1
+			else:
+				velocities[slot] = Vector2.ZERO
+				speeds[slot] = 0.0
+				_pending_arrival_handles.append(_entering_handles[i])
 			continue
 		var direction := to_target / distance
-		var avoidance_fade := clampf(distance / WALK_AVOIDANCE_FADE_DISTANCE, 0.0, 1.0)
+		# Fade is based on the distance to the final spot, so the center waypoint does not
+		# weaken avoidance.
+		var avoidance_fade := clampf(positions[slot].distance_to(spot) / WALK_AVOIDANCE_FADE_DISTANCE, 0.0, 1.0)
 		var steered := direction * walk_speed + avoidance[slot] * (walk_speed * avoidance_fade)
 		var steered_length := steered.length()
 		if steered_length > 1e-4:

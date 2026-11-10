@@ -24,8 +24,9 @@ func run() -> void:
 	check(guided != null, "Mixed Classic species explicitly cover upstream guided vocabulary")
 	if guided != null:
 		var idle = orange.find_state(&"idle")
-		check(guided.influences == idle.influences and guided.max_speed == idle.max_speed,
-			"Orange guided fallback preserves its existing idle steering")
+		check(guided.influences != idle.influences and guided.max_speed == idle.max_speed
+			and not guided.transitions.is_empty() and not idle.transitions.is_empty(),
+			"Preserve main's authored orange guided behaviour and state transitions")
 	var menu = load("res://scenes/main_menu/main_menu_3d.tscn").instantiate()
 	root.add_child(menu)
 	var buttons: Array[Node] = menu.find_children("*", "Button", true, false)

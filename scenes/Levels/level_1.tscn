@@ -6,10 +6,8 @@
 [ext_resource type="Script" uid="uid://dptck584sv5sx" path="res://flocking/ground/boid_ground.gd" id="3_0r5j3"]
 [ext_resource type="PackedScene" uid="uid://bkrws3pn6341w" path="res://Low_Poly_Farm_Assets/Assets/floor.tscn" id="3_xxpsm"]
 [ext_resource type="Script" uid="uid://rxx1132rkva2" path="res://flocking/obstacles/boid_obstacle_source.gd" id="4_d0wj5"]
-[ext_resource type="PackedScene" uid="uid://cvqko6273r0ff" path="res://Low_Poly_Farm_Assets/Assets/fence.tscn" id="4_j85eu"]
 [ext_resource type="Script" uid="uid://bm3na2cm00w3e" path="res://flocking/ground/boid_ground_source_world.gd" id="4_o7j4k"]
 [ext_resource type="Script" uid="uid://bcbiaoan3p8p5" path="res://flocking/obstacles/boid_obstacle_source_world.gd" id="5_1n1l4"]
-[ext_resource type="PackedScene" uid="uid://b4pr8n61wffyh" path="res://Low_Poly_Farm_Assets/Assets/fence_gate.tscn" id="5_4p1o3"]
 [ext_resource type="Script" uid="uid://cnxce80poaxm2" path="res://flocking/core/boid_species_profile.gd" id="6_yhe24"]
 [ext_resource type="Resource" uid="uid://cvvq0q35rcgcb" path="res://assets/boids_resources/sheep_behaviour.tres" id="7_x5rd6"]
 [ext_resource type="Script" uid="uid://bh4m16gxnmuuw" path="res://flocking/presentation/boid_presenter.gd" id="8_sl41b"]
@@ -24,18 +22,21 @@
 [ext_resource type="ArrayMesh" uid="uid://b1ij20rnulvqa" path="res://assets/meshes/apple_tree.tres" id="18_7o3do"]
 [ext_resource type="PackedScene" uid="uid://d2bu1bbq21dnd" path="res://scenes/pen.tscn" id="24_mqh5v"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_pa8r4"]
-ground_bottom_color = Color(0.64705884, 0.654902, 0.67058825, 1)
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4wyq6"]
+sky_top_color = Color(0.47058824, 0.69803923, 0.7411765, 1)
+sky_horizon_color = Color(0.47058824, 0.69803923, 0.7411765, 1)
+ground_bottom_color = Color(0.47058824, 0.69803923, 0.36862746, 1)
+ground_horizon_color = Color(0.47058824, 0.69803923, 0.36862746, 1)
 
 [sub_resource type="Sky" id="Sky_5xbjy"]
-sky_material = SubResource("ProceduralSkyMaterial_pa8r4")
+sky_material = SubResource("ProceduralSkyMaterial_4wyq6")
 
-[sub_resource type="Environment" id="Environment_15mv3"]
-background_mode = 2
-background_color = Color(0.453705, 0.7558182, 0.80611324, 1)
+[sub_resource type="Environment" id="Environment_7h2jl"]
+background_mode = 1
+background_color = Color(0.48749998, 0.585, 0.65, 1)
 sky = SubResource("Sky_5xbjy")
 reflected_light_source = 1
-glow_enabled = true
+volumetric_fog_density = 0.0245
 
 [sub_resource type="Resource" id="Resource_uticb"]
 script = ExtResource("3_0r5j3")
@@ -47,6 +48,11 @@ metadata/_custom_type_script = "uid://bm3na2cm00w3e"
 
 [sub_resource type="Resource" id="Resource_1opq5"]
 script = ExtResource("5_1n1l4")
+metadata/_custom_type_script = "uid://bcbiaoan3p8p5"
+
+[sub_resource type="Resource" id="Resource_4xsrm"]
+script = ExtResource("5_1n1l4")
+collision_mask = 4
 metadata/_custom_type_script = "uid://bcbiaoan3p8p5"
 
 [sub_resource type="Resource" id="Resource_pc6eh"]
@@ -78,7 +84,7 @@ size = Vector3(1, 4.32959, 44.399292)
 [node name="Environment" type="Node" parent="." unique_id=1109842562]
 
 [node name="WorldEnvironment2" type="WorldEnvironment" parent="Environment" unique_id=1534438762]
-environment = SubResource("Environment_15mv3")
+environment = SubResource("Environment_7h2jl")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment" unique_id=433509021]
 transform = Transform3D(-0.8665031, -0.42787755, 0.25708607, 0.49658918, -0.6865803, 0.5310431, -0.050711185, 0.58781666, 0.8074033, 3.815112, 5.495054, 2.3786573)
@@ -99,6 +105,7 @@ rng_seed = 5318008
 ground = SubResource("Resource_uticb")
 ground_source = SubResource("Resource_7h2jl")
 obstacle_sources = Array[ExtResource("4_d0wj5")]([SubResource("Resource_1opq5")])
+entering_obstacle_source = SubResource("Resource_4xsrm")
 profiles = Array[ExtResource("6_yhe24")]([ExtResource("7_x5rd6")])
 metadata/_custom_type_script = "uid://b1wnhlmks4525"
 
@@ -126,7 +133,7 @@ metadata/_custom_type_script = "uid://p4stixdtom0l"
 main_scene = ExtResource("16_0r5j3")
 next_scene = ExtResource("17_0r5j3")
 scene_help = "W/A/S/D to move, Left Shift to sprint, Space to jump
-Q/E to rotate the camera, Mouse wheel to zoom in/out
+Q/E to rotate the camera
 Get the sheep to the barn"
 
 [node name="Trees" type="Node3D" parent="." unique_id=2001116940]
@@ -170,66 +177,10 @@ mesh = ExtResource("18_7o3do")
 [node name="Floor" parent="." unique_id=444543483 instance=ExtResource("3_xxpsm")]
 transform = Transform3D(1.7, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
-[node name="FencesEnclosing" type="Node3D" parent="." unique_id=356478146]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.66429, 0.2990849, 1.7908597)
-
-[node name="Fence" parent="FencesEnclosing" unique_id=711951069 instance=ExtResource("4_j85eu")]
-
-[node name="Fence2" parent="FencesEnclosing" unique_id=1639183014 instance=ExtResource("4_j85eu")]
-transform = Transform3D(0.9135698, 0, 0.406682, 0, 1, 0, -0.406682, 0, 0.9135698, 0.21458721, 5.9604645e-08, 0.9788904)
-
-[node name="Fence3" parent="FencesEnclosing" unique_id=813923806 instance=ExtResource("4_j85eu")]
-transform = Transform3D(0.45263168, 0, 0.8916975, 0, 1, 0, -0.8916975, 0, 0.45263168, 0.88440657, 5.9604645e-08, 1.6840706)
-
-[node name="Fence4" parent="FencesEnclosing" unique_id=469868432 instance=ExtResource("4_j85eu")]
-transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 1.8552098, 1.1920929e-07, 1.9114494)
-
-[node name="Fence5" parent="FencesEnclosing" unique_id=999232120 instance=ExtResource("4_j85eu")]
-transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 2.8822217, 1.1920929e-07, 1.9114494)
-
-[node name="Fence6" parent="FencesEnclosing" unique_id=1459234558 instance=ExtResource("4_j85eu")]
-transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 3.9168487, 1.1920929e-07, 1.9114494)
-
-[node name="Fence15" parent="FencesEnclosing" unique_id=758610984 instance=ExtResource("4_j85eu")]
-transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 4.931852, 1.1920929e-07, 1.9114494)
-
-[node name="Fence16" parent="FencesEnclosing" unique_id=1412187685 instance=ExtResource("4_j85eu")]
-transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 5.701675, 1.1920929e-07, 1.9114494)
-
-[node name="Fence7" parent="FencesEnclosing" unique_id=1229958745 instance=ExtResource("4_j85eu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.7)
-
-[node name="Fence8" parent="FencesEnclosing" unique_id=1229385951 instance=ExtResource("4_j85eu")]
-transform = Transform3D(0.9135454, 0, -0.40673664, 0, 1, 0, 0.40673664, 0, 0.9135454, 0.215, 0, -4.69)
-
-[node name="Fence9" parent="FencesEnclosing" unique_id=1030293880 instance=ExtResource("4_j85eu")]
-transform = Transform3D(0.4524347, 0, -0.8917975, 0, 1, 0, 0.8917975, 0, 0.4524347, 0.8839998, 0, -5.394885)
-
-[node name="Fence10" parent="FencesEnclosing" unique_id=583520284 instance=ExtResource("4_j85eu")]
-transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 1.8552098, 1.1920929e-07, -5.6)
-
-[node name="Fence11" parent="FencesEnclosing" unique_id=1424378719 instance=ExtResource("4_j85eu")]
-transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 2.8822217, 1.1920929e-07, -5.6)
-
-[node name="Fence12" parent="FencesEnclosing" unique_id=1818422300 instance=ExtResource("4_j85eu")]
-transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 3.9168487, 1.1920929e-07, -5.6)
-
-[node name="Fence13" parent="FencesEnclosing" unique_id=2141950505 instance=ExtResource("4_j85eu")]
-transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 4.9548717, 1.1920929e-07, -5.6)
-
-[node name="Fence14" parent="FencesEnclosing" unique_id=1975709141 instance=ExtResource("4_j85eu")]
-transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 5.60869, 1.1920929e-07, -5.6)
-
-[node name="Fence_Gate" parent="FencesEnclosing" unique_id=355494656 instance=ExtResource("5_4p1o3")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.081, -0.001, -0.006)
-
 [node name="Pen" parent="." unique_id=1020403270 instance=ExtResource("24_mqh5v")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 17.433, 0, 0)
 
 [node name="BoidPenStorage" parent="Pen" index="1" unique_id=1921800734 node_paths=PackedStringArray("system")]
-system = NodePath("../../scripts/BoidSystem")
-
-[node name="PenLure" parent="Pen" index="3" unique_id=819242920 node_paths=PackedStringArray("system")]
 system = NodePath("../../scripts/BoidSystem")
 
 [node name="Bounds" type="StaticBody3D" parent="." unique_id=601405917]
