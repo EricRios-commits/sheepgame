@@ -94,6 +94,7 @@ func _process(_delta: float) -> void:
 		var next_cutoff = star_percentages[next_cutoff_idx]
 		if percentage >= next_cutoff:
 			Global.audio_manager.trigger_sfx("star_achieved", next_cutoff_idx)
+			stars_achieved += 1
 	
 	ui.update_progress(percentage)
 	
