@@ -21,17 +21,20 @@
 [ext_resource type="PackedScene" uid="uid://c0ak38sjbhatk" path="res://Low_Poly_Farm_Assets/Assets/straw_pack.tscn" id="23_v4u6s"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4wyq6"]
-ground_bottom_color = Color(0.64705884, 0.654902, 0.67058825, 1)
+sky_top_color = Color(0.47058824, 0.69803923, 0.7411765, 1)
+sky_horizon_color = Color(0.47058824, 0.69803923, 0.7411765, 1)
+ground_bottom_color = Color(0.47058824, 0.69803923, 0.36862746, 1)
+ground_horizon_color = Color(0.47058824, 0.69803923, 0.36862746, 1)
 
 [sub_resource type="Sky" id="Sky_5xbjy"]
 sky_material = SubResource("ProceduralSkyMaterial_4wyq6")
 
 [sub_resource type="Environment" id="Environment_6mhh6"]
-background_mode = 2
-background_color = Color(0.453705, 0.7558182, 0.80611324, 1)
+background_mode = 1
+background_color = Color(0.48749998, 0.585, 0.65, 1)
 sky = SubResource("Sky_5xbjy")
 reflected_light_source = 1
-glow_enabled = true
+volumetric_fog_density = 0.0245
 
 [sub_resource type="Resource" id="Resource_v4u6s"]
 script = ExtResource("3_vujtu")
@@ -54,7 +57,7 @@ size = Vector3(96, 0.5, 50)
 size = Vector3(96, 0.5, 50)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_l7saq"]
-size = Vector3(96, 1, 1)
+size = Vector3(96, 50, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_hm4er"]
 size = Vector3(1, 1, 50)
@@ -153,7 +156,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.94867, 0, 25.001587)
 [node name="Top Wall" type="StaticBody3D" parent="." unique_id=1890980749]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -25)
 collision_layer = 2
-collision_mask = 2
+collision_mask = 3
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Top Wall" unique_id=783989376]
 shape = SubResource("BoxShape3D_l7saq")
@@ -161,7 +164,7 @@ shape = SubResource("BoxShape3D_l7saq")
 [node name="Bottom Wall" type="StaticBody3D" parent="." unique_id=1744406240]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 25)
 collision_layer = 2
-collision_mask = 2
+collision_mask = 3
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Bottom Wall" unique_id=1717208653]
 shape = SubResource("BoxShape3D_l7saq")
@@ -169,7 +172,7 @@ shape = SubResource("BoxShape3D_l7saq")
 [node name="Left Wall" type="StaticBody3D" parent="." unique_id=972617133]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0, 0)
 collision_layer = 2
-collision_mask = 2
+collision_mask = 3
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Left Wall" unique_id=1146280680]
 shape = SubResource("BoxShape3D_hm4er")
@@ -177,7 +180,7 @@ shape = SubResource("BoxShape3D_hm4er")
 [node name="Right Wall" type="StaticBody3D" parent="." unique_id=1957284186]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0, 0)
 collision_layer = 2
-collision_mask = 2
+collision_mask = 3
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Right Wall" unique_id=222222583]
 shape = SubResource("BoxShape3D_hm4er")
@@ -274,9 +277,6 @@ system = NodePath("../../scripts/BoidSystem")
 [node name="BoidPenEntrance" parent="Pen" index="2" unique_id=1500361483]
 show_gizmo_in_game = false
 
-[node name="PenLure" parent="Pen" index="3" unique_id=819242920 node_paths=PackedStringArray("system")]
-system = NodePath("../../scripts/BoidSystem")
-
 [node name="Pen2" parent="." unique_id=1694921268 instance=ExtResource("18_bu5vv")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -37, 0, 0)
 
@@ -285,9 +285,6 @@ system = NodePath("../../scripts/BoidSystem")
 
 [node name="BoidPenEntrance" parent="Pen2" index="2" unique_id=1500361483]
 show_gizmo_in_game = false
-
-[node name="PenLure" parent="Pen2" index="3" unique_id=819242920 node_paths=PackedStringArray("system")]
-system = NodePath("../../scripts/BoidSystem")
 
 [editable path="Pen"]
 [editable path="Pen2"]

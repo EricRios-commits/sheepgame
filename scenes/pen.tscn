@@ -3,7 +3,6 @@
 [ext_resource type="PackedScene" uid="uid://b6uswonu6fvhk" path="res://assets/environment/pen_building.tscn" id="1_j676a"]
 [ext_resource type="Script" uid="uid://bohp2a4orq7tw" path="res://flocking/pen/boid_pen_storage.gd" id="2_gl254"]
 [ext_resource type="Script" uid="uid://bivryc0yy37dq" path="res://flocking/pen/boid_pen_entrance.gd" id="3_285jo"]
-[ext_resource type="Script" uid="uid://bfcj4jv4px22k" path="res://flocking/core/boid_emitter.gd" id="4_i8tlv"]
 
 [node name="Pen" type="Node3D" unique_id=1020403270]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
@@ -11,10 +10,9 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0
 [node name="StaticBody3D" parent="." unique_id=920224430 instance=ExtResource("1_j676a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.297, 0)
 
-[node name="BoidPenStorage" type="Node3D" parent="." unique_id=1921800734 node_paths=PackedStringArray("system")]
+[node name="BoidPenStorage" type="Node3D" parent="." unique_id=1921800734]
 transform = Transform3D(0.99999356, 0, 0.0035854501, 0, 1, 0, -0.0035854501, 0, 0.99999356, -7.3618594e-08, 0, 0.12819672)
 script = ExtResource("2_gl254")
-system = NodePath("")
 size = Vector2(12, 8)
 number_of_spots = 20
 
@@ -24,12 +22,3 @@ script = ExtResource("3_285jo")
 storage = NodePath("../BoidPenStorage")
 entry_mode = 1
 show_gizmo_in_game = true
-
-[node name="PenLure" type="Node3D" parent="." unique_id=819242920 node_paths=PackedStringArray("system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.1602385e-07, 0, -9.517519)
-script = ExtResource("4_i8tlv")
-system = NodePath("")
-kind = &"pen_lure"
-radius = 5.0
-strength = 10.0
-metadata/_custom_type_script = "uid://bfcj4jv4px22k"

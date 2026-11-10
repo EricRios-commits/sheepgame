@@ -24,18 +24,21 @@
 [ext_resource type="ArrayMesh" uid="uid://b1ij20rnulvqa" path="res://assets/meshes/apple_tree.tres" id="18_7o3do"]
 [ext_resource type="PackedScene" uid="uid://d2bu1bbq21dnd" path="res://scenes/pen.tscn" id="24_mqh5v"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_pa8r4"]
-ground_bottom_color = Color(0.64705884, 0.654902, 0.67058825, 1)
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4wyq6"]
+sky_top_color = Color(0.47058824, 0.69803923, 0.7411765, 1)
+sky_horizon_color = Color(0.47058824, 0.69803923, 0.7411765, 1)
+ground_bottom_color = Color(0.47058824, 0.69803923, 0.36862746, 1)
+ground_horizon_color = Color(0.47058824, 0.69803923, 0.36862746, 1)
 
 [sub_resource type="Sky" id="Sky_5xbjy"]
-sky_material = SubResource("ProceduralSkyMaterial_pa8r4")
+sky_material = SubResource("ProceduralSkyMaterial_4wyq6")
 
-[sub_resource type="Environment" id="Environment_15mv3"]
-background_mode = 2
-background_color = Color(0.453705, 0.7558182, 0.80611324, 1)
+[sub_resource type="Environment" id="Environment_7h2jl"]
+background_mode = 1
+background_color = Color(0.48749998, 0.585, 0.65, 1)
 sky = SubResource("Sky_5xbjy")
 reflected_light_source = 1
-glow_enabled = true
+volumetric_fog_density = 0.0245
 
 [sub_resource type="Resource" id="Resource_uticb"]
 script = ExtResource("3_0r5j3")
@@ -78,7 +81,7 @@ size = Vector3(1, 4.32959, 44.399292)
 [node name="Environment" type="Node" parent="." unique_id=1109842562]
 
 [node name="WorldEnvironment2" type="WorldEnvironment" parent="Environment" unique_id=1534438762]
-environment = SubResource("Environment_15mv3")
+environment = SubResource("Environment_7h2jl")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment" unique_id=433509021]
 transform = Transform3D(-0.8665031, -0.42787755, 0.25708607, 0.49658918, -0.6865803, 0.5310431, -0.050711185, 0.58781666, 0.8074033, 3.815112, 5.495054, 2.3786573)
@@ -227,9 +230,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.081, -0.001, -0.006)
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 17.433, 0, 0)
 
 [node name="BoidPenStorage" parent="Pen" index="1" unique_id=1921800734 node_paths=PackedStringArray("system")]
-system = NodePath("../../scripts/BoidSystem")
-
-[node name="PenLure" parent="Pen" index="3" unique_id=819242920 node_paths=PackedStringArray("system")]
 system = NodePath("../../scripts/BoidSystem")
 
 [node name="Bounds" type="StaticBody3D" parent="." unique_id=601405917]
