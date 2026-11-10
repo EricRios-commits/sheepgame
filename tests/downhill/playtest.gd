@@ -26,7 +26,7 @@ func start() -> void:
 	if directory.is_empty():
 		directory = OS.get_user_data_dir().path_join("downhill-captures")
 	DirAccess.make_dir_recursive_absolute(directory)
-	output = directory.path_join("downhill-v3")
+	output = directory.path_join("downhill-v4")
 	root.size = Vector2i(1280, 720)
 	level = load("res://scenes/downhill/downhill_level_01.tscn").instantiate()
 	var args := OS.get_cmdline_user_args()
@@ -154,6 +154,7 @@ func end_run() -> void:
 	print("CAMERA samples=%d dog_visible_pct=%.2f flock_visible_pct=%.2f" % [camera_samples,
 		100.0 * dog_visible_samples / maxi(1, camera_samples),
 		100.0 * flock_visible_fraction / maxi(1, camera_samples)])
+	print("CAMERA mode=dog_only (flock inclusion is informational, not a framing requirement)")
 	print(level.system.stage_timer.summary())
 	level.free()
 	await create_timer(0.2).timeout

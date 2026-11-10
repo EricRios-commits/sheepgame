@@ -2,6 +2,23 @@ extends BoidPresenter
 
 var motion: RefCounted
 
+func physical_pose(handle: int) -> Transform3D:
+	# Read physical coordinates before removal, preserving the species mesh scale.
+	var slot := system.store.slot_of(handle)
+	var sp := system.store.species[slot]
+	_capture(false)
+	var p := system.store.pos[slot]
+	var heading := system.store.heading[slot] + _sp_yaw[sp]
+	var normals := PackedVector3Array([Vector3.UP])
+	system.ground.sample_normals(PackedVector2Array([p]), normals, 0, 1)
+	var up := Vector3.UP.lerp(normals[0], _sp_tilt[sp]).normalized()
+	var forward := Vector3(sin(heading),0,cos(heading)).slide(up).normalized()
+	var basis := Basis(up.cross(forward),up,forward).scaled(Vector3.ONE * _scale[handle & BoidStore.ID_MASK] * _sp_scale[sp])
+	var origin: Vector3 = motion.world_position(handle,p) + Vector3.UP * (_sp_yoff[sp] + motion.presentation_bounce(handle,1))
+	var center := _active[sp].mm.mesh.get_aabb().get_center()
+	var spun := basis * Basis(Vector3.BACK,motion.presentation_spin(handle,1))
+	return Transform3D(spun,origin + basis*center - spun*center)
+
 func _sync_species() -> void:
 	super._sync_species()
 	for batch in _active + _frozen:

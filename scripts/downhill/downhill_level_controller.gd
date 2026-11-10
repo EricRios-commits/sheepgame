@@ -13,7 +13,11 @@ const MOTION = preload("res://scripts/downhill/downhill_motion.gd")
 const PRESENTER = preload("res://scripts/downhill/downhill_presenter.gd")
 var motion: RefCounted
 var effects: MultiMeshInstance3D
+var farewells: MultiMeshInstance3D
+var presenter: Node3D
 var feedback_voice: AudioStreamPlayer
+var music: AudioStreamPlayer
+var window_focused := true
 var feedback_cooldown := 0.0
 var sounds := {&"pad": preload("res://audio/sfx/star/star_1.mp3"), &"hoop": preload("res://audio/sfx/star/star_2.mp3"), &"results": preload("res://audio/sfx/star/star_3.mp3"), &"bleat": preload("res://audio/sfx/sheep/universfield-sheep-bleat-122256.mp3")}
 
@@ -23,6 +27,8 @@ var sounds := {&"pad": preload("res://audio/sfx/star/star_1.mp3"), &"hoop": prel
 @export var round_limit := 95.0
 ## Deterministic fixture controls also support the profiling harness.
 @export var manual_simulation := false
+## Audio integration fixtures opt in; accelerated simulation tests stay silent.
+@export var fixture_audio := false
 @export var spawn_center := Vector2(0, 14)
 @export var spawn_size := Vector2(10, 7)
 @export var spawn_heading := 0.0
@@ -52,12 +58,25 @@ var _candidate_time := 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	Global.audio_manager.stop_bgm()
+	music = AudioStreamPlayer.new()
+	music.name = "DownhillMusic"
+	music.process_mode = Node.PROCESS_MODE_PAUSABLE
+	music.stream = preload("res://audio/bgm/geoffharvey-fun-on-the-farm-377651.mp3")
+	music.volume_db = -20
+	music.finished.connect(music.play)
+	add_child(music)
+	if not manual_simulation or fixture_audio:
+		music.play()
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	countdown_left = countdown_seconds
 	motion = MOTION.new()
 	motion.level = self
 	effects = preload("res://scripts/downhill/downhill_effects.gd").new()
 	effects.level = self
 	add_child(effects)
+	farewells = preload("res://scripts/downhill/downhill_farewells.gd").new()
+	add_child(farewells)
 	feedback_voice = AudioStreamPlayer.new()
 	feedback_voice.process_mode = Node.PROCESS_MODE_PAUSABLE
 	feedback_voice.volume_db = -15
@@ -102,7 +121,7 @@ func _ready() -> void:
 	zone.config.fixed_heading_degrees = spawn_heading
 	zone.config.initial_speed = Rules.CRUISE
 	add_child(zone)
-	var presenter := PRESENTER.new()
+	presenter = PRESENTER.new()
 	presenter.motion = motion
 	# The presenter already interpolates its buffers; avoid double interpolation.
 	presenter.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
@@ -240,6 +259,13 @@ func queue_loss(handle: int) -> void:
 func _on_died(handle: int, _species: int, _at: Vector2) -> void:
 	if not population.has(handle) or outcomes.has(handle):
 		return
+	# The identified signal precedes store compaction. Snapshot now, never retain
+	# a slot index after removal. Deadline losses on safe ground do not tumble.
+	if not system.ground.is_over_ground(_at):
+		var outward := Vector3(signf(_at.x), 0, 0)
+		if outward == Vector3.ZERO:
+			outward = Vector3.BACK
+		farewells.snapshot(handle, _species, presenter.physical_pose(handle), outward)
 	outcomes[handle] = &"lost"
 	pending_losses.erase(handle)
 	lost += 1
@@ -315,13 +341,16 @@ func update_groups(positions: PackedVector2Array, delta: float) -> void:
 		split = candidate
 		if split:
 			ever_split = true
-			notice = "Flock split! Sprint to the outer flank."
+			notice = "HERD SPLIT!"
+			notice_left = 1.25
 		elif ever_split:
 			reunited = true
-			notice = "Reunited! Keep them together."
-		notice_left = 2.5
 
 func finish() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	music.stop()
+	music.stream = null
+	notice_left = 0
 	phase = Phase.RESULTS
 	system.run_simulation = false
 	dog.enabled = false
@@ -333,7 +362,7 @@ func feedback(message: String, kind: StringName, force := false) -> void:
 	if feedback_cooldown > 0 and not force:
 		return
 	feedback_cooldown = 0.4
-	if not message.is_empty():
+	if not message.is_empty() and kind not in [&"pad", &"hoop"]:
 		notice = message
 		notice_left = 1.0
 	feedback_voice.stream = sounds[kind]
@@ -352,7 +381,22 @@ func rescue_position(preferred_z: float) -> Vector3:
 
 func toggle_pause() -> void:
 	if phase != Phase.RESULTS:
+		if get_tree().paused and not window_focused:
+			return
 		get_tree().paused = not get_tree().paused
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if get_tree().paused else Input.MOUSE_MODE_CAPTURED
+		music.stream_paused = get_tree().paused
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		window_focused = false
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		if is_inside_tree() and phase != Phase.RESULTS:
+			get_tree().paused = true
+			if music:
+				music.stream_paused = true
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		window_focused = true
 
 func retry() -> void:
 	get_tree().paused = false
@@ -363,6 +407,10 @@ func back_to_menu() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu/main_menu_3d.tscn")
 
 func _exit_tree() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	if music:
+		music.stop()
+		music.stream = null
 	if feedback_voice:
 		feedback_voice.stop()
 		feedback_voice.stream = null

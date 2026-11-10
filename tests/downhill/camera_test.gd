@@ -21,7 +21,7 @@ func run() -> void:
 	drag.button_mask = MOUSE_BUTTON_MASK_RIGHT
 	drag.relative = Vector2(-10000, 10000)
 	camera._unhandled_input(drag)
-	check(camera.yaw == 0.8 and camera.pitch == 0.95, "Actual drag clamps yaw and pitch")
+	check(absf(camera.yaw) > 0.8 and camera.pitch == 0.95, "Mouse look wraps full yaw and clamps pitch")
 	var wheel := InputEventMouseButton.new()
 	wheel.button_index = MOUSE_BUTTON_WHEEL_UP
 	wheel.pressed = true
@@ -50,6 +50,21 @@ func run() -> void:
 			child._capture(false)
 			for batch in child._active + child._frozen:
 				check(batch.inst.physics_interpolation_mode == Node.PHYSICS_INTERPOLATION_MODE_OFF, "Actual batch engine interpolation disabled")
+	# A tall obstruction on the orbit ray must never remain between dog and lens.
+	camera.reset_view()
+	camera._process(1)
+	var blocker := StaticBody3D.new()
+	var shape := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(8,40,2)
+	shape.shape = box
+	blocker.add_child(shape)
+	blocker.position = camera.focus + Vector3(0,5,-8)
+	level.add_child(blocker)
+	await physics_frame
+	camera._process(1)
+	var sight := PhysicsRayQueryParameters3D.create(camera.focus+Vector3.UP*2,camera.global_position,1,[level.dog.get_rid()])
+	check(level.get_world_3d().direct_space_state.intersect_ray(sight).is_empty(), "Tall obstacle cannot occlude camera after orbit correction")
 	level.free()
 	print("CAMERA failures=%d rendered=%s" % [failures, DisplayServer.get_name()])
 	quit(1 if failures else 0)

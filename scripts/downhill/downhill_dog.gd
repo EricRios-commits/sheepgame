@@ -41,7 +41,7 @@ func _physics_process(delta: float) -> void:
 		bark.trigger()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if enabled and not get_tree().paused and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+	if enabled and not get_tree().paused and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		bark.trigger()
 
 func bark_hop() -> void:

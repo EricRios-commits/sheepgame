@@ -7,11 +7,8 @@ var initialized := false
 var yaw := 0.0
 var pitch := DEFAULT_PITCH
 var zoom := 18.0
-var dog_only := false
-var right_down := false
-var drag_distance := 0.0
+var dog_only := true
 var desired_distance := 18.0
-var right_press_ms := 0
 
 func _ready() -> void:
 	current = true
@@ -43,10 +40,18 @@ func _process(delta: float) -> void:
 	# Stay above the analytic terrain and solid camera obstructions.
 	desired.y = maxf(desired.y, level.system.ground.height_at(Vector2(desired.x, desired.z)) + 5)
 	var query := PhysicsRayQueryParameters3D.create(focus + Vector3.UP * 2, desired, 1, [level.dog.get_rid()])
-	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	var space := get_world_3d().direct_space_state
+	var hit := space.intersect_ray(query)
 	if not hit.is_empty():
-		desired.y = maxf(desired.y, hit.position.y + 10)
-	global_position = global_position.lerp(desired, 1 - exp(-7 * delta)) if initialized else desired
+		desired = hit.position + hit.normal * 0.6
+	var proposed := global_position.lerp(desired, 1 - exp(-7 * delta)) if initialized else desired
+	# Damping must not carry the lens through an obstruction when yaw changes.
+	query.to = proposed
+	hit = space.intersect_ray(query)
+	if not hit.is_empty():
+		proposed = hit.position + hit.normal * 0.6
+	proposed.y = maxf(proposed.y, level.system.ground.height_at(Vector2(proposed.x,proposed.z)) + 0.8)
+	global_position = proposed
 	look_at(focus)
 	initialized = true
 
@@ -54,30 +59,20 @@ func reset_view() -> void:
 	yaw = 0
 	pitch = DEFAULT_PITCH
 	zoom = 18
+	initialized = false
 
 func orbit(relative: Vector2) -> void:
-	yaw = clampf(yaw - relative.x * 0.004, -0.8, 0.8)
+	yaw = wrapf(yaw - relative.x * 0.004, -PI, PI)
 	pitch = clampf(pitch + relative.y * 0.003, 0.4, 0.95)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if get_tree().paused or level.phase == level.Phase.RESULTS:
-		right_down = false
+	if get_tree().paused or level.phase == level.Phase.RESULTS or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		return
-	if event is InputEventMouseMotion and event.button_mask & MOUSE_BUTTON_MASK_RIGHT:
-		if not right_down:
-			return
-		drag_distance += event.relative.length()
-		if drag_distance > 6:
-			orbit(event.relative)
+	if event is InputEventMouseMotion:
+		orbit(event.relative)
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if event.pressed:
-			right_down = true
-			right_press_ms = Time.get_ticks_msec()
-			drag_distance = 0
-		else:
-			if right_down and drag_distance <= 6 and Time.get_ticks_msec()-right_press_ms <= 350:
-				dog_only = not dog_only
-			right_down = false
+			dog_only = not dog_only
 	elif event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			zoom = clampf(zoom - 2, 12, 32)

@@ -33,7 +33,7 @@ func run() -> void:
 	var labels: Array[String] = []
 	for button in buttons:
 		labels.append(button.text)
-	check(labels.has("Downhill Herd") and labels.has("Classic Puzzle"), "Menu exposes both modes")
+	check(labels.has("Downhill Challenge") and labels.has("Puzzle Game"), "Menu exposes both modes")
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
 		capture_frame("menu")
@@ -86,6 +86,8 @@ func run() -> void:
 	var old_emitter: WeakRef = weakref(level.dog.bark)
 	var old_effects: WeakRef = weakref(level.effects)
 	var old_wind: WeakRef = weakref(level.hud.wind)
+	var old_music: WeakRef = weakref(level.music)
+	var old_ghosts: WeakRef = weakref(level.farewells)
 	level.motion.dog_boost_left = 2
 	level.effects.burst(level.dog.position)
 	level.toggle_pause()
@@ -94,6 +96,7 @@ func run() -> void:
 	await process_frame
 	check(old_emitter.get_ref() == null, "Retry frees old emitter/audio/scene")
 	check(old_effects.get_ref() == null and old_wind.get_ref() == null,"Retry frees old world effects and wind")
+	check(old_music.get_ref() == null and old_ghosts.get_ref() == null and current_scene.music.playing,"Retry replaces music and cosmetic batch")
 	check(current_scene.effects.sparks.is_empty() and current_scene.motion.dog_boost_left == 0,"Retry has no boost/effects residue")
 	check(not paused, "Retry from pause resumes new scene")
 	check(current_scene.initial == 35 and current_scene.saved == 0 and current_scene.lost == 0,
@@ -119,6 +122,12 @@ func run() -> void:
 	await process_frame
 	check(current_scene.scene_file_path.ends_with("level_1.tscn"), "Classic menu button launches original level")
 	var classic_ui: UI = current_scene.find_children("UI", "Control", true, false)[0]
+	for number in [2,3,4]:
+		classic_ui.on_next_level()
+		await process_frame
+		await process_frame
+		check(current_scene.scene_file_path.ends_with("level_%d.tscn" % number), "Classic next-level chain %d" % number)
+		classic_ui = current_scene.find_children("UI", "Control", true, false)[0]
 	classic_ui.on_main_menu()
 	await process_frame
 	await process_frame

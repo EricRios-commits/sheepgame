@@ -24,7 +24,7 @@ func run() -> void:
 	var herd_focus: Vector3 = camera.focus
 	camera._unhandled_input(press)
 	camera._unhandled_input(release)
-	check(camera.dog_only,"Short RMB click selects dog follow")
+	check(not camera.dog_only,"RMB press selects herd follow")
 	camera._process(0.016)
 	check(not camera.focus.is_equal_approx(herd_focus) and not camera.focus.is_equal_approx(level.dog.position+Vector3(0,1.2,3)),"Camera transition damps smoothly between modes")
 	camera._unhandled_input(press)
@@ -33,11 +33,12 @@ func run() -> void:
 	motion.relative = Vector2(10,0)
 	camera._unhandled_input(motion)
 	camera._unhandled_input(release)
-	check(camera.dog_only and camera.yaw != 0,"Drag orbits without toggling")
+	check(camera.dog_only and camera.yaw != 0,"Next press returns dog mode and motion orbits")
 	camera._unhandled_input(press)
-	camera.right_press_ms -= 500
 	camera._unhandled_input(release)
-	check(camera.dog_only,"Long stationary RMB hold is not a short-click toggle")
+	check(not camera.dog_only,"Each press switches once regardless of hold")
+	camera._unhandled_input(press)
+	camera._unhandled_input(release)
 	camera._process(5)
 	var before: Vector3 = camera.focus
 	var distance: float = camera.desired_distance
@@ -80,9 +81,26 @@ func run() -> void:
 		check(not hud.classic.get_node("Button").visible and not hud.classic.get_node("Results Screen/VBoxContainer/Buttons/Next Level").visible,"No Classic finish/next controls leak")
 		check(root.get_visible_rect().encloses(hud.pause_button.get_global_rect()) and root.get_visible_rect().encloses(hud.retry_button.get_global_rect()),"Bottom-right controls fit resolution")
 		check(hud.counters.get_global_rect().end.x < 400,"HUD counters remain compact")
-		print("BARS course=%s min=%s saved=%s min=%s" % [hud.progress.size,hud.progress.get_minimum_size(),hud.classic.get_node("ProgressBar").size,hud.classic.get_node("ProgressBar").get_minimum_size()])
-		check(hud.progress.size.y <= 8 and hud.classic.get_node("ProgressBar").size.y <= 14,"Course and saved progress bars stay slim")
-		var at: Vector2 = hud.pause_button.get_global_rect().get_center()
+		check(not hud.progress.visible and not hud.status.visible and not hud.arrows.visible,"Removed course/status counters stay hidden")
+		check(hud.classic.get_node("ProgressBar").size.y <= 14,"Saved progress bar stays slim")
+		var hints: Label = hud.camera_icon.get_parent().get_node("ActionHints")
+		check(hints.text == "Bark: LMB | Sprint: Shift | Switch view: RMB | Wheel: Zoom", "Exact single-row hint")
+		check(hints.get_global_rect().position.x >= 120 and hints.get_global_rect().end.x < hud.pause_button.get_global_rect().position.x,"Hints clear keys and buttons")
+		check(root.get_visible_rect().encloses(hud.camera_icon.get_global_rect()),"Camera icon inside safe margin")
+		var key_hint: Control = hud.classic.get_node("Control")
+		var key_bottom := key_hint.get_global_transform() * Vector2(159,92)
+		check(key_bottom.y <= root.get_visible_rect().end.y - 8,"Drawn jump key clears lower safe margin")
+		# Captured gameplay uses Esc to reach real GUI controls.
+		var esc := InputEventKey.new()
+		esc.physical_keycode = KEY_ESCAPE
+		esc.pressed = true
+		root.push_input(esc,true)
+		await process_frame
+		check(paused and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE,"Esc releases mouse for GUI")
+		# Resume button receives the physical click, without barking.
+		level.hud.update_display()
+		await process_frame
+		var at: Vector2 = hud.resume.get_global_rect().get_center()
 		var mouse_motion := InputEventMouseMotion.new()
 		mouse_motion.position = at
 		root.push_input(mouse_motion,true)
@@ -95,12 +113,12 @@ func run() -> void:
 			click.pressed = down
 			root.push_input(click,true)
 			await process_frame
-		check(paused and level.dog.bark.cooldown_left == 0,"Real pause GUI click pauses without barking")
+		check(not paused and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and level.dog.bark.cooldown_left == 0,"Real Resume GUI click captures without barking")
+		level.toggle_pause()
 		level.hud.update_display()
 		if DisplayServer.get_name() != "headless":
 			await RenderingServer.frame_post_draw
-			root.get_texture().get_image().save_png(OS.get_environment("DOWNHILL_OUTPUT_DIR").path_join("downhill-v3-ui-%d.png" % resolution.x))
-		level.toggle_pause()
+			root.get_texture().get_image().save_png(OS.get_environment("DOWNHILL_OUTPUT_DIR").path_join("downhill-v4-ui-%d.png" % resolution.x))
 		level.hud.update_display()
 		# RMB on a GUI control must not reach the camera gesture.
 		var mode: bool = camera.dog_only
@@ -112,6 +130,7 @@ func run() -> void:
 			root.push_input(click,true)
 			await process_frame
 		check(camera.dog_only == mode,"GUI RMB has no camera clickthrough")
+		level.toggle_pause()
 	level.finish()
 	level.hud.update_display()
 	level.hud.wind._process(0)

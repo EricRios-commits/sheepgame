@@ -1,4 +1,6 @@
-# Downhill Herd - current local handoff
+# Downhill Challenge - current local handoff
+
+The current uncommitted release-polish iteration is [downhill_v4.md](downhill_v4.md), on the main-integrated base c3b5b42. Its controls and verification supersede the historical v3 notes below. The menu now starts with **Puzzle Game**, then **Downhill Challenge**, then **Quit**. Gameplay uses captured no-button mouse-look; RMB press switches the pictorial dog/herd camera mode. Esc releases the cursor for pause controls; explicit Resume captures it again.
 
 The playable third iteration is documented in [downhill_v3.md](downhill_v3.md), including its bounded plan, all eleven acceptance exercises, exact tuning, changed files, captures and honest verification limitations. [downhill_v2.md](downhill_v2.md) preserves the earlier verified base and its history.
 
