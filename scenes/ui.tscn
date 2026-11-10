@@ -58,6 +58,7 @@ horizontal_alignment = 1
 
 [node name="Stars" type="HBoxContainer" parent="Results Screen/VBoxContainer" unique_id=1337069345]
 layout_mode = 2
+alignment = 1
 
 [node name="Buttons" type="HBoxContainer" parent="Results Screen/VBoxContainer" unique_id=47434720]
 layout_mode = 2

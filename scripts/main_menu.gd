@@ -2,6 +2,7 @@ extends Control
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	Global.audio_manager.next_bgm()
 	var classic := $VBoxContainer/StartButton
 	classic.text = "Classic Puzzle"
 	var downhill := classic.duplicate() as Button
@@ -19,6 +20,7 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
+
 
 
 func _on_start_button_pressed() -> void:
