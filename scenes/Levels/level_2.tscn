@@ -46,6 +46,11 @@ metadata/_custom_type_script = "uid://dptck584sv5sx"
 script = ExtResource("4_ki2ik")
 metadata/_custom_type_script = "uid://bcbiaoan3p8p5"
 
+[sub_resource type="Resource" id="Resource_452xl"]
+script = ExtResource("4_ki2ik")
+collision_mask = 4
+metadata/_custom_type_script = "uid://bcbiaoan3p8p5"
+
 [sub_resource type="Resource" id="Resource_x15ge"]
 script = ExtResource("15_r0w8p")
 species = &"orange_sheep"
@@ -63,6 +68,9 @@ metadata/_custom_type_script = "uid://ddho2emmyrsog"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_452xl"]
 albedo_color = Color(1, 0.54901963, 0.14901961, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_452xl"]
+size = Vector3(13.995178, 7.349121, 9.902008)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_xge20"]
 size = Vector3(65.57251, 1, 1)
@@ -98,6 +106,7 @@ script = ExtResource("1_rbuvs")
 rng_seed = 5318008
 ground = SubResource("Resource_pv7xf")
 obstacle_sources = Array[ExtResource("3_f2tki")]([SubResource("Resource_1opq5")])
+entering_obstacle_source = SubResource("Resource_452xl")
 profiles = Array[ExtResource("5_u84qy")]([ExtResource("6_godws"), ExtResource("8_rbuvs")])
 world_bounds = Rect2(-35, -10, 70, 20)
 metadata/_custom_type_script = "uid://b1wnhlmks4525"
@@ -179,8 +188,9 @@ transform = Transform3D(0.9067367, 0.09467517, -0.41093224, -0.087063976, 0.9955
 [node name="WhitePen" type="Node3D" parent="." unique_id=2052652196]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 22.806854, 3.2965703, 0.7528522)
 
-[node name="PenBuilding" parent="WhitePen" unique_id=920224430 instance=ExtResource("20_ttcij")]
+[node name="PenBuilding" parent="WhitePen" unique_id=920224430 node_paths=PackedStringArray("storage") instance=ExtResource("20_ttcij")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.145)
+storage = NodePath("../WhiteSheepManager/BoidPenStorage")
 
 [node name="WhiteSheepManager" type="Node3D" parent="WhitePen" unique_id=249568923]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0.7528532, -3.2965703, -22.806854)
@@ -196,6 +206,7 @@ number_of_spots = 10
 transform = Transform3D(0.6912075, 0, 0, 0, 1, 0, 0, 0, 1, 23.950905, 0.026062727, 0.9370556)
 script = ExtResource("17_gv2sh")
 storage = NodePath("../BoidPenStorage")
+entry_mode = 1
 show_gizmo_in_game = true
 
 [node name="PenLure" type="Node3D" parent="WhitePen/WhiteSheepManager" unique_id=1119253909 node_paths=PackedStringArray("system")]
@@ -207,11 +218,19 @@ radius = 5.0
 strength = 10.0
 metadata/_custom_type_script = "uid://bfcj4jv4px22k"
 
+[node name="AllCol" type="StaticBody3D" parent="WhitePen" unique_id=308921975]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.145)
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WhitePen/AllCol" unique_id=666319851]
+shape = SubResource("BoxShape3D_452xl")
+
 [node name="OrangePen" type="Node3D" parent="." unique_id=1638594937]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -22.807, 3.297, 0.753)
 
-[node name="PenBuilding" parent="OrangePen" unique_id=604357240 instance=ExtResource("20_ttcij")]
+[node name="PenBuilding" parent="OrangePen" unique_id=604357240 node_paths=PackedStringArray("storage") instance=ExtResource("20_ttcij")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.145)
+storage = NodePath("../OrangeSheepManager/BoidOrangePenStorage")
 
 [node name="OrangeSheepManager" type="Node3D" parent="OrangePen" unique_id=1746534321]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -0.75300103, -3.297, -22.807)
@@ -228,6 +247,7 @@ number_of_spots = 10
 transform = Transform3D(0.6912075, 0, 0, 0, 1, 0, 0, 0, 1, -24.195261, 0.026, 0)
 script = ExtResource("17_gv2sh")
 storage = NodePath("../BoidOrangePenStorage")
+entry_mode = 1
 show_gizmo_in_game = true
 
 [node name="PenLure" type="Node3D" parent="OrangePen/OrangeSheepManager" unique_id=1223320695 node_paths=PackedStringArray("system")]
@@ -238,6 +258,13 @@ kind = &"pen_lure"
 radius = 5.0
 strength = 10.0
 metadata/_custom_type_script = "uid://bfcj4jv4px22k"
+
+[node name="AllCol" type="StaticBody3D" parent="OrangePen" unique_id=186613569]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.145)
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="OrangePen/AllCol" unique_id=1841783597]
+shape = SubResource("BoxShape3D_452xl")
 
 [node name="WorldBoundaries" type="StaticBody3D" parent="." unique_id=1715718943]
 collision_layer = 3

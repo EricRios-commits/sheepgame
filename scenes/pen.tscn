@@ -10,8 +10,11 @@ size = Vector3(13.995178, 7.349121, 9.902008)
 [node name="Pen" type="Node3D" unique_id=1020403270]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
 
-[node name="StaticBody3D" parent="." unique_id=920224430 instance=ExtResource("1_j676a")]
+[node name="Pen" parent="." unique_id=920224430 node_paths=PackedStringArray("storage") instance=ExtResource("1_j676a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.297, 0)
+storage = NodePath("../BoidPenStorage")
+swing_seconds = 0.6
+swing_delay_seconds = 3.0
 
 [node name="BoidPenStorage" type="Node3D" parent="." unique_id=1921800734]
 transform = Transform3D(0.99999356, 0, 0.0035854501, 0, 1, 0, -0.0035854501, 0, 0.99999356, -7.3618594e-08, 0, 0.12819672)
@@ -24,7 +27,6 @@ transform = Transform3D(-3.021364e-08, 0, -1, 0, 1, 0, 0.6912075, 0, -4.371139e-
 script = ExtResource("3_285jo")
 storage = NodePath("../BoidPenStorage")
 entry_mode = 1
-show_gizmo_in_game = true
 
 [node name="AllCol" type="StaticBody3D" parent="." unique_id=838427267]
 collision_layer = 2

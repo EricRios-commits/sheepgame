@@ -280,17 +280,11 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 37, 
 [node name="BoidPenStorage" parent="Pen" index="1" unique_id=1921800734 node_paths=PackedStringArray("system")]
 system = NodePath("../../scripts/BoidSystem")
 
-[node name="BoidPenEntrance" parent="Pen" index="2" unique_id=1500361483]
-show_gizmo_in_game = false
-
 [node name="Pen2" parent="." unique_id=1694921268 instance=ExtResource("18_bu5vv")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -37, 0, 0)
 
 [node name="BoidPenStorage" parent="Pen2" index="1" unique_id=1921800734 node_paths=PackedStringArray("system")]
 system = NodePath("../../scripts/BoidSystem")
-
-[node name="BoidPenEntrance" parent="Pen2" index="2" unique_id=1500361483]
-show_gizmo_in_game = false
 
 [editable path="Pen"]
 [editable path="Pen2"]
