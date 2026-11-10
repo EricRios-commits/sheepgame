@@ -224,6 +224,9 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_1xabi")
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_i2tgm"]
+size = Vector3(6.3, 4.5, 4.5)
+
 [node name="farmbuilding_f004" type="Node3D" unique_id=270229936]
 transform = Transform3D(4.371139e-08, 1, -4.371139e-08, 0, 4.371139e-08, 1, -1, 4.371139e-08, -1.9106855e-15, 0, 0, 0)
 
@@ -256,3 +259,10 @@ mesh = SubResource("ArrayMesh_pnxi1")
 transform = Transform3D(1, 0, 0, 0, -1.1920929e-07, -0.99999994, 0, 0.99999994, -1.1920929e-07, -4.8828124e-06, -0.41567773, -1.0084281)
 material_override = SubResource("StandardMaterial3D_4ehfl")
 mesh = SubResource("ArrayMesh_gxiw0")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1241886518]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1542667514]
+shape = SubResource("BoxShape3D_i2tgm")

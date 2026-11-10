@@ -14,7 +14,7 @@
 [ext_resource type="Script" uid="uid://rxx1132rkva2" path="res://flocking/obstacles/boid_obstacle_source.gd" id="12_xam4q"]
 [ext_resource type="Script" uid="uid://bcbiaoan3p8p5" path="res://flocking/obstacles/boid_obstacle_source_world.gd" id="13_3la1q"]
 [ext_resource type="Script" uid="uid://cnxce80poaxm2" path="res://flocking/core/boid_species_profile.gd" id="14_yunpj"]
-[ext_resource type="Resource" uid="uid://cvvq0q35rcgcb" path="res://assets/boids_resources/sheep_behaviour.tres" id="15_ikloj"]
+[ext_resource type="Resource" uid="uid://bkljjy0dwvkxk" path="res://assets/boids_resources/sheep_profile.tres" id="15_obggk"]
 [ext_resource type="Script" uid="uid://bh4m16gxnmuuw" path="res://flocking/presentation/boid_presenter.gd" id="16_hgv2y"]
 [ext_resource type="Script" uid="uid://c7cfrpt3iasuh" path="res://flocking/presentation/boid_species_visual.gd" id="17_j0ayw"]
 [ext_resource type="Resource" uid="uid://3yvh757yqh84" path="res://assets/boids_resources/sheep_visual.tres" id="18_phd6t"]
@@ -103,7 +103,7 @@ metadata/_custom_type_script = "uid://bcbiaoan3p8p5"
 
 [sub_resource type="Resource" id="Resource_nsv3q"]
 script = ExtResource("21_kdagq")
-count = 4
+count = 10
 metadata/_custom_type_script = "uid://ddho2emmyrsog"
 
 [node name="MainMenu3D" type="Node3D" unique_id=1450327583]
@@ -183,7 +183,7 @@ rng_seed = 5318008
 ground = SubResource("Resource_rwi5d")
 ground_source = SubResource("Resource_8k1xn")
 obstacle_sources = Array[ExtResource("12_xam4q")]([SubResource("Resource_1opq5")])
-profiles = Array[ExtResource("14_yunpj")]([ExtResource("15_ikloj")])
+profiles = Array[ExtResource("14_yunpj")]([ExtResource("15_obggk")])
 metadata/_custom_type_script = "uid://b1wnhlmks4525"
 
 [node name="BoidPresenter" type="Node3D" parent="scripts" unique_id=1291645547 node_paths=PackedStringArray("system")]
