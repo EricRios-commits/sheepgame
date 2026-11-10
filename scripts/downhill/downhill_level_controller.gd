@@ -8,6 +8,14 @@ const DOG = preload("res://scripts/downhill/downhill_dog.gd")
 const BARK = preload("res://scripts/downhill/downhill_bark.gd")
 const CAMERA = preload("res://scripts/downhill/downhill_camera.gd")
 const HUD = preload("res://scripts/downhill/downhill_hud.gd")
+const Rules = preload("res://scripts/downhill/downhill_rules.gd")
+const MOTION = preload("res://scripts/downhill/downhill_motion.gd")
+const PRESENTER = preload("res://scripts/downhill/downhill_presenter.gd")
+var motion: RefCounted
+var effects: MultiMeshInstance3D
+var feedback_voice: AudioStreamPlayer
+var feedback_cooldown := 0.0
+var sounds := {&"pad": preload("res://audio/sfx/star/star_1.mp3"), &"hoop": preload("res://audio/sfx/star/star_2.mp3"), &"results": preload("res://audio/sfx/star/star_3.mp3"), &"bleat": preload("res://audio/sfx/sheep/universfield-sheep-bleat-122256.mp3")}
 
 @export_range(1, 100) var flock_count := 35
 @export var countdown_seconds := 2.0
@@ -45,13 +53,23 @@ var _candidate_time := 0.0
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	countdown_left = countdown_seconds
+	motion = MOTION.new()
+	motion.level = self
+	effects = preload("res://scripts/downhill/downhill_effects.gd").new()
+	effects.level = self
+	add_child(effects)
+	feedback_voice = AudioStreamPlayer.new()
+	feedback_voice.process_mode = Node.PROCESS_MODE_PAUSABLE
+	feedback_voice.volume_db = -15
+	add_child(feedback_voice)
 	system = BoidSystem.new()
 	system.name = "BoidSystem"
 	system.process_mode = Node.PROCESS_MODE_PAUSABLE
 	system.auto_spawn = false
 	system.run_simulation = false
 	system.use_world_bounds = false
-	system.world_bounds = Rect2(-20, -16, 40, 348)
+	system.world_bounds = Rect2(-Rules.HALF_WIDTH - 8, -16, (Rules.HALF_WIDTH + 8) * 2, 348)
+	system.set_meta(&"downhill_motion", motion)
 	system.ground = GROUND.new()
 	system.profiles.append(preload("res://assets/boids_resources/downhill_sheep_behaviour.tres"))
 	add_child(system)
@@ -70,7 +88,7 @@ func _ready() -> void:
 	add_child(storage)
 	var gate := BoidPenEntrance.new()
 	gate.storage = storage
-	gate.size = Vector2(23, 6)
+	gate.size = Vector2(Rules.HALF_WIDTH * 2 - 1, 6)
 	gate.position = Vector3(0, -26.2, 301)
 	add_child(gate)
 	var zone := BoidSpawnZone.new()
@@ -82,9 +100,10 @@ func _ready() -> void:
 	zone.config.count = flock_count
 	zone.config.heading_policy = BoidSpawnConfig.HeadingPolicy.FIXED
 	zone.config.fixed_heading_degrees = spawn_heading
-	zone.config.initial_speed = 5.0
+	zone.config.initial_speed = Rules.CRUISE
 	add_child(zone)
-	var presenter := BoidPresenter.new()
+	var presenter := PRESENTER.new()
+	presenter.motion = motion
 	# The presenter already interpolates its buffers; avoid double interpolation.
 	presenter.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	presenter.system = system
@@ -93,7 +112,7 @@ func _ready() -> void:
 	dog = DOG.new()
 	dog.name = "Dog"
 	dog.level = self
-	dog.position = Vector3(0, 1, 6)
+	dog.position = Vector3(0, Rules.height(Vector2(0, 6)) + 0.04, 6)
 	dog.bark = BARK.new()
 	dog.bark.system = system
 	dog.add_child(dog.bark)
@@ -102,18 +121,22 @@ func _ready() -> void:
 	camera.level = self
 	add_child(camera)
 	var environment := WorldEnvironment.new()
-	var sky := ProceduralSkyMaterial.new()
-	sky.sky_top_color = Color("6899b7")
-	sky.sky_horizon_color = Color("c4d5d1")
-	sky.ground_bottom_color = Color("304952")
-	sky.ground_horizon_color = Color("93b1b7")
+	var sky := ShaderMaterial.new()
+	sky.shader = preload("res://scripts/downhill/mountain_sky.gdshader")
 	environment.environment = Environment.new()
 	environment.environment.background_mode = Environment.BG_SKY
 	environment.environment.sky = Sky.new()
 	environment.environment.sky.sky_material = sky
+	# TIME animates clouds: use a cheap small radiance pass, not full sky shading.
+	environment.environment.sky.process_mode = Sky.PROCESS_MODE_REALTIME
+	environment.environment.sky.radiance_size = Sky.RADIANCE_SIZE_256
 	environment.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	environment.environment.ambient_light_color = Color("d8e7ef")
 	environment.environment.ambient_light_energy = 0.55
+	environment.environment.fog_enabled = true
+	environment.environment.fog_light_color = Color("b7c8c1")
+	environment.environment.fog_density = 0.0018
+	environment.environment.fog_sky_affect = 0.15
 	add_child(environment)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-55, -25, 0)
@@ -177,6 +200,9 @@ func _on_tick(delta: float) -> void:
 	if phase == Phase.RESULTS:
 		return
 	dog.bark.advance(delta)
+	feedback_cooldown = maxf(0, feedback_cooldown - delta)
+	motion.advance(delta)
+	effects.advance(delta)
 	elapsed += delta
 	notice_left = maxf(0, notice_left - delta)
 	var positions := living_positions()
@@ -217,6 +243,7 @@ func _on_died(handle: int, _species: int, _at: Vector2) -> void:
 	outcomes[handle] = &"lost"
 	pending_losses.erase(handle)
 	lost += 1
+	motion.remove(handle)
 
 func _on_penned(handle: int, _storage: int, _species: int) -> void:
 	if not population.has(handle) or outcomes.has(handle):
@@ -224,6 +251,7 @@ func _on_penned(handle: int, _storage: int, _species: int) -> void:
 	outcomes[handle] = &"saved"
 	pending_losses.erase(handle)
 	saved += 1
+	motion.remove(handle)
 
 func remaining() -> int:
 	return initial - saved - lost
@@ -283,7 +311,7 @@ func update_groups(positions: PackedVector2Array, delta: float) -> void:
 		_split_candidate = candidate
 		_candidate_time = 0
 	_candidate_time += delta
-	if _candidate_time >= 0.75 and split != candidate:
+	if _candidate_time >= 0.5 and split != candidate:
 		split = candidate
 		if split:
 			ever_split = true
@@ -298,6 +326,19 @@ func finish() -> void:
 	system.run_simulation = false
 	dog.enabled = false
 	dog.bark.cancel()
+	effects.clear()
+	feedback("", &"results", true)
+
+func feedback(message: String, kind: StringName, force := false) -> void:
+	if feedback_cooldown > 0 and not force:
+		return
+	feedback_cooldown = 0.4
+	if not message.is_empty():
+		notice = message
+		notice_left = 1.0
+	feedback_voice.stream = sounds[kind]
+	if not manual_simulation:
+		feedback_voice.play()
 
 func rescue_position(preferred_z: float) -> Vector3:
 	var z := clampf(preferred_z, 0, 295)
@@ -322,4 +363,7 @@ func back_to_menu() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu/main_menu_3d.tscn")
 
 func _exit_tree() -> void:
+	if feedback_voice:
+		feedback_voice.stop()
+		feedback_voice.stream = null
 	get_tree().paused = false

@@ -1,13 +1,17 @@
 extends CharacterBody3D
 
-const WALK_SPEED := 5.0
+const Rules = preload("res://scripts/downhill/downhill_rules.gd")
+const WALK_SPEED := Rules.CRUISE
 var enabled := false
 var level: Node3D
 var bark: BoidEmitter
 var visual: Node3D
+var model: Node3D
 var safe_z := 6.0
 var respawns := 0
 var hop_clock := 0.0
+var hop_blend := 0.0
+var bark_hop_left := 0.0
 
 func _ready() -> void:
 	floor_snap_length = 0.6
@@ -19,9 +23,11 @@ func _ready() -> void:
 	collision.shape = capsule
 	collision.position.y = 0.6
 	add_child(collision)
-	visual = load("res://assets/dog/german_shepherd.glb").instantiate()
-	visual.scale = Vector3.ONE * 1.4
+	visual = Node3D.new()
 	add_child(visual)
+	model = load("res://assets/dog/german_shepherd.glb").instantiate()
+	model.scale = Vector3.ONE * 1.4
+	visual.add_child(model)
 
 func _physics_process(delta: float) -> void:
 	if not enabled:
@@ -31,11 +37,31 @@ func _physics_process(delta: float) -> void:
 		float(Input.is_physical_key_pressed(KEY_W)) - float(Input.is_physical_key_pressed(KEY_S)))
 	move_with_input(direction, Input.is_physical_key_pressed(KEY_SHIFT), delta,
 		Input.is_physical_key_pressed(KEY_SPACE))
-	if Input.is_physical_key_pressed(KEY_E) or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if Input.is_physical_key_pressed(KEY_E):
 		bark.trigger()
 
+func _unhandled_input(event: InputEvent) -> void:
+	if enabled and not get_tree().paused and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		bark.trigger()
+
+func bark_hop() -> void:
+	bark_hop_left = 0.3
+
+func animate_gait(delta: float, moving: bool, grounded: bool, speed: float) -> void:
+	hop_blend = move_toward(hop_blend,1.0 if moving and grounded else 0.0,delta*8)
+	if moving and grounded:
+		hop_clock = fposmod(hop_clock+delta*clampf(speed/7,0.5,2.5),0.5)
+	var phase := hop_clock/0.25
+	var t := fposmod(phase,1)
+	var side := 1.0 if phase < 1 else -1.0
+	var arc := 4*t*(1-t)*hop_blend
+	bark_hop_left = maxf(0,bark_hop_left-delta)
+	var bt := bark_hop_left/0.3
+	model.position = Vector3(side*arc*0.12,arc*0.2+0.18*4*bt*(1-bt),0)
+	model.rotation.z = side*arc*deg_to_rad(13)
+
 func speed_for(sprint: bool) -> float:
-	return WALK_SPEED * (2.0 if sprint else 1.0)
+	return WALK_SPEED * (2.0 if sprint else 1.0) * (Rules.BOOST if level.motion.dog_boost_left > 0 else 1.0)
 
 func move_with_input(input: Vector2, sprint: bool, delta: float, jump := false) -> void:
 	var camera := get_viewport().get_camera_3d()
@@ -50,9 +76,8 @@ func move_with_input(input: Vector2, sprint: bool, delta: float, jump := false) 
 	move_and_slide()
 	if direction.length_squared() > 0.01:
 		visual.rotation.y = lerp_angle(visual.rotation.y, atan2(direction.x, direction.z), 1 - exp(-12 * delta))
-		hop_clock += delta * speed_for(sprint)
-		visual.position.y = absf(sin(hop_clock * 5)) * 0.09
-	if absf(position.x) < 10.5 and is_on_floor():
+	animate_gait(delta,direction.length_squared()>0.01,is_on_floor(),speed_for(sprint))
+	if absf(position.x) < Rules.HALF_WIDTH - 1.5 and is_on_floor():
 		safe_z = clampf(position.z, 0, 295)
 	if position.y < level.system.ground.height_at(Vector2(position.x, position.z)) - 5.0 or position.z < -15:
 		respawn()

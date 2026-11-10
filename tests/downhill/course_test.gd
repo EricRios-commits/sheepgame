@@ -18,6 +18,7 @@ func run() -> void:
 	level.manual_simulation = true
 	level.countdown_seconds = 0
 	root.add_child(level)
+	var central_radius: float = level.get_node("Track").ROCKS[1].z
 	var left_stream := false
 	var right_stream := false
 	var central_passed := false
@@ -26,8 +27,8 @@ func run() -> void:
 		level.simulate_step(1.0 / 30.0)
 		for p in level.living_positions():
 			if p.y > 140 and p.y < 154:
-				left_stream = left_stream or p.x < -4.5
-				right_stream = right_stream or p.x > 4.5
+				left_stream = left_stream or p.x < -central_radius - 0.2
+				right_stream = right_stream or p.x > central_radius + 0.2
 			if p.y > 167:
 				central_passed = true
 			for rock in level.get_node("Track").ROCKS:

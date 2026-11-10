@@ -1,4 +1,5 @@
 extends SceneTree
+const Rules = preload("res://scripts/downhill/downhill_rules.gd")
 
 var failures := 0
 var deaths := 0
@@ -17,7 +18,7 @@ func run() -> void:
 	level.manual_simulation = true
 	level.countdown_seconds = 0
 	level.flock_count = 1
-	level.spawn_center = Vector2(11.95, 30)
+	level.spawn_center = Vector2(Rules.HALF_WIDTH - 0.05, 30)
 	level.spawn_size = Vector2(0.001, 0.001)
 	level.spawn_heading = 90
 	root.add_child(level)
@@ -28,13 +29,15 @@ func run() -> void:
 	var handle := sys.store.handle_at(0)
 	for i in 60:
 		level.simulate_step(1.0 / 30.0)
-	check(absf(last_death.x) > 12, "Actual physics crosses visible rim before death")
+	check(absf(last_death.x) > Rules.HALF_WIDTH, "Actual physics crosses visible rim before death")
 	check(deaths == 1 and level.lost == 1, "Edge emits and counts exactly one death")
 	check(not sys.store.is_valid(handle) and sys.store.count == 0, "Dead stable handle removed")
 	sys.request_state(handle, sys.vocab.state_id(BoidSystem.DEAD_STATE))
 	sys.request_state(handle, sys.vocab.state_id(BoidSystem.DEAD_STATE))
 	sys.tick(1.0 / 30.0)
 	check(deaths == 1 and level.lost == 1, "Stale duplicate death requests cannot farm losses")
+	level._on_penned(handle, 0, 0)
+	check(level.saved == 0 and level.lost == 1, "Dead identity can never later be counted as saved")
 	check(sys.obstacles != null and not sys.use_world_bounds, "Rocks baked while bounds permit falls")
 	level.free()
 	print("EDGE failures=%d deaths=%d rim_x=%.3f" % [failures, deaths, last_death.x])

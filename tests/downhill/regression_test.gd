@@ -1,4 +1,5 @@
 extends SceneTree
+const Rules = preload("res://scripts/downhill/downhill_rules.gd")
 
 var failures := 0
 
@@ -15,7 +16,7 @@ func capture_frame(label: String) -> void:
 	if directory.is_empty():
 		directory = OS.get_user_data_dir().path_join("downhill-captures")
 	DirAccess.make_dir_recursive_absolute(directory)
-	root.get_texture().get_image().save_png(directory.path_join("downhill-%s.png" % label))
+	root.get_texture().get_image().save_png(directory.path_join("downhill-v3-%s.png" % label))
 
 func run() -> void:
 	var menu = load("res://scenes/main_menu/main_menu_3d.tscn").instantiate()
@@ -61,7 +62,7 @@ func run() -> void:
 	var level = current_scene
 	level.countdown_left = 0
 	level.start_run()
-	check(level.dog.speed_for(false) == 5 and level.dog.speed_for(true) == 10, "Dog exact walk/sprint speeds")
+	check(level.dog.speed_for(false) == Rules.CRUISE and level.dog.speed_for(true) == Rules.SPRINT, "Dog exact walk/sprint speeds")
 	check(level.dog.bark.trigger(), "Bark starts")
 	check(level.dog.bark.voice.playing and level.dog.bark.ring.visible, "Bark schedules sound and shows pulse")
 	check(not level.dog.bark.trigger(), "Bark cooldown rejects repeated input")
@@ -75,20 +76,32 @@ func run() -> void:
 		await physics_frame
 	check(level.system.tick_count > ticks and not paused, "Resume restarts real boid ticks")
 	var old_emitter: WeakRef = weakref(level.dog.bark)
+	var old_effects: WeakRef = weakref(level.effects)
+	var old_wind: WeakRef = weakref(level.hud.wind)
+	level.motion.dog_boost_left = 2
+	level.effects.burst(level.dog.position)
 	level.toggle_pause()
-	level.retry()
+	level.hud.retry_button.pressed.emit()
 	await process_frame
 	await process_frame
 	check(old_emitter.get_ref() == null, "Retry frees old emitter/audio/scene")
+	check(old_effects.get_ref() == null and old_wind.get_ref() == null,"Retry frees old world effects and wind")
+	check(current_scene.effects.sparks.is_empty() and current_scene.motion.dog_boost_left == 0,"Retry has no boost/effects residue")
 	check(not paused, "Retry from pause resumes new scene")
 	check(current_scene.initial == 35 and current_scene.saved == 0 and current_scene.lost == 0,
 		"Retry starts a fresh population and score")
+	current_scene.finish()
+	current_scene.hud.update_display()
+	current_scene.hud.classic.get_node("Results Screen/VBoxContainer/Buttons/Restart Level").pressed.emit()
+	await process_frame
+	await process_frame
+	check(current_scene.phase == current_scene.Phase.COUNTDOWN and current_scene.initial == 35,"Classic results retry routes to a fresh downhill scene")
 	var count: int = current_scene.initial
 	current_scene.dog.position = Vector3(18, -20, 20)
 	current_scene.dog.respawn()
 	check(current_scene.dog.position.x == 0 and current_scene.initial == count and current_scene.lost == 0,
 		"Dog rescue preserves flock and score")
-	current_scene.back_to_menu()
+	current_scene.hud.classic.get_node("Results Screen/VBoxContainer/Buttons/Main Menu").pressed.emit()
 	await process_frame
 	await process_frame
 	check(not paused and current_scene.scene_file_path.ends_with("main_menu_3d.tscn"), "Menu exit clears pause")

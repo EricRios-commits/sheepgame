@@ -18,14 +18,18 @@ func run() -> void:
 		level.manual_simulation = true
 		level.countdown_seconds = 0.0
 		root.add_child(level)
+		level.system.boid_died_identified.connect(func(_h: int, _species: int, at: Vector2): print("GUIDANCE loss guided=%s at=%s" % [guided,at]))
 		var pulses := 0
 		for tick in 3000:
 			var center: Vector3 = level.flock_center()
-			if guided and center.z > 190 and center.z < 217:
+			if guided and (center.z > 170 and center.z < 230):
 				# A flank-emitter fixture isolates bark steering. No sheep transform,
 				# velocity, state, or grouping is overridden. The rendered driver
 				# separately gets the real dog here through CharacterBody movement.
-				level.dog.position = Vector3(9, center.y, center.z)
+				var outer := 0.0
+				for p in level.living_positions():
+					outer = maxf(outer, p.x) if center.z < 235 else minf(outer, p.x)
+				level.dog.position = Vector3(clampf(outer + (3 if center.z < 235 else -3), -17, 17), center.y, center.z)
 				if level.dog.bark.trigger():
 					pulses += 1
 			level.simulate_step(1.0 / 30.0)

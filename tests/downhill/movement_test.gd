@@ -1,4 +1,5 @@
 extends SceneTree
+const Rules = preload("res://scripts/downhill/downhill_rules.gd")
 
 var failures := 0
 
@@ -31,7 +32,7 @@ func run() -> void:
 		zone.config = BoidSpawnConfig.new()
 		zone.config.count = 1
 		zone.config.heading_policy = BoidSpawnConfig.HeadingPolicy.FIXED
-		zone.config.initial_speed = 5.0
+		zone.config.initial_speed = Rules.CRUISE
 		sys.add_child(zone)
 		sys.spawn_all()
 		var start := sys.store.pos[0]
@@ -48,7 +49,7 @@ func run() -> void:
 		var travel := sys.store.pos[0] - start
 		if flank == 0.0:
 			check(travel.y > 1.5, "Real boid advances without input")
-			check(absf(sys.store.speed[0] - 5.0) < 0.05, "Sheep cruise is 5")
+			check(absf(sys.store.speed[0] - Rules.CRUISE) < 0.05, "Sheep cruise uses shared rules")
 		else:
 			check(travel.x * -signf(flank) > 0.15, "Flank bark pushes away within 0.33s: %s" % flank)
 		sys.free()

@@ -1,4 +1,5 @@
 extends SceneTree
+const Rules = preload("res://scripts/downhill/downhill_rules.gd")
 ## Rendered edge-death proof using ordinary scene ticks, not store overrides.
 
 var level: Node3D
@@ -18,7 +19,7 @@ func start() -> void:
 	root.size = Vector2i(1280, 720)
 	level = load("res://scenes/downhill/downhill_level_01.tscn").instantiate()
 	level.flock_count = 1
-	level.spawn_center = Vector2(11.8, 20)
+	level.spawn_center = Vector2(Rules.HALF_WIDTH - 0.2, 20)
 	level.spawn_size = Vector2(0.001, 0.001)
 	level.spawn_heading = 90.0
 	root.add_child(level)
@@ -47,4 +48,5 @@ func finish() -> void:
 	var ok: bool = deaths == 1 and level.lost == 1 and level.saved == 0 and level.remaining() == 0 and level.system.store.count == 0
 	print("FALL_DEMO passed=%s deaths=%d saved=%d lost=%d remaining=%d store=%d" % [ok, deaths, level.saved, level.lost, level.remaining(), level.system.store.count])
 	level.free()
+	await create_timer(0.2).timeout
 	quit(0 if ok else 1)

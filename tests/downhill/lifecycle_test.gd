@@ -1,4 +1,5 @@
 extends SceneTree
+const Rules = preload("res://scripts/downhill/downhill_rules.gd")
 
 var failures := 0
 
@@ -26,7 +27,7 @@ func run() -> void:
 		level.spawn_center = Vector2(0, 297)
 		level.spawn_size = Vector2(0.01, 0.01)
 		if scenario == "lost":
-			level.spawn_center = Vector2(11.95, 20)
+			level.spawn_center = Vector2(Rules.HALF_WIDTH - 0.05, 20)
 			level.spawn_heading = 90.0
 		if scenario == "straggler":
 			level.spawn_center = Vector2(0, 20)

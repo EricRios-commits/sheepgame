@@ -6,11 +6,13 @@ var cooldown_left := 0.0
 var pulse_left := 0.0
 var ring: MeshInstance3D
 var voice: AudioStreamPlayer3D
+var impacted: Dictionary = {}
+var pulse_origin := Vector2.ZERO
 
 func _ready() -> void:
 	kind = &"bark"
-	radius = 7.0
-	strength = 30.0
+	radius = 10.0
+	strength = 40.0
 	active = false
 	super._ready()
 	ring = MeshInstance3D.new()
@@ -42,21 +44,35 @@ func trigger() -> bool:
 	pulse_left = duration
 	active = true
 	ring.visible = true
+	impacted.clear()
+	pulse_origin = Vector2(global_position.x,global_position.z)
+	ring.scale = Vector3(0.6,1,0.6)
+	ring.global_position = Vector3(pulse_origin.x,global_position.y+0.3,pulse_origin.y)
+	if get_parent().has_method("bark_hop"):
+		get_parent().bark_hop()
 	voice.play()
+	if system.has_meta(&"downhill_motion"):
+		system.get_meta(&"downhill_motion").bark_at(Vector2(global_position.x, global_position.z), radius)
 	return true
 
 func advance(delta: float) -> void:
+	var was_active := pulse_left > 0
 	cooldown_left = maxf(0, cooldown_left - delta)
 	pulse_left = maxf(0, pulse_left - delta)
 	active = pulse_left > 0.0
 	ring.visible = active
-	if active:
+	if was_active:
 		var size := lerpf(0.6, radius, 1.0 - pulse_left / duration)
 		ring.scale = Vector3(size, 1, size)
+		# Keep the visual wave and gameplay impact centered at emission.
+		ring.global_position = Vector3(pulse_origin.x,global_position.y+0.3,pulse_origin.y)
+		if system.has_meta(&"downhill_motion"):
+			system.get_meta(&"downhill_motion").pulse_impact(pulse_origin,size,impacted)
 
 func cancel() -> void:
 	active = false
 	pulse_left = 0.0
+	impacted.clear()
 	ring.visible = false
 	voice.stop()
 

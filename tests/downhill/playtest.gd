@@ -15,6 +15,8 @@ var camera_samples := 0
 var dog_visible_samples := 0
 var flock_visible_fraction := 0.0
 var camera_clock := 0.0
+var left_stream := false
+var right_stream := false
 
 func _initialize() -> void:
 	call_deferred("start")
@@ -24,7 +26,7 @@ func start() -> void:
 	if directory.is_empty():
 		directory = OS.get_user_data_dir().path_join("downhill-captures")
 	DirAccess.make_dir_recursive_absolute(directory)
-	output = directory.path_join("downhill")
+	output = directory.path_join("downhill-v3")
 	root.size = Vector2i(1280, 720)
 	level = load("res://scenes/downhill/downhill_level_01.tscn").instantiate()
 	var args := OS.get_cmdline_user_args()
@@ -43,19 +45,31 @@ func _physics_process(delta: float) -> bool:
 	# Move a real CharacterBody dog; no sheep position/velocity overrides.
 	level.dog.enabled = false
 	var center: Vector3 = level.flock_center()
+	for p in level.living_positions():
+		if p.y > 140 and p.y < 154:
+			left_stream = left_stream or p.x < -6.2
+			right_stream = right_stream or p.x > 6.2
 	var target := Vector2(center.x, center.z - 7.0)
-	if center.z > 170 and center.z < 217:
-		target.x = 9.0
-		target.y = center.z + 3.0
+	if center.z > 158 and center.z < 230:
+		var outer := 0.0
+		for p in level.living_positions():
+			outer = maxf(outer, p.x)
+		target.x = clampf(outer + 3, 3, 17)
+		target.y = center.z
 	var at := Vector2(level.dog.position.x, level.dog.position.z)
 	var direction := target - at
 	if direction.length() < 0.2:
 		direction = Vector2.ZERO
 	else:
 		direction = direction.normalized()
-	# Camera looks along +Z, so its screen-right is world -X.
-	level.dog.move_with_input(Vector2(-direction.x, direction.y), at.distance_to(target) > 3, delta)
-	if center.z > 190 and center.z < 217 and absf(at.x - 9) < 0.3:
+	var camera := root.get_camera_3d()
+	var world_direction := Vector3(direction.x, 0, direction.y)
+	var right := camera.global_basis.x
+	var forward := -camera.global_basis.z
+	right.y = 0
+	forward.y = 0
+	level.dog.move_with_input(Vector2(world_direction.dot(right.normalized()), world_direction.dot(forward.normalized())), at.distance_to(target) > 3, delta)
+	if center.z > 170 and center.z < 230 and at.x >= target.x - 0.6:
 		level.dog.bark.trigger()
 	return false
 
@@ -80,16 +94,28 @@ func _process(delta: float) -> bool:
 				dog_visible_samples += 1
 			var visible := 0
 			var positions: PackedVector2Array = level.living_positions()
-			for p in positions:
-				var world := Vector3(p.x, level.system.ground.height_at(p) + 0.5, p.y)
+			for i in level.system.store.count:
+				var h: int = level.system.store.handle_at(i)
+				if level.outcomes.has(h):
+					continue
+				var world: Vector3 = level.motion.world_position(h, level.system.store.pos[i]) + Vector3.UP * 0.5
 				if not camera.is_position_behind(world) and viewport.has_point(camera.unproject_position(world)):
 					visible += 1
 			flock_visible_fraction += float(visible) / maxi(1, positions.size())
 	var capture := ""
+	var spinning := false
+	for h in level.motion.states:
+		spinning = spinning or (level.motion.spin_angle(h) > 0.5 and level.motion.height_offset(h) > 0.5)
 	if level.elapsed > 2 and not captures.has("start"):
 		capture = "start"
-	elif level.split and level.flock_center().z > 138 and not captures.has("split"):
+	elif left_stream and right_stream and level.flock_center().z > 142 and not captures.has("split"):
 		capture = "split"
+	elif level.motion.pad_entries > 0 and not captures.has("pad"):
+		capture = "pad"
+	elif level.motion.launch_count > 0 and not captures.has("ramp-airborne"):
+		capture = "ramp-airborne"
+	elif spinning and not captures.has("hoop-spin"):
+		capture = "hoop-spin"
 	elif level.flock_center().z > 198 and level.dog.bark.active and not captures.has("bark"):
 		capture = "bark"
 	elif level.phase == level.Phase.RESULTS and not captures.has("results"):
@@ -123,9 +149,12 @@ func end_run() -> void:
 			frame_ms[int((frame_ms.size() - 1) * 0.99)], frame_ms.back(), draw_calls / frame_ms.size()])
 	print("PLAYTEST saved=%d lost=%d elapsed=%.2f split=%s reunited=%s dog_rescues=%d" % [level.saved,
 		level.lost, level.elapsed, level.ever_split, level.reunited, level.dog.respawns])
+	print("EVENTS pads=%d launches=%d hoops=%d" % [level.motion.pad_entries, level.motion.launch_count, level.motion.hoop_hits])
+	print("STREAMS left=%s right=%s" % [left_stream, right_stream])
 	print("CAMERA samples=%d dog_visible_pct=%.2f flock_visible_pct=%.2f" % [camera_samples,
 		100.0 * dog_visible_samples / maxi(1, camera_samples),
 		100.0 * flock_visible_fraction / maxi(1, camera_samples)])
 	print(level.system.stage_timer.summary())
 	level.free()
+	await create_timer(0.2).timeout
 	quit()
