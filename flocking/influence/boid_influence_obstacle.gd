@@ -1,4 +1,4 @@
-﻿class_name BoidInfluenceObstacle
+class_name BoidInfluenceObstacle
 extends BoidInfluence
 ## Steers away from baked obstacles (walls, rocks, unwalkable ground). SAFETY layer, so it
 ## wins the acceleration budget over threats and flocking
@@ -28,6 +28,7 @@ class Runtime extends BoidInfluenceRuntime:
 	var margin := 3.0
 	var slide := 0.6
 	var brake := 0.25
+	var field_override: BoidObstacleField
 
 	func _init(source_influence: BoidInfluenceObstacle) -> void:
 		margin = source_influence.margin
@@ -36,7 +37,7 @@ class Runtime extends BoidInfluenceRuntime:
 
 	func apply(system: BoidSystem, boid_order: PackedInt32Array, from_index: int, to_index: int, weight: float,
 			_max_speed: float, layer_accel: PackedVector2Array) -> void:
-		var field := system.obstacles
+		var field := field_override if field_override != null else system.obstacles
 		if field == null:
 			return
 		var positions := system.store.pos

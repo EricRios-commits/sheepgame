@@ -66,6 +66,10 @@ signal boid_died(species_id: int, position: Vector2)
 @export var ground_cell := 1.0
 ## Extra obstacle sources besides BoidObstacle nodes
 @export var obstacle_sources: Array[BoidObstacleSource] = []
+## Obstacle source baked into a separate field used only while ENTERING. If unset, walkers
+## avoid the normal `obstacles` field.
+@export var entering_obstacle_source: BoidObstacleSource
+var entering_obstacles: BoidObstacleField
 ## On: bake ground and obstacles at startup
 ## Off: use the `ground` and `obstacles` resources exactly as assigned
 @export var bake_on_start := true
@@ -277,6 +281,13 @@ func bake_environment() -> void:
 		else:
 			push_error("BoidSystem: ground_source failed to bake; keeping the existing ground.")
 	_build_storages_and_entrances()
+	entering_obstacles = null
+	if entering_obstacle_source != null:
+		var entering_field := BoidObstacleField.new()
+		entering_field.setup(world_bounds, obstacle_cell, obstacle_max_dist)
+		entering_obstacle_source.bake_obstacles(self, entering_field)
+		entering_field.compute_normals()
+		entering_obstacles = entering_field
 	var ground_is_heightfield := ground is BoidHeightfield
 	if _obstacle_nodes.is_empty() and obstacle_sources.is_empty() and not ground_is_heightfield:
 		return
@@ -705,7 +716,10 @@ func _stage_integrate(sim_dt: float) -> void:
 		field_origin_z = field.origin.y
 		field_inv_cell = 1.0 / field.cell
 		field_near_threshold = collision_radius + field.cell
+	var state_ids := store.state
 	for i in boid_count:
+		if state_ids[i] == entering_state_id:
+			continue
 		var boid_max_speed := group_max_speed[_group_of_boid[i]]
 		var new_velocity := velocities[i] + combined_accel[i] * sim_dt
 		var new_speed := new_velocity.length()
@@ -923,7 +937,9 @@ func _walk_entering_boids(sim_dt: float) -> void:
 	var avoidance := layer_accels[BoidInfluence.Layer.SAFETY]
 	for slot in _walk_slots:
 		avoidance[slot] = Vector2.ZERO
-	_get_walk_avoidance().apply(self, _walk_slots, 0, keep_count, 1.0, 0.0, avoidance)
+	var walk_avoidance := _get_walk_avoidance() as BoidInfluenceObstacle.Runtime
+	walk_avoidance.field_override = entering_obstacles
+	walk_avoidance.apply(self, _walk_slots, 0, keep_count, 1.0, 0.0, avoidance)
 	for i in keep_count:
 		var slot := _walk_slots[i]
 		var walk_speed := _entering_speeds[i]

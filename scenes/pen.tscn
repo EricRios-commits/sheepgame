@@ -4,6 +4,9 @@
 [ext_resource type="Script" uid="uid://bohp2a4orq7tw" path="res://flocking/pen/boid_pen_storage.gd" id="2_gl254"]
 [ext_resource type="Script" uid="uid://bivryc0yy37dq" path="res://flocking/pen/boid_pen_entrance.gd" id="3_285jo"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_8w0r3"]
+size = Vector3(13.995178, 7.349121, 9.902008)
+
 [node name="Pen" type="Node3D" unique_id=1020403270]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
 
@@ -22,3 +25,10 @@ script = ExtResource("3_285jo")
 storage = NodePath("../BoidPenStorage")
 entry_mode = 1
 show_gizmo_in_game = true
+
+[node name="AllCol" type="StaticBody3D" parent="." unique_id=838427267]
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AllCol" unique_id=1465514734]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07711792, 3.1745605, -0.065536484)
+shape = SubResource("BoxShape3D_8w0r3")

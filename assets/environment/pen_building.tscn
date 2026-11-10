@@ -546,7 +546,7 @@ size = Vector3(9.675346, 5.126953, 0.92559814)
 size = Vector3(13.875441, 5.126953, 0.92559814)
 
 [node name="PenBuilding" type="StaticBody3D" unique_id=920224430]
-collision_layer = 6
+collision_layer = 4
 
 [node name="Visuals" type="Node3D" parent="." unique_id=400056443]
 transform = Transform3D(0.001, 0, 0, 0, 0.001, 0, 0, 0, 0.001, 0, 0, 0)
