@@ -8,6 +8,7 @@ extends Node
 var last_bgm_index = -1
 
 func _ready() -> void:
+	AudioServer.set_bus_volume_db(0, -12)
 	for i in sfx_descriptions.size():
 		var desc = sfx_descriptions[i];
 		AudioServer.add_bus(i + 2)
