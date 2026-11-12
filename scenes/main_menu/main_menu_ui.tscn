@@ -24,8 +24,6 @@ corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_k0akp"]
-
 [node name="MainMenu" type="Control" unique_id=254378970]
 layout_mode = 3
 anchors_preset = 15
@@ -33,6 +31,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+focus_neighbor_bottom = NodePath("VBoxContainer/QuitButton")
+focus_next = NodePath("VBoxContainer/QuitButton")
 script = ExtResource("1_rayio")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1490059087]
@@ -54,18 +54,18 @@ theme_override_font_sizes/font_size = 21
 theme_override_styles/normal = SubResource("StyleBoxFlat_x15ge")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_vue75")
 theme_override_styles/hover = SubResource("StyleBoxFlat_l6cm7")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_k0akp")
 text = "Start game"
 
 [node name="QuitButton" type="Button" parent="VBoxContainer" unique_id=2120715684]
 layout_mode = 2
 size_flags_vertical = 3
+focus_neighbor_top = NodePath("../StartButton")
+focus_next = NodePath("../StartButton")
 theme_override_fonts/font = ExtResource("2_4pl3l")
 theme_override_font_sizes/font_size = 21
 theme_override_styles/normal = SubResource("StyleBoxFlat_x15ge")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_vue75")
 theme_override_styles/hover = SubResource("StyleBoxFlat_l6cm7")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_k0akp")
 text = "Quit"
 
 [node name="Label" type="Label" parent="." unique_id=885101958]

@@ -3,15 +3,23 @@
 [ext_resource type="Script" uid="uid://b8dpcoru2v5go" path="res://scripts/audio_manager.gd" id="1_aoitu"]
 [ext_resource type="AudioStream" uid="uid://dk4yj7830swsl" path="res://audio/bgm/andriig-agriculture-farming-farm-music-551390.mp3" id="2_njtn3"]
 [ext_resource type="AudioStream" uid="uid://de4vs67gysw20" path="res://audio/bgm/audiodollar-farm-614046.mp3" id="3_kq7b2"]
+[ext_resource type="AudioStream" uid="uid://d2faisyepo7r2" path="res://audio/bgm/andriig-calm-calm-music-618660.mp3" id="3_u6qdm"]
 [ext_resource type="AudioStream" uid="uid://quyg38b7prkw" path="res://audio/bgm/geoffharvey-fun-on-the-farm-377651.mp3" id="4_02gw7"]
+[ext_resource type="AudioStream" uid="uid://bcoh3v03n1x5q" path="res://audio/bgm/andriih-cozy-cozy-coffee-music-568234.mp3" id="4_f6jxr"]
+[ext_resource type="AudioStream" uid="uid://c46cd2grcvu6" path="res://audio/bgm/atlasaudio-autumn-cozy-621527.mp3" id="5_ovaav"]
 [ext_resource type="AudioStream" uid="uid://c3tuxo7l6yftk" path="res://audio/bgm/u_nhimhor2050-my-farm-of-love-339846.mp3" id="5_ujhup"]
 [ext_resource type="Script" uid="uid://cvgrryp4ctpo" path="res://scripts/SFXDescriptor.gd" id="6_8igv3"]
+[ext_resource type="AudioStream" uid="uid://dsw8vjgkik818" path="res://audio/bgm/atlasaudio-calm-621544.mp3" id="6_thanh"]
 [ext_resource type="AudioStream" uid="uid://bns1e0t07s7p8" path="res://audio/sfx/sheep/freesound_community-sheep-2-106164.mp3" id="7_2y2jw"]
+[ext_resource type="AudioStream" uid="uid://c4wjtyh00lbng" path="res://audio/bgm/atlasaudio-calm-calm-music-576616.mp3" id="7_nplbh"]
 [ext_resource type="AudioStream" uid="uid://drpmlhvvx713y" path="res://audio/sfx/sheep/stu9-sheep-352668.mp3" id="8_2y5yn"]
 [ext_resource type="AudioStream" uid="uid://cifjcotiyo5mv" path="res://audio/sfx/sheep/teoglas-sheep-bleating-223324.mp3" id="9_oucy0"]
+[ext_resource type="AudioStream" uid="uid://bqc71trp7l5b1" path="res://audio/bgm/idoberg-cozy-lofi-beat-split-memmories-248205.mp3" id="10_24ib7"]
 [ext_resource type="AudioStream" uid="uid://d1cgackveoiu5" path="res://audio/sfx/sheep/universfield-sheep-bleat-122256.mp3" id="10_cuol6"]
+[ext_resource type="AudioStream" uid="uid://jtnkpjr0c18v" path="res://audio/bgm/leberch-calm-calm-music-595679.mp3" id="11_kr8a2"]
 [ext_resource type="AudioStream" uid="uid://d3yye7qjffyv8" path="res://audio/sfx/star/star_1.mp3" id="11_m1k83"]
 [ext_resource type="AudioStream" uid="uid://cadxn4vpr03pu" path="res://audio/sfx/star/star_2.mp3" id="12_oummu"]
+[ext_resource type="AudioStream" uid="uid://dirwx66y1eixy" path="res://audio/bgm/lofi_hour-a-cozy-day-114852.mp3" id="13_2agnf"]
 [ext_resource type="AudioStream" uid="uid://d3jksolrq3qnj" path="res://audio/sfx/star/star_3.mp3" id="13_hssp1"]
 [ext_resource type="Script" uid="uid://birupfc67u1g" path="res://scenes/audio_debug.gd" id="14_2y2jw"]
 
@@ -29,7 +37,7 @@ metadata/_custom_type_script = "uid://cvgrryp4ctpo"
 
 [node name="Audio Manager" type="Node" unique_id=1657933678]
 script = ExtResource("1_aoitu")
-background_tracks = Array[AudioStream]([ExtResource("2_njtn3"), ExtResource("3_kq7b2"), ExtResource("4_02gw7"), ExtResource("5_ujhup")])
+background_tracks = Array[AudioStream]([ExtResource("2_njtn3"), ExtResource("3_u6qdm"), ExtResource("4_f6jxr"), ExtResource("5_ovaav"), ExtResource("6_thanh"), ExtResource("7_nplbh"), ExtResource("3_kq7b2"), ExtResource("4_02gw7"), ExtResource("10_24ib7"), ExtResource("11_kr8a2"), ExtResource("5_ujhup"), ExtResource("13_2agnf")])
 sfx_descriptions = Array[ExtResource("6_8igv3")]([SubResource("Resource_aoitu"), SubResource("Resource_njtn3")])
 
 [node name="BGM Stream Player" type="AudioStreamPlayer" parent="." unique_id=1974145008]

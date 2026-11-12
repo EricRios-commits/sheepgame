@@ -24,6 +24,7 @@ layout_mode = 1
 offset_top = 32.0
 offset_right = 160.0
 offset_bottom = 64.0
+focus_mode = 1
 text = "Finish Attempt"
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=191041277]
@@ -51,9 +52,14 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="Results Screen" unique_id=1210004883]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Results Screen/VBoxContainer" unique_id=2105991602]
+[node name="Top text" type="Label" parent="Results Screen/VBoxContainer" unique_id=2105991602]
 layout_mode = 2
 text = "YOU WIN"
+horizontal_alignment = 1
+
+[node name="Time" type="Label" parent="Results Screen/VBoxContainer" unique_id=1669047192]
+layout_mode = 2
+text = "Time: %d"
 horizontal_alignment = 1
 
 [node name="Stars" type="HBoxContainer" parent="Results Screen/VBoxContainer" unique_id=1337069345]
@@ -67,14 +73,24 @@ alignment = 1
 
 [node name="Main Menu" type="Button" parent="Results Screen/VBoxContainer/Buttons" unique_id=1850984220]
 layout_mode = 2
+focus_neighbor_right = NodePath("../Restart Level")
+focus_next = NodePath("../Restart Level")
+focus_previous = NodePath("../Next Level")
 text = "Main Menu"
 
 [node name="Restart Level" type="Button" parent="Results Screen/VBoxContainer/Buttons" unique_id=681562427]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Main Menu")
+focus_neighbor_right = NodePath("../Next Level")
+focus_next = NodePath("../Next Level")
+focus_previous = NodePath("../Main Menu")
 text = "Restart Level"
 
 [node name="Next Level" type="Button" parent="Results Screen/VBoxContainer/Buttons" unique_id=163913792]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Restart Level")
+focus_next = NodePath("../Main Menu")
+focus_previous = NodePath("../Restart Level")
 text = "Next Level"
 
 [node name="Label" type="Label" parent="." unique_id=1303028438]

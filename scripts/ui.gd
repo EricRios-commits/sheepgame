@@ -13,12 +13,17 @@ extends Control
 @export_group("")
 @export_multiline() var scene_help: String
 
-@onready var top_text = $"Results Screen/VBoxContainer/Label"
+@onready var top_text = $"Results Screen/VBoxContainer/Top text"
+@onready var time_text = $"Results Screen/VBoxContainer/Time"
 @onready var results_screen = $"Results Screen"
 @onready var results_star_container = $"Results Screen/VBoxContainer/Stars"
 @onready var bottom_text = $Label
 @onready var wrong_barn_label = $WrongBarnLabel
+
+@onready var restart_button = $"Results Screen/VBoxContainer/Buttons/Restart Level"
 @onready var next_button = $"Results Screen/VBoxContainer/Buttons/Next Level"
+
+@onready var control = $Control
 
 signal on_finish_attempt()
 
@@ -28,10 +33,12 @@ var star_indicators: Array[StarIndicator] = []
 
 # to keep just one tween going 
 var wrong_barn_tween: Tween
+var show_controls = true
 
 func _ready():
 	bottom_text.text = scene_help
 	results_screen.visible = false
+	top_text.visible = false
 	next_button.visible = false
 
 func setup_star(percentage: float):
@@ -50,7 +57,7 @@ func update_progress(percentage: float):
 		var cutoff = star_percentages[i]
 		star.set_star(percentage >= cutoff)
 
-func should_show_results(percentage: float, cutoffs: Array[float]):
+func should_show_results(percentage: float, cutoffs: Array[float], time: float):
 	for child in results_star_container.get_children():
 		results_star_container.remove_child(child)
 		child.queue_free()
@@ -64,14 +71,17 @@ func should_show_results(percentage: float, cutoffs: Array[float]):
 			results_star_container.add_child(hollow)
 			
 	# TODO: Show other stats from the play
+	results_screen.visible = true
 	
 	if percentage >= cutoffs[0]:
 		top_text.visible = true
 		next_button.visible = true
+		next_button.grab_focus()
+	else:
+		restart_button.grab_focus()
 	
-	results_screen.visible = true
-	pass
-	
+	time_text.text = "Time: %ds" % time
+
 func show_wrong_barn_label() -> void:
 	if wrong_barn_tween:
 		wrong_barn_tween.kill()
@@ -84,6 +94,15 @@ func show_wrong_barn_label() -> void:
 	wrong_barn_tween.tween_property(wrong_barn_label, "modulate:a", 0.0, 0.5)
 	wrong_barn_tween.tween_callback(wrong_barn_label.hide)
 	
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		show_controls = true
+	elif event is InputEventJoypadMotion or event is InputEventJoypadButton:
+		show_controls = false
+
+func _process(_delta: float) -> void:
+	control.visible = show_controls
 
 # UI Button callbacks
 

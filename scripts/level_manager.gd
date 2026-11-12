@@ -7,6 +7,7 @@ extends Node3D
 
 var last_percentage = 0
 var stars_achieved = -1
+var elapsed_time = 0
 
 class AmountPerSpecies:
 	var total: int
@@ -30,6 +31,8 @@ func _ready() -> void:
 	# For this reason we delay for one frame
 	call_deferred("_get_pens_from_system")
 	Global.audio_manager.next_bgm()
+	
+	elapsed_time = 0
 
 func _get_pens_from_system():
 	if boid_system == null:
@@ -70,7 +73,9 @@ func _on_boid_penned(storage_index: int, species_id: int):
 	Global.audio_manager.trigger_sfx("sheep_baa")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	elapsed_time += delta
+	
 	var progress = 0
 	var total_overall = 0
 	
@@ -86,7 +91,7 @@ func _process(_delta: float) -> void:
 	if percentage == 1.0 && last_percentage < 1.0:
 		# We have finished the level
 		# I was too lazy to add another variable for the rising edge detection
-		ui.should_show_results(percentage, star_percentages)
+		ui.should_show_results(percentage, star_percentages, elapsed_time)
 	
 	var next_cutoff_idx = stars_achieved + 1
 	if next_cutoff_idx < star_percentages.size():
@@ -101,5 +106,9 @@ func _process(_delta: float) -> void:
 	last_percentage = percentage
 
 func on_give_up_button() -> void:
-	ui.should_show_results(last_percentage, star_percentages)
+	ui.should_show_results(last_percentage, star_percentages, elapsed_time)
+	
+func _input(event: InputEvent) -> void:
+	if Input.is_action_pressed("finish_level"):
+		on_give_up_button()
 	
